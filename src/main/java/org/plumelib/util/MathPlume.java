@@ -16,8 +16,10 @@ import org.checkerframework.common.value.qual.ArrayLen;
 import org.checkerframework.common.value.qual.MinLen;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.checker.determinism.qual.*;
 
 /** Mathematical utilities. */
+@SuppressWarnings("determinism:return.type.incompatible")
 public final class MathPlume {
 
   /** This class is a collection of methods; it does not represent anything. */
@@ -848,6 +850,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
+  @SuppressWarnings("determinism:array.initializer.type.incompatible")
   public static int @Nullable @ArrayLen(2) [] modulus(int[] nums) {
     if (nums.length < 3) {
       return null;
@@ -863,7 +866,7 @@ public final class MathPlume {
       remainder += modulus;
     }
 
-    return new int[] {remainder, modulus};
+    return new @PolyDet int @PolyDet[] {remainder, modulus};
   }
 
   /**
@@ -876,6 +879,7 @@ public final class MathPlume {
    *     null if no such exists or the iterator contains fewer than 3 elements
    * @see #modulus(int[])
    */
+  @SuppressWarnings("determinism:array.initializer.type.incompatible")
   public static int @Nullable @ArrayLen(2) [] modulusInt(Iterator<Integer> itor) {
     if (!itor.hasNext()) {
       return null;
@@ -903,7 +907,7 @@ public final class MathPlume {
     if (count < 3) {
       return null;
     }
-    return new int[] {MathPlume.modPositive(avalue, modulus), modulus};
+    return new @PolyDet int @PolyDet[] {MathPlume.modPositive(avalue, modulus), modulus};
   }
 
   /**
@@ -927,6 +931,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
+  @SuppressWarnings("determinism:array.initializer.type.incompatible")
   public static int @Nullable @ArrayLen(2) [] modulusStrict(int[] nums, boolean nonstrictEnds) {
     if (nums.length < 3) {
       return null;
@@ -964,7 +969,7 @@ public final class MathPlume {
       }
     }
 
-    return new int[] {r, modulus};
+    return new @PolyDet int @PolyDet[] {r, modulus};
   }
 
   /**
@@ -980,6 +985,7 @@ public final class MathPlume {
    *     null if no such exists or the iterator contains fewer than 3 elements
    * @see #modulusStrict(int[], boolean)
    */
+  @SuppressWarnings("determinism:array.initializer.type.incompatible")
   public static int @Nullable @ArrayLen(2) [] modulusStrictInt(
       Iterator<Integer> itor, boolean nonstrictEnds) {
     if (!itor.hasNext()) {
@@ -1027,7 +1033,7 @@ public final class MathPlume {
       }
     }
 
-    return new int[] {r, modulus};
+    return new @PolyDet int @PolyDet[] {r, modulus};
   }
 
   /// modulus for long (as opposed to int) values
@@ -1085,6 +1091,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
+  @SuppressWarnings("determinism:array.initializer.type.incompatible")
   public static long @Nullable @ArrayLen(2) [] modulus(long[] nums) {
     if (nums.length < 3) {
       return null;
@@ -1100,7 +1107,7 @@ public final class MathPlume {
       remainder += modulus;
     }
 
-    return new long[] {remainder, modulus};
+    return new @PolyDet long @PolyDet[] {remainder, modulus};
   }
 
   /**
@@ -1113,6 +1120,7 @@ public final class MathPlume {
    *     null if no such exists or the iterator contains fewer than 3 elements
    * @see #modulus(long[])
    */
+  @SuppressWarnings("determinism:array.initializer.type.incompatible")
   public static long @Nullable @ArrayLen(2) [] modulusLong(Iterator<Long> itor) {
     if (!itor.hasNext()) {
       return null;
@@ -1140,7 +1148,7 @@ public final class MathPlume {
     if (count < 3) {
       return null;
     }
-    return new long[] {MathPlume.modPositive(avalue, modulus), modulus};
+    return new @PolyDet long @PolyDet[] {MathPlume.modPositive(avalue, modulus), modulus};
   }
 
   /**
@@ -1164,6 +1172,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
+  @SuppressWarnings("determinism:array.initializer.type.incompatible")
   public static long @Nullable @ArrayLen(2) [] modulusStrict(long[] nums, boolean nonstrictEnds) {
     if (nums.length < 3) {
       return null;
@@ -1201,7 +1210,7 @@ public final class MathPlume {
       }
     }
 
-    return new long[] {r, modulus};
+    return new @PolyDet long @PolyDet[] {r, modulus};
   }
 
   /**
@@ -1217,6 +1226,7 @@ public final class MathPlume {
    *     null if no such exists or the iterator contains fewer than 3 elements
    * @see #modulusStrict(int[], boolean)
    */
+  @SuppressWarnings("determinism:array.initializer.type.incompatible")
   public static long @Nullable @ArrayLen(2) [] modulusStrictLong(
       Iterator<Long> itor, boolean nonstrictEnds) {
     if (!itor.hasNext()) {
@@ -1264,7 +1274,7 @@ public final class MathPlume {
       }
     }
 
-    return new long[] {r, modulus};
+    return new @PolyDet long @PolyDet[] {r, modulus};
   }
 
   ///
@@ -1279,17 +1289,17 @@ public final class MathPlume {
    * @param nums numbers to be excluded; length &gt; 0; may contain duplicates
    * @return the set: [min(nums)..max(nums)] - nums
    */
-  @SuppressWarnings({"allcheckers:purity", "lock"})
+  @SuppressWarnings({"allcheckers:purity", "lock", "determinism:invalid.array.component.type"})
   @Pure
   @StaticallyExecutable
-  public static int[] missingNumbers(int @MinLen(1) [] nums) {
+  public static int[] missingNumbers(@PolyDet("down") int @PolyDet @MinLen(1) [] nums) {
     // avoid modifying parameter
     nums = nums.clone();
     Arrays.sort(nums);
     int min = nums[0];
     int max = nums[nums.length - 1];
     int sizeEstimate = max - min + 1 - nums.length;
-    List<Integer> resultList = new ArrayList<>(sizeEstimate < 1 ? 1 : sizeEstimate);
+    @PolyDet("up") List<Integer> resultList = new ArrayList<>(sizeEstimate < 1 ? 1 : sizeEstimate);
     int val = min;
     for (int i = 0; i < nums.length; i++) {
       while (val < nums[i]) {
@@ -1338,10 +1348,11 @@ public final class MathPlume {
      * @param nums a non-empty array
      * @param addEnds if true, include the bracketing endpoints
      */
-    MissingNumbersIteratorInt(int @MinLen(1) [] nums, boolean addEnds) {
+    @SuppressWarnings("determinism:assignment.type.incompatible")
+    MissingNumbersIteratorInt(@PolyDet("down") int @MinLen(1) @PolyDet [] nums, boolean addEnds) {
       this.addEnds = addEnds;
       { // avoid modifying parameter
-        int[] numsCopy = new int[nums.length];
+        @PolyDet("down") int @PolyDet[] numsCopy = new @PolyDet("down") int @PolyDet[nums.length];
         System.arraycopy(nums, 0, numsCopy, 0, nums.length);
         nums = numsCopy;
       }
@@ -1362,6 +1373,7 @@ public final class MathPlume {
      * @param numsItor a non-empty iterator; it must return integers in sorted order
      * @param addEnds if true, include the bracketing endpoints
      */
+    @SuppressWarnings("determinism:assignment.type.incompatible")
     MissingNumbersIteratorInt(Iterator<Integer> numsItor, boolean addEnds) {
       this.addEnds = addEnds;
       if (!numsItor.hasNext()) {
@@ -1382,10 +1394,11 @@ public final class MathPlume {
 
     @SuppressWarnings({
       "allcheckers:purity", // benevolent side effects
-      "lock:method.guarantee.violated"
+      "lock:method.guarantee.violated",
+            "determinism:assignment.type.incompatible"
     })
     @Override
-    public boolean hasNext(@GuardSatisfied MissingNumbersIteratorInt this) {
+    public @PolyDet("down") boolean hasNext(@GuardSatisfied MissingNumbersIteratorInt this) {
       if (currentMissing < currentNonmissing) {
         return true;
       }
@@ -1464,7 +1477,7 @@ public final class MathPlume {
   @SuppressWarnings({"allcheckers:purity", "lock"})
   @Pure
   @StaticallyExecutable
-  public static int @Nullable @ArrayLen(2) [] nonmodulusStrict(int[] nums) {
+  public static int @Nullable @ArrayLen(2) [] nonmodulusStrict(@PolyDet("down") int @PolyDet[] nums) {
     // This implementation is particularly inefficient; find a better way to
     // compute this.  Perhaps obtain the new modulus numbers incrementally
     // instead of all at once.
@@ -1485,14 +1498,15 @@ public final class MathPlume {
    * @return value to be returned by {@link #nonmodulusStrict(int[])}: a tuple of (r,m) where all
    *     numbers in {@code missing} are equal to r (ood m)
    */
+  @SuppressWarnings({"determinism:invalid.array.component.type","determinism:argument.type.incompatible"})
   private static int @Nullable @ArrayLen(2) [] nonmodulusStrictIntInternal(
       Iterator<Integer> missing) {
     // Must not use regular modulus:  that can produce errors, eg
     // nonmodulusStrict({1,2,3,5,6,7,9,11}) => {0,2}.  Thus, use
     // modulusStrict.
-    CollectionsPlume.RemoveFirstAndLastIterator<Integer> missingNums =
-        new CollectionsPlume.RemoveFirstAndLastIterator<Integer>(missing);
-    int[] result = modulusStrictInt(missingNums, false);
+    CollectionsPlume.@PolyDet RemoveFirstAndLastIterator<@Det Integer> missingNums =
+        new CollectionsPlume.RemoveFirstAndLastIterator<@Det Integer>(missing);
+    int [] result = modulusStrictInt(missingNums, false);
     if (result == null) {
       return result;
     }
@@ -1558,7 +1572,7 @@ public final class MathPlume {
    */
   // This seems to give too many false positives (or maybe my probability
   // model was wrong); use nonmodulusStrict instead.
-  @SuppressWarnings("allcheckers:purity")
+  @SuppressWarnings({"allcheckers:purity","determinism:invalid.array.component.type"})
   @Pure
   @StaticallyExecutable
   public static int @Nullable @ArrayLen(2) [] nonmodulusNonstrict(int[] nums) {
@@ -1608,17 +1622,17 @@ public final class MathPlume {
    * @param nums numbers to be excluded; length &gt; 0; may contain duplicates
    * @return the set: [min(nums)..max(nums)] - nums
    */
-  @SuppressWarnings({"allcheckers:purity", "lock"})
+  @SuppressWarnings({"allcheckers:purity", "lock","determinism:invalid.array.component.type"})
   @Pure
   @StaticallyExecutable
-  public static long[] missingNumbers(long @MinLen(1) [] nums) {
+  public static long[] missingNumbers(@PolyDet("down") long @MinLen(1) @PolyDet [] nums) {
     // avoid modifying parameter
     nums = nums.clone();
     Arrays.sort(nums);
     long min = nums[0];
     long max = nums[nums.length - 1];
     int sizeEstimate = ((int) (max - min + 1 - nums.length));
-    List<Long> resultList = new ArrayList<>(sizeEstimate < 1 ? 1 : sizeEstimate);
+    @PolyDet("up") List<Long> resultList = new ArrayList<>(sizeEstimate < 1 ? 1 : sizeEstimate);
     long val = min;
     for (int i = 0; i < nums.length; i++) {
       while (val < nums[i]) {
@@ -1668,10 +1682,11 @@ public final class MathPlume {
      * @param nums a non-empty array
      * @param addEnds if true, include the bracketing endpoints
      */
-    MissingNumbersIteratorLong(long @MinLen(1) [] nums, boolean addEnds) {
+    @SuppressWarnings("determinism:assignment.type.incompatible")
+    MissingNumbersIteratorLong(@PolyDet("down") long @MinLen(1) @PolyDet[] nums, boolean addEnds) {
       this.addEnds = addEnds;
       { // avoid modifying parameter
-        long[] numsCopy = new long[nums.length];
+        @PolyDet("down") long @PolyDet[] numsCopy = new @PolyDet("down") long @PolyDet[nums.length];
         System.arraycopy(nums, 0, numsCopy, 0, nums.length);
         nums = numsCopy;
       }
@@ -1692,6 +1707,7 @@ public final class MathPlume {
      * @param numsItor a non-empty array; must return longs in sorted order
      * @param addEnds if true, include the bracketing endpoints
      */
+    @SuppressWarnings("determinism:assignment.type.incompatible")
     MissingNumbersIteratorLong(Iterator<Long> numsItor, boolean addEnds) {
       this.addEnds = addEnds;
       if (!numsItor.hasNext()) {
@@ -1712,10 +1728,11 @@ public final class MathPlume {
 
     @SuppressWarnings({
       "allcheckers:purity", // benevolent side effects
-      "lock:method.guarantee.violated"
+      "lock:method.guarantee.violated",
+            "determinism:assignment.type.incompatible"
     })
     @Override
-    public boolean hasNext(@GuardSatisfied MissingNumbersIteratorLong this) {
+    public @PolyDet("down") boolean hasNext(@GuardSatisfied MissingNumbersIteratorLong this) {
       if (currentMissing < currentNonmissing) {
         return true;
       }
@@ -1794,7 +1811,7 @@ public final class MathPlume {
   @SuppressWarnings({"allcheckers:purity", "lock"})
   @Pure
   @StaticallyExecutable
-  public static long @Nullable @ArrayLen(2) [] nonmodulusStrict(long[] nums) {
+  public static long @Nullable @ArrayLen(2) [] nonmodulusStrict(@PolyDet("down") long @PolyDet[] nums) {
     // This implementation is particularly inefficient; find a better way to
     // compute this.  Perhaps obtain the new modulus numbers incrementally
     // instead of all at once.
@@ -1814,13 +1831,14 @@ public final class MathPlume {
    * @param missing the missing integers
    * @return value to be returned by {@link #nonmodulusStrict(long[])}
    */
+  @SuppressWarnings({"determinism:invalid.array.component.type","determinism:argument.type.incompatible"})
   private static long @Nullable @ArrayLen(2) [] nonmodulusStrictLongInternal(
       Iterator<Long> missing) {
     // Must not use regular modulus:  that can produce errors, eg
     // nonmodulusStrict({1,2,3,5,6,7,9,11}) => {0,2}.  Thus, use
     // modulusStrict.
-    CollectionsPlume.RemoveFirstAndLastIterator<Long> missingNums =
-        new CollectionsPlume.RemoveFirstAndLastIterator<Long>(missing);
+    CollectionsPlume.@PolyDet RemoveFirstAndLastIterator<Long> missingNums =
+        new CollectionsPlume.@PolyDet RemoveFirstAndLastIterator<Long>(missing);
     long[] result = modulusStrictLong(missingNums, false);
     if (result == null) {
       return result;
@@ -1887,7 +1905,7 @@ public final class MathPlume {
    */
   // This seems to give too many false positives (or maybe my probability
   // model was wrong); use nonmodulusStrict instead.
-  @SuppressWarnings("allcheckers:purity")
+  @SuppressWarnings({"allcheckers:purity","determinism:invalid.array.component.type"})
   @Pure
   @StaticallyExecutable
   public static long @Nullable @ArrayLen(2) [] nonmodulusNonstrict(long[] nums) {

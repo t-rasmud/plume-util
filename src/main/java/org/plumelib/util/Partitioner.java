@@ -1,6 +1,7 @@
 package org.plumelib.util;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * A Partitioner accepts Objects and assigns them to an equivalence class.
@@ -17,5 +18,5 @@ public interface Partitioner<ELEMENT extends @Nullable Object, CLASS extends @Nu
    * @param obj the Object to be assigned to a bucket
    * @return a key representing the bucket containing obj
    */
-  CLASS assignToBucket(ELEMENT obj);
+  @PolyDet CLASS assignToBucket(@PolyDet ELEMENT obj);
 }

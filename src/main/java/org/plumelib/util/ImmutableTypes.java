@@ -3,6 +3,8 @@ package org.plumelib.util;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.checkerframework.checker.determinism.qual.*;
+
 /** Records all the immutable types in the JDK, and can be queried. */
 public class ImmutableTypes {
 
@@ -15,7 +17,7 @@ public class ImmutableTypes {
    */
   // It might be more efficient to use Class objects rather than Strings, but that would require
   // everything in the list to be loaded into the JDK at run time.
-  public static Set<String> immutableTypeNames = new HashSet<>();
+  public static @OrderNonDet Set<String> immutableTypeNames = new HashSet<>();
 
   // The set contains nothing in package javax.management, which is littered with comments like
   // "Instances of this class are immutable.  Subclasses may be mutable but this is not
@@ -228,6 +230,7 @@ public class ImmutableTypes {
    * @param typeName the fully-qualified name of the type
    * @return true iff the class of the given name is immutable
    */
+  @SuppressWarnings({"determinism:method.invocation.invalid","determinism:return.type.incompatible"})
   public static boolean isImmutable(String typeName) {
     return immutableTypeNames.contains(typeName);
   }

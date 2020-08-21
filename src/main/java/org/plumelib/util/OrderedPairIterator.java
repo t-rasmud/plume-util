@@ -7,6 +7,7 @@ import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * Given two sorted iterators, this class returns a new iterator that pairs equal elements of the
@@ -82,11 +83,13 @@ public class OrderedPairIterator<T> implements java.util.Iterator<Pair<@Nullable
   }
   /** Set the next1 variable. */
   @RequiresNonNull("itor1")
+  @SuppressWarnings("determinism:assignment.type.incompatible")
   private void setnext1(@GuardSatisfied @UnknownInitialization OrderedPairIterator<T> this) {
     next1 = itor1.hasNext() ? itor1.next() : null;
   }
   /** Set the next2 variable. */
   @RequiresNonNull("itor2")
+  @SuppressWarnings("determinism:assignment.type.incompatible")
   private void setnext2(@GuardSatisfied @UnknownInitialization OrderedPairIterator<T> this) {
     next2 = itor2.hasNext() ? itor2.next() : null;
   }
@@ -95,7 +98,8 @@ public class OrderedPairIterator<T> implements java.util.Iterator<Pair<@Nullable
   //   this((new TreeSet(s1)).iterator(), (new TreeSet(s2)).iterator());
   // }
   @Override
-  public boolean hasNext(@GuardSatisfied OrderedPairIterator<T> this) {
+  @SuppressWarnings("determinism:return.type.incompatible")
+  public @PolyDet("down") boolean hasNext(@GuardSatisfied OrderedPairIterator<T> this) {
     return ((next1 != null) || (next2 != null));
   }
   /**
@@ -103,8 +107,9 @@ public class OrderedPairIterator<T> implements java.util.Iterator<Pair<@Nullable
    *
    * @return an element of the first iterator, paired with null
    */
+  @SuppressWarnings("determinism:assignment.type.incompatible")
   private Pair<@Nullable T, @Nullable T> return1(@GuardSatisfied OrderedPairIterator<T> this) {
-    Pair<@Nullable T, @Nullable T> result =
+    @PolyDet Pair<@Nullable T, @Nullable T> result =
         Pair.<@Nullable T, @Nullable T>of(next1, (@Nullable T) null);
     setnext1();
     return result;
@@ -114,6 +119,7 @@ public class OrderedPairIterator<T> implements java.util.Iterator<Pair<@Nullable
    *
    * @return a pair of null and an element of the second iterator
    */
+  @SuppressWarnings("determinism:return.type.incompatible")
   private Pair<@Nullable T, @Nullable T> return2(@GuardSatisfied OrderedPairIterator<T> this) {
     Pair<@Nullable T, @Nullable T> result =
         Pair.<@Nullable T, @Nullable T>of((@Nullable T) null, next2);

@@ -6,6 +6,8 @@ import java.io.LineNumberReader;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.HasQualifierParameter;
+import org.checkerframework.checker.determinism.qual.*;
 
 // TODO:  A better name would be LineNumberException.
 // And then it needn't really extend IOException.
@@ -18,6 +20,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
  * This class extends IOException by also reporting a file name and line number at which the
  * exception occurred. It requires use of a {@link LineNumberReader}.
  */
+@HasQualifierParameter(NonDet.class)
 public class FileIOException extends IOException {
   static final long serialVersionUID = 20050923L;
 

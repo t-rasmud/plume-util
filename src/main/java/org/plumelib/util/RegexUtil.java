@@ -74,6 +74,7 @@ public final class RegexUtil {
      *
      * @param pse the PatternSyntaxException to be wrapped
      */
+    @SuppressWarnings("determinism:assignment.type.incompatible")
     public CheckedPatternSyntaxException(PatternSyntaxException pse) {
       this.pse = pse;
     }

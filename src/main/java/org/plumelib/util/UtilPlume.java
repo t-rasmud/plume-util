@@ -52,6 +52,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.checker.determinism.qual.*;
 
 /** Utility functions that do not belong elsewhere in the plume package. */
 public final class UtilPlume {
@@ -483,6 +484,7 @@ public final class UtilPlume {
    * @throws IOException if there is trouble writing the file
    */
   // Question:  should this be rewritten as a wrapper around bufferedFileOutputStream?
+  @SuppressWarnings({"determinism:invalid.array.component.type","determinism:conditional.type.incompatible"})
   public static BufferedWriter bufferedFileWriter(String filename, boolean append)
       throws IOException {
     if (filename.endsWith(".gz")) {
@@ -493,7 +495,7 @@ public final class UtilPlume {
       return Files.newBufferedWriter(
           Paths.get(filename),
           UTF_8,
-          append ? new StandardOpenOption[] {CREATE, APPEND} : new StandardOpenOption[] {CREATE});
+          append ? new StandardOpenOption @PolyDet[] {CREATE, APPEND} : new StandardOpenOption[] {CREATE});
     }
   }
 
@@ -548,8 +550,8 @@ public final class UtilPlume {
    * @return the contents of {@code filename}, one string per line
    * @throws IOException if there was a problem reading the file
    */
-  public static List<String> fileLines(String filename) throws IOException {
-    List<String> textList = new ArrayList<>();
+  public static List<@PolyDet("use") String> fileLines(String filename) throws IOException {
+    @PolyDet List<@PolyDet("use") String> textList = new @PolyDet ArrayList<>();
     try (LineNumberReader reader = UtilPlume.lineNumberFileReader(filename)) {
       String line;
       while ((line = reader.readLine()) != null) {
@@ -714,19 +716,20 @@ public final class UtilPlume {
    *     SecurityManager.checkWrite(java.lang.String) method does not allow a file to be created
    * @see java.io.File#createTempFile(String, String, File)
    */
+  @SuppressWarnings("determinism:assignment.type.incompatible")
   public static File createTempDir(String prefix, String suffix) throws IOException {
     String fs = File.separator;
-    String path = System.getProperty("java.io.tmpdir") + fs + System.getProperty("user.name") + fs;
-    File pathFile = new File(path);
+    @PolyDet String path = System.getProperty("java.io.tmpdir") + fs + System.getProperty("user.name") + fs;
+    @PolyDet File pathFile = new @PolyDet File(path);
     if (!pathFile.isDirectory()) {
       if (!pathFile.mkdirs()) {
         throw new IOException("Could not create directory: " + pathFile);
       }
     }
     // Call Java runtime to create a file with a unique name
-    File tmpfile = File.createTempFile(prefix + "_", "_", pathFile);
-    String tmpDirPath = tmpfile.getPath() + suffix;
-    File tmpDir = new File(tmpDirPath);
+    @PolyDet File tmpfile = File.createTempFile(prefix + "_", "_", pathFile);
+    @PolyDet String tmpDirPath = tmpfile.getPath() + suffix;
+    @PolyDet File tmpDir = new @PolyDet File(tmpDirPath);
     if (!tmpDir.mkdirs()) {
       throw new IOException("Could not create directory: " + tmpDir);
     }
@@ -805,6 +808,7 @@ public final class UtilPlume {
   }
 
   /** The user's home directory. */
+  @SuppressWarnings("determinism:assignment.type.incompatible")
   static final String userHome = System.getProperty("user.home");
 
   /**
@@ -1040,7 +1044,7 @@ public final class UtilPlume {
    * @param a value to be hashed
    * @return a hash of the arguments
    */
-  public static int hash(double @Nullable [] a) {
+  public static @PolyDet("up") int hash(double @Nullable [] a) {
     double result = 17;
     if (a != null) {
       result = result * 37 + a.length;
@@ -1058,7 +1062,7 @@ public final class UtilPlume {
    * @param b value to be hashed
    * @return a hash of the arguments
    */
-  public static int hash(double @Nullable [] a, double @Nullable [] b) {
+  public static @NonDet int hash(double @Nullable [] a, double @Nullable [] b) {
     return hash(hash(a), hash(b));
   }
 
@@ -1121,7 +1125,7 @@ public final class UtilPlume {
    * @param a value to be hashed
    * @return a hash of the arguments
    */
-  public static int hash(long @Nullable [] a) {
+  public static @PolyDet("up") int hash(long @Nullable [] a) {
     long result = 17;
     if (a != null) {
       result = result * 37 + a.length;
@@ -1139,7 +1143,7 @@ public final class UtilPlume {
    * @param b value to be hashed
    * @return a hash of the arguments
    */
-  public static int hash(long @Nullable [] a, long @Nullable [] b) {
+  public static @NonDet int hash(long @Nullable [] a, long @Nullable [] b) {
     return hash(hash(a), hash(b));
   }
 
@@ -1149,7 +1153,7 @@ public final class UtilPlume {
    * @param a value to be hashed
    * @return a hash of the arguments
    */
-  public static int hash(@Nullable String a) {
+  public static @NonDet int hash(@Nullable String a) {
     return (a == null) ? 0 : a.hashCode();
   }
 
@@ -1160,7 +1164,7 @@ public final class UtilPlume {
    * @param b value to be hashed
    * @return a hash of the arguments
    */
-  public static int hash(@Nullable String a, @Nullable String b) {
+  public static @NonDet int hash(@Nullable String a, @Nullable String b) {
     long result = 17;
     result = result * 37 + hash(a);
     result = result * 37 + hash(b);
@@ -1175,7 +1179,7 @@ public final class UtilPlume {
    * @param c value to be hashed
    * @return a hash of the arguments
    */
-  public static int hash(@Nullable String a, @Nullable String b, @Nullable String c) {
+  public static @NonDet int hash(@Nullable String a, @Nullable String b, @Nullable String c) {
     long result = 17;
     result = result * 37 + hash(a);
     result = result * 37 + hash(b);
@@ -1189,7 +1193,7 @@ public final class UtilPlume {
    * @param a value to be hashed
    * @return a hash of the arguments
    */
-  public static int hash(@Nullable String @Nullable [] a) {
+  public static @NonDet int hash(@Nullable String @Nullable [] a) {
     long result = 17;
     if (a != null) {
       result = result * 37 + a.length;
@@ -1210,6 +1214,7 @@ public final class UtilPlume {
    * @param command a command to execute on the command line
    * @return all the output of the command
    */
+  @SuppressWarnings("determinism:argument.type.incompatible")
   public static String backticks(String... command) {
     return backticks(Arrays.asList(command));
   }
@@ -1301,7 +1306,7 @@ public final class UtilPlume {
    * @param to output stream
    */
   public static void streamCopy(InputStream from, OutputStream to) {
-    byte[] buffer = new byte[1024];
+    @PolyDet("use") byte @PolyDet[] buffer = new @PolyDet("use") byte @PolyDet[1024];
     int bytes;
     try {
       while (true) {
@@ -1336,8 +1341,8 @@ public final class UtilPlume {
    * @return the list of lines read from the stream
    * @throws IOException if there is an error reading from the stream
    */
-  public static List<String> streamLines(InputStream stream) throws IOException {
-    List<String> outputLines = new ArrayList<>();
+  public static @PolyDet List<@PolyDet("use") String> streamLines(InputStream stream) throws IOException {
+    @PolyDet List<@PolyDet("use") String> outputLines = new @PolyDet ArrayList<>();
     try (BufferedReader rdr = new BufferedReader(new InputStreamReader(stream, UTF_8))) {
       String line;
       while ((line = rdr.readLine()) != null) {
@@ -1392,13 +1397,13 @@ public final class UtilPlume {
    * @return array of length at least 1, containing s split on delimiter
    */
   public static String[] split(String s, char delim) {
-    ArrayList<String> resultList = new ArrayList<>();
+    @PolyDet ArrayList<@PolyDet("use") String> resultList = new @PolyDet ArrayList<>();
     for (int delimpos = s.indexOf(delim); delimpos != -1; delimpos = s.indexOf(delim)) {
       resultList.add(s.substring(0, delimpos));
       s = s.substring(delimpos + 1);
     }
     resultList.add(s);
-    String[] result = resultList.toArray(new @NonNull String[resultList.size()]);
+    @PolyDet("use") String @PolyDet[] result = resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet[resultList.size()]);
     return result;
   }
 
@@ -1421,13 +1426,13 @@ public final class UtilPlume {
     if (delimlen == 0) {
       throw new Error("Second argument to split was empty.");
     }
-    ArrayList<String> resultList = new ArrayList<>();
+    @PolyDet ArrayList<@PolyDet("use") String> resultList = new @PolyDet ArrayList<>();
     for (int delimpos = s.indexOf(delim); delimpos != -1; delimpos = s.indexOf(delim)) {
       resultList.add(s.substring(0, delimpos));
       s = s.substring(delimpos + delimlen);
     }
     resultList.add(s);
-    String[] result = resultList.toArray(new @NonNull String[resultList.size()]);
+    @PolyDet("use") String @PolyDet[] result = resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet[resultList.size()]);
     return result;
   }
 
@@ -1464,7 +1469,7 @@ public final class UtilPlume {
    *     order
    */
   @Deprecated // use join(CharSequence, Object...) which has the arguments in the other order
-  public static <T> String join(T[] a, CharSequence delim) {
+  public static <T> @PolyDet("up") String join(T[] a, CharSequence delim) {
     if (a.length == 0) {
       return "";
     }
@@ -1493,7 +1498,7 @@ public final class UtilPlume {
    *     between
    */
   @SafeVarargs
-  public static <T> String join(CharSequence delim, T... a) {
+  public static <T> @PolyDet("up") String join(CharSequence delim, T... a) {
     if (a.length == 0) {
       return "";
     }
@@ -1516,7 +1521,7 @@ public final class UtilPlume {
    * @return the concatenation of the string representations of the values, each on its own line
    */
   @SafeVarargs
-  @SuppressWarnings("varargs")
+  @SuppressWarnings({"varargs","determinism:return.type.incompatible"})
   public static <T> String joinLines(T... a) {
     return join(lineSep, a);
   }
@@ -1689,6 +1694,7 @@ public final class UtilPlume {
    * @param c character to quote
    * @return quoted version of ch
    */
+  @SuppressWarnings("determinism:cast.unsafe.constructor.invocation")
   public static String escapeJava(char c) {
     switch (c) {
       case '\"':
@@ -1706,7 +1712,7 @@ public final class UtilPlume {
       case '\t':
         return "\\t";
       default:
-        return new String(new char[] {c});
+        return new @PolyDet String(new @PolyDet char @PolyDet[] {c});
     }
   }
 
@@ -1735,6 +1741,7 @@ public final class UtilPlume {
    * @param c character to quote
    * @return quoted version of c
    */
+  @SuppressWarnings("determinism:cast.unsafe.constructor.invocation")
   private static String escapeNonASCII(char c) {
     if (c == '"') {
       return "\\\"";
@@ -1747,7 +1754,7 @@ public final class UtilPlume {
     } else if (c == '\t') {
       return "\\t";
     } else if (c >= ' ' && c <= '~') {
-      return new String(new char[] {c});
+      return new @PolyDet String(new @PolyDet char @PolyDet[] {c});
     } else if (c < 256) {
       String octal = Integer.toOctalString(c);
       while (octal.length() < 3) {
@@ -1755,7 +1762,7 @@ public final class UtilPlume {
       }
       return "\\" + octal;
     } else {
-      String hex = Integer.toHexString(c);
+      @PolyDet String hex = Integer.toHexString(c);
       while (hex.length() < 4) {
         hex = "0" + hex;
       }
@@ -2107,7 +2114,7 @@ public final class UtilPlume {
     }) // toString is being used in a deterministic way
     @Pure
     @Override
-    public int compare(@Nullable Object o1, @Nullable Object o2) {
+    public @NonDet int compare(@Nullable Object o1, @Nullable Object o2) {
       // Make null compare smaller than anything else
       if ((o1 == o2)) {
         return 0;
@@ -2173,6 +2180,7 @@ public final class UtilPlume {
    * @param val a numeric value
    * @return an abbreviated string representation of the value
    */
+  @SuppressWarnings("determinism:return.type.incompatible")
   public static String abbreviateNumber(long val) {
 
     double dval = (double) val;

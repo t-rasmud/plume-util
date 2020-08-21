@@ -10,6 +10,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * Given a set of collections, yield each combination that takes one element from each collection.
@@ -45,16 +46,16 @@ public class CombinationIterator<T> implements Iterator<List<T>> {
    *
    * @param collectionsOfCandidates lists of candidate values for each position in generated lists
    */
-  @SuppressWarnings({"rawtypes", "unchecked"}) // for generic array creation
+  @SuppressWarnings({"rawtypes", "unchecked","determinism:assignment.type.incompatible"}) // for generic array creation
   public CombinationIterator(Collection<? extends Collection<T>> collectionsOfCandidates) {
     int size = collectionsOfCandidates.size();
     // Just like collectionsOfCandidates, but indexable.
-    ArrayList<? extends Collection<T>> listOfCollectionsOfCanditates =
+    @PolyDet ArrayList<? extends Collection<T>> listOfCollectionsOfCanditates =
         new ArrayList<>(collectionsOfCandidates);
     listsOfCandidates = new ArrayList[size];
     iterators = new Iterator[size];
     combinationSize = size;
-    nextValue = (combinationSize == 0 ? null : new ArrayList<>(collectionsOfCandidates.size()));
+    nextValue = (combinationSize == 0 ? null : new @PolyDet ArrayList<>(collectionsOfCandidates.size()));
 
     for (int i = 0; i < combinationSize; i++) {
       Collection<T> userSuppliedCandidates = listOfCollectionsOfCanditates.get(i);
@@ -75,12 +76,14 @@ public class CombinationIterator<T> implements Iterator<List<T>> {
 
   @Override
   @EnsuresNonNullIf(expression = "nextValue", result = true)
-  public boolean hasNext(@GuardSatisfied CombinationIterator<T> this) {
+  @SuppressWarnings("determinism:return.type.incompatible")
+  public @PolyDet("down") boolean hasNext(@GuardSatisfied CombinationIterator<T> this) {
     return nextValue != null;
   }
 
   /** Advance {@code nextValue} to the next value, or to null if there are no more values. */
   @RequiresNonNull("nextValue")
+  @SuppressWarnings("determinism:method.invocation.invalid")
   private void advanceNext(@GuardSatisfied CombinationIterator<T> this) {
     for (int i = combinationSize - 1; i >= 0; i--) {
       if (iterators[i].hasNext()) {
@@ -95,12 +98,13 @@ public class CombinationIterator<T> implements Iterator<List<T>> {
   }
 
   @Override
-  public List<T> next(@GuardSatisfied CombinationIterator<T> this) {
+  @SuppressWarnings("determinism:argument.type.incompatible")
+  public @PolyDet("up") List<T> next(@GuardSatisfied CombinationIterator<T> this) {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
 
-    List<T> result = new ArrayList<T>(nextValue);
+    @PolyDet("up") List<T> result = new @PolyDet("up") ArrayList<T>(nextValue);
     advanceNext();
     return result;
   }

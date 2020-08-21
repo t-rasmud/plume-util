@@ -1,0 +1,17 @@
+> Task :createCheckerFrameworkManifest UP-TO-DATE
+> Task :compileJava
+> Task :processResources NO-SOURCE
+> Task :classes
+> Task :jar
+> Task :javadoc
+> Task :javadocJar
+> Task :sourcesJar
+> Task :signArchives SKIPPED
+> Task :assemble
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.1.1/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 24s
+6 actionable tasks: 5 executed, 1 up-to-date

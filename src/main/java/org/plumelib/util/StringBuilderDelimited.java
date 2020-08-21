@@ -9,6 +9,8 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.HasQualifierParameter;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * Like StringBuilder, but adds a delimiter between each pair of strings that are inserted into the
@@ -24,6 +26,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
  * @deprecated use StringJoiner
  */
 @Deprecated // use StringJoiner
+@HasQualifierParameter(NonDet.class)
 public class StringBuilderDelimited implements Appendable, CharSequence {
 
   /** The StringBuilder to which this delegates work. */

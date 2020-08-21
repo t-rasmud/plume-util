@@ -15,6 +15,9 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.common.value.qual.PolyValue;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.checker.determinism.qual.*;
+import org.checkerframework.framework.qual.HasQualifierParameter;
+
 
 /**
  * Utilities for interning objects. Interning is also known as canonicalization or hash-consing: it
@@ -26,6 +29,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
  * <p>Java builds in interning for Strings, but not for other objects. The methods in this class
  * extend interning to all Java objects.
  */
+@HasQualifierParameter(NonDet.class)
 public final class Intern {
 
   /** This class is a collection of methods; it does not represent anything. */
@@ -53,7 +57,7 @@ public final class Intern {
    * @return an interned version of a
    * @see String#intern
    */
-  @SuppressWarnings("interning") // side-effects the array in place (dangerous, but convenient)
+  @SuppressWarnings({"interning","determinism:assignment.type.incompatible"}) // side-effects the array in place (dangerous, but convenient)
   public static @Interned String @PolyValue @SameLen("#1") [] internStrings(
       String @PolyValue [] a) {
     for (int i = 0; i < a.length; i++) {
@@ -117,6 +121,7 @@ public final class Intern {
    */
   private static final class IntegerHasher implements Hasher {
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return a1.equals(a2);
     }
@@ -136,6 +141,7 @@ public final class Intern {
    */
   private static final class LongHasher implements Hasher {
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return a1.equals(a2);
     }
@@ -155,11 +161,13 @@ public final class Intern {
    */
   private static final class IntArrayHasher implements Hasher {
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return Arrays.equals((int[]) a1, (int[]) a2);
     }
 
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public int hashCode(Object o) {
       return Arrays.hashCode((int[]) o);
     }
@@ -173,11 +181,13 @@ public final class Intern {
    */
   private static final class LongArrayHasher implements Hasher {
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return Arrays.equals((long[]) a1, (long[]) a2);
     }
 
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public int hashCode(Object o) {
       return Arrays.hashCode((long[]) o);
     }
@@ -195,6 +205,7 @@ public final class Intern {
    */
   private static final class DoubleHasher implements Hasher {
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return a1.equals(a2);
     }
@@ -232,6 +243,7 @@ public final class Intern {
     }
 
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public int hashCode(Object o) {
       double[] a = (double[]) o;
       // Not Arrays.hashCode(a), for consistency with equals method
@@ -255,11 +267,13 @@ public final class Intern {
    */
   private static final class StringArrayHasher implements Hasher {
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return Arrays.equals((String[]) a1, (String[]) a2);
     }
 
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public int hashCode(Object o) {
       return Arrays.hashCode((String[]) o);
     }
@@ -273,11 +287,13 @@ public final class Intern {
    */
   private static final class ObjectArrayHasher implements Hasher {
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return Arrays.equals((@Nullable Object[]) a1, (@Nullable Object[]) a2);
     }
 
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public int hashCode(Object o) {
       return Arrays.hashCode((Object[]) o);
     }
@@ -556,7 +572,7 @@ public final class Intern {
   // TODO: JLS 5.1.7 requires that the boxing conversion interns integer
   // values between -128 and 127 (and Intern.valueOf is intended to promise
   // the same).  This does not currently take advantage of that.
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock"}) // interning implementation
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"}) // interning implementation
   @Pure
   public static @Interned Integer intern(Integer a) {
     WeakReference<@Interned Integer> lookup = internedIntegers.get(a);
@@ -565,7 +581,7 @@ public final class Intern {
       return result1;
     } else {
       @Interned Integer result = (@Interned Integer) a;
-      internedIntegers.put(result, new WeakReference<>(result));
+      internedIntegers.put(result, new @PolyDet WeakReference<>(result));
       return result;
     }
   }
@@ -601,7 +617,7 @@ public final class Intern {
   // TODO: JLS 5.1.7 requires that the boxing conversion interns integer
   // values between -128 and 127 (and Long.valueOf is intended to promise
   // the same).  This could take advantage of that.
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
   @Pure
   public static @Interned Long intern(Long a) {
     WeakReference<@Interned Long> lookup = internedLongs.get(a);
@@ -649,7 +665,7 @@ public final class Intern {
    * @param a the array to canonicalize
    * @return a canonical representation for the int[] array
    */
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
   @Pure
   public static int @Interned @PolyValue @SameLen("#1") [] intern(int @PolyValue [] a) {
     // Throwable stack = new Throwable("debug traceback");
@@ -680,7 +696,7 @@ public final class Intern {
    * @param a the array to canonicalize
    * @return a canonical representation for the long[] array
    */
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
   @Pure
   public static long @Interned @PolyValue @SameLen("#1") [] intern(long @PolyValue [] a) {
     // System.out.printf("intern %s %s long[] %s%n", a.getClass(),
@@ -711,7 +727,7 @@ public final class Intern {
   // TODO: JLS 5.1.7 requires that the boxing conversion interns integer
   // values between -128 and 127 (and Double.valueOf is intended to promise
   // the same).  This could take advantage of that.
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
   @Pure
   public static @Interned Double intern(Double a) {
     // Double.NaN == Double.Nan  always evaluates to false.
@@ -767,7 +783,7 @@ public final class Intern {
    * @param a the array to canonicalize
    * @return a canonical representation for the double[] array
    */
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
   @Pure
   public static double @Interned @PolyValue @SameLen("#1") [] intern(double @PolyValue [] a) {
     WeakReference<double @Interned []> lookup = internedDoubleArrays.get(a);
@@ -802,7 +818,8 @@ public final class Intern {
     "allcheckers:purity",
     "lock",
     // Error Prone Warnings
-    "ReferenceEquality"
+    "ReferenceEquality",
+          "determinism"
   }) // cast is redundant (except in JSR 308)
   @Pure
   public static @PolyNull @Interned String @Interned @PolyValue @SameLen("#1") [] intern(
@@ -847,7 +864,8 @@ public final class Intern {
     "interning", // interns its argument
     "allcheckers:purity",
     "lock",
-    "cast"
+    "cast",
+          "determinism"
   }) // cast is redundant (except in JSR 308)
   @Pure
   public static @PolyNull @Interned Object @Interned @PolyValue @SameLen("#1") [] intern(
@@ -886,7 +904,7 @@ public final class Intern {
     } else if (a instanceof String) {
       return intern((String) a);
     } else if (a instanceof String[]) {
-      @Interned String[] asArray = (@Interned String[]) a;
+      @Interned @PolyDet("use") String @PolyDet[] asArray = (@Interned @PolyDet("use") String @PolyDet[]) a;
       return intern(asArray);
     } else if (a instanceof Integer) {
       return intern((Integer) a);
@@ -901,7 +919,7 @@ public final class Intern {
     } else if (a instanceof double[]) {
       return intern((double[]) a);
     } else if (a instanceof Object[]) {
-      @Interned Object[] asArray = (@Interned Object[]) a;
+      @Interned @PolyDet("use") Object @PolyDet[] asArray = (@Interned @PolyDet("use") Object @PolyDet[]) a;
       return intern(asArray);
     } else {
       throw new IllegalArgumentException(
@@ -925,6 +943,7 @@ public final class Intern {
    * @param end the index of the end of the subsequence to compute and intern
    * @return a subsequence of seq from start to end that is interned
    */
+  @SuppressWarnings("determinism")
   public static int @Interned [] internSubsequence(
       int @Interned [] seq,
       @IndexFor("#1") @LessThan("#3") int start,
@@ -954,7 +973,7 @@ public final class Intern {
    * @return a subsequence of seq from start to end that is interned
    * @see #internSubsequence(int[], int, int)
    */
-  @SuppressWarnings({"allcheckers:purity", "lock"}) // interning logic
+  @SuppressWarnings({"allcheckers:purity", "lock", "determinism"}) // interning logic
   @Pure
   public static long @Interned [] internSubsequence(
       long @Interned [] seq,
@@ -985,7 +1004,7 @@ public final class Intern {
    * @return a subsequence of seq from start to end that is interned
    * @see #internSubsequence(int[], int, int)
    */
-  @SuppressWarnings({"allcheckers:purity", "lock"}) // interning logic
+  @SuppressWarnings({"allcheckers:purity", "lock", "determinism"}) // interning logic
   @Pure
   public static double @Interned [] internSubsequence(
       double @Interned [] seq,
@@ -1016,7 +1035,7 @@ public final class Intern {
    * @return a subsequence of seq from start to end that is interned
    * @see #internSubsequence(int[], int, int)
    */
-  @SuppressWarnings({"allcheckers:purity", "lock"}) // interning logic
+  @SuppressWarnings({"allcheckers:purity", "lock", "determinism"}) // interning logic
   @Pure
   public static @PolyNull @Interned Object @Interned [] internSubsequence(
       @PolyNull @Interned Object @Interned [] seq,
@@ -1054,7 +1073,7 @@ public final class Intern {
    * @see #internSubsequence(int[], int, int)
    */
   @Pure
-  @SuppressWarnings({"allcheckers:purity", "lock"}) // interning logic
+  @SuppressWarnings({"allcheckers:purity", "lock", "determinism"}) // interning logic
   public static @PolyNull @Interned String @Interned [] internSubsequence(
       @PolyNull @Interned String @Interned [] seq,
       @IndexFor("#1") @LessThan("#3") int start,
@@ -1102,7 +1121,7 @@ public final class Intern {
      * @param start the start index
      * @param end the end index
      */
-    public Subsequence(T seq, @NonNegative int start, int end) {
+    public @PolyDet Subsequence(@PolyDet T seq, @PolyDet @NonNegative int start, @PolyDet int end) {
       if (assertsEnabled && !Intern.isInterned(seq)) {
         throw new IllegalArgumentException();
       }
@@ -1139,6 +1158,7 @@ public final class Intern {
 
     @Pure
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public int hashCode(@GuardSatisfied Subsequence<T> this) {
       return seq.hashCode() + start * 30 - end * 2;
     }
@@ -1168,6 +1188,7 @@ public final class Intern {
     }
 
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")
     public int hashCode(Object o) {
       return o.hashCode();
     }

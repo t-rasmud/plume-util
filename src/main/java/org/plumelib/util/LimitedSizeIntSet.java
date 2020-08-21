@@ -12,6 +12,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.value.qual.MinLen;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.checker.determinism.qual.*;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /**
  * LimitedSizeIntSet stores up to some maximum number of unique values. If more than that many
@@ -27,6 +29,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
 // Consider adding:
 //  * @deprecated Use LimitedSizeSet instead
 // @Deprecated
+  @HasQualifierParameter(NonDet.class)
 public class LimitedSizeIntSet implements Serializable, Cloneable {
   // We are Serializable, so we specify a version to allow changes to
   // method signatures without breaking serialization.  If you add or
@@ -202,13 +205,13 @@ public class LimitedSizeIntSet implements Serializable, Cloneable {
   }
 
   @SuppressWarnings(
-      "allcheckers:purity.not.sideeffectfree.assign.field") // side effect to local state (clone)
+          {"allcheckers:purity.not.sideeffectfree.assign.field","determinism:invariant.cast.unsafe"}) // side effect to local state (clone)
   @SideEffectFree
   @Override
   public LimitedSizeIntSet clone(@GuardSatisfied LimitedSizeIntSet this) {
     LimitedSizeIntSet result;
     try {
-      result = (LimitedSizeIntSet) super.clone();
+      result = (@PolyDet LimitedSizeIntSet) super.clone();
     } catch (CloneNotSupportedException e) {
       throw new Error(); // can't happen
     }
@@ -236,6 +239,7 @@ public class LimitedSizeIntSet implements Serializable, Cloneable {
 
   @SideEffectFree
   @Override
+  @SuppressWarnings("determinism:return.type.incompatible")
   public String toString(@GuardSatisfied LimitedSizeIntSet this) {
     return ("[size=" + size() + "; " + Arrays.toString(values) + "]");
   }

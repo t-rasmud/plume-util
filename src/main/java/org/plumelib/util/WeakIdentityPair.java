@@ -30,6 +30,7 @@ public class WeakIdentityPair<T1 extends Object, T2 extends Object> {
    * @param a the first element of the pair
    * @param b the second element of the pair
    */
+  @SuppressWarnings("determinism:assignment.type.incompatible")
   public WeakIdentityPair(T1 a, T2 b) {
     if (a == null || b == null) {
       throw new IllegalArgumentException(

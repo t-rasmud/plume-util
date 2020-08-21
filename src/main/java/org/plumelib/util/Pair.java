@@ -4,6 +4,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * Mutable pair class: type-safely holds two objects of possibly-different types. Defines
@@ -25,7 +26,7 @@ public class Pair<T1 extends @Nullable Object, T2 extends @Nullable Object> {
    * @param a the first element of the pair
    * @param b the second element of the pair
    */
-  public Pair(T1 a, T2 b) {
+  public @PolyDet Pair(@PolyDet T1 a, @PolyDet T2 b) {
     this.a = a;
     this.b = b;
   }
@@ -39,8 +40,8 @@ public class Pair<T1 extends @Nullable Object, T2 extends @Nullable Object> {
    * @param b second argument
    * @return a pair of the values (a, b)
    */
-  public static <A extends @Nullable Object, B extends @Nullable Object> Pair<A, B> of(A a, B b) {
-    return new Pair<>(a, b);
+  public static <A extends @Nullable Object, B extends @Nullable Object> @PolyDet Pair<A, B> of(@PolyDet A a, @PolyDet B b) {
+    return new @PolyDet Pair<>(a, b);
   }
 
   @Override
@@ -51,6 +52,7 @@ public class Pair<T1 extends @Nullable Object, T2 extends @Nullable Object> {
 
   @Override
   @Pure
+  @SuppressWarnings("determinism:return.type.incompatible")
   public boolean equals(@GuardSatisfied Pair<T1, T2> this, @GuardSatisfied @Nullable Object obj) {
     if (!(obj instanceof Pair<?, ?>)) {
       return false;
@@ -67,6 +69,7 @@ public class Pair<T1 extends @Nullable Object, T2 extends @Nullable Object> {
   // But then the class would not be useful for mutable pairs.
   @Override
   @Pure
+  @SuppressWarnings("determinism:return.type.incompatible")
   public int hashCode(@GuardSatisfied Pair<T1, T2> this) {
     return (((a == null) ? 0 : a.hashCode()) + ((b == null) ? 0 : b.hashCode()));
   }

@@ -26,6 +26,7 @@ import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.checker.determinism.qual.*;
 
 // The purpose of this class is to be used by Intern.java.  It is difficult
 // to upgrade this to use the Java 1.5 version of WeakHashMap (which is
@@ -115,11 +116,13 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
   private Hasher hasher = null;
 
   @Pure
+  @SuppressWarnings("determinism:return.type.incompatible")
   private boolean keyEquals(Object k1, Object k2) {
     return (hasher == null ? k1.equals(k2) : hasher.equals(k1, k2));
   }
 
   @Pure
+  @SuppressWarnings("determinism:return.type.incompatible")
   private int keyHashCode(Object k1) {
     return (hasher == null ? k1.hashCode() : hasher.hashCode(k1));
   }
@@ -130,12 +133,12 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
   // were static in the original version of this code.
   // This finesses that.
 
-  private @Nullable WeakKey WeakKeyCreate(K k) {
+  private @Nullable WeakKey WeakKeyCreate(@PolyDet K k) {
     if (k == null) return null;
     else return new WeakKey(k);
   }
 
-  private @Nullable WeakKey WeakKeyCreate(K k, ReferenceQueue<? super K> q) {
+  private @Nullable WeakKey WeakKeyCreate(@PolyDet K k, ReferenceQueue<? super K> q) {
     if (k == null) return null;
     else return new WeakKey(k, q);
   }
@@ -145,30 +148,34 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
     private int hash; /* Hashcode of key, stored here since the key
 				   may be tossed by the GC */
 
-    private WeakKey(K k) {
+    @SuppressWarnings({"determinism:method.invocation.invalid","determinism:argument.type.incompatible"})
+    private WeakKey(@PolyDet K k) {
       super(k);
       hash = keyHashCode(k);
     }
 
-    private @Nullable WeakKey create(K k) {
+    private @Nullable WeakKey create(@PolyDet K k) {
       if (k == null) return null;
-      else return new WeakKey(k);
+      else return new @PolyDet WeakKey(k);
     }
 
-    private WeakKey(K k, ReferenceQueue<? super K> q) {
+    @SuppressWarnings({"determinism:method.invocation.invalid","determinism:argument.type.incompatible"})
+    private WeakKey(@PolyDet K k, ReferenceQueue<? super K> q) {
       super(k, q);
       hash = keyHashCode(k);
     }
 
+    @SuppressWarnings("determinism:cast.unsafe.constructor.invocation")
     private @Nullable WeakKey create(K k, ReferenceQueue<? super K> q) {
       if (k == null) return null;
-      else return new WeakKey(k, q);
+      else return new @PolyDet WeakKey(k, q);
     }
 
     /* A WeakKey is equal to another WeakKey iff they both refer to objects
     that are, in turn, equal according to their own equals methods */
     @Pure
     @Override
+    @SuppressWarnings({"determinism:return.type.incompatible","determinism:method.invocation.invalid"})
     public boolean equals(@Nullable Object o) {
       if (o == null) return false; // never happens
       if (this == o) return true;
@@ -192,7 +199,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
   }
 
   /* Hash table mapping WeakKeys to values */
-  private Map<WeakKey, V> hash;
+  private @PolyDet("upDet") Map<WeakKey, V> hash;
 
   /* Reference queue for cleared WeakKeys */
   private ReferenceQueue<? super K> queue = new ReferenceQueue<K>();
@@ -241,7 +248,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
    * factor, which is <code>0.75</code>.
    */
   public WeakHasherMap() {
-    hash = new HashMap<>();
+    hash = new @PolyDet("upDet") HashMap<>();
   }
 
   /**
@@ -252,7 +259,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
    * @param h the Hasher to use when hashing values for this map
    */
   public WeakHasherMap(Hasher h) {
-    hash = new HashMap<>();
+    hash = new @PolyDet("upDet") HashMap<>();
     hasher = h;
   }
 
@@ -265,14 +272,14 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
    */
   @Pure
   @Override
-  public int size() {
+  public @PolyDet("down") int size() {
     return entrySet().size();
   }
 
   /** Returns <code>true</code> if this map contains no key-value mappings. */
   @Pure
   @Override
-  public boolean isEmpty() {
+  public @PolyDet("down") boolean isEmpty() {
     return entrySet().isEmpty();
   }
 
@@ -283,9 +290,9 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
    */
   @Pure
   @Override
-  public boolean containsKey(Object key) {
+  public @PolyDet("down") boolean containsKey(Object key) {
     @SuppressWarnings("unchecked")
-    K kkey = (K) key;
+    @PolyDet K kkey = (@PolyDet K) key;
     return hash.containsKey(WeakKeyCreate(kkey));
   }
 
@@ -299,9 +306,10 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
    */
   @Pure
   @Override
-  public @Nullable V get(Object key) { // type of argument is Object, not K
+  @SuppressWarnings("determinism:return.type.incompatible")
+  public @Nullable @PolyDet("down") V get(Object key) { // type of argument is Object, not K
     @SuppressWarnings("unchecked")
-    K kkey = (K) key;
+    @PolyDet K kkey = (@PolyDet K) key;
     return hash.get(WeakKeyCreate(kkey));
   }
 
@@ -316,7 +324,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
    *     no mapping for the key
    */
   @Override
-  public V put(K key, V value) {
+  public @PolyDet("down") V put(@PolyDet("use") K key, @PolyDet("use") V value) {
     processQueue();
     return hash.put(WeakKeyCreate(key, queue), value);
   }
@@ -329,10 +337,10 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
    *     for the key
    */
   @Override
-  public V remove(Object key) { // type of argument is Object, not K
+  public @PolyDet("down") V remove(Object key) { // type of argument is Object, not K
     processQueue();
     @SuppressWarnings("unchecked")
-    K kkey = (K) key;
+    @PolyDet K kkey = (@PolyDet K) key;
     return hash.remove(WeakKeyCreate(kkey));
   }
 
@@ -361,33 +369,36 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    public K getKey() {
+    @SuppressWarnings("determinism:return.type.incompatible")
+    public @PolyDet K getKey() {
       return key;
     }
 
     @Pure
     @Override
-    public V getValue() {
+    public @PolyDet V getValue() {
       return ent.getValue();
     }
 
     @Override
-    public V setValue(V value) {
+    public @PolyDet V setValue(V value) {
       return ent.setValue(value);
     }
 
     @Pure
-    private boolean keyvalEquals(K o1, K o2) {
+    @SuppressWarnings({"determinism:method.invocation.invalid","determinism:return.type.incompatible"})
+    private boolean keyvalEquals(@PolyDet K o1, @PolyDet K o2) {
       return (o1 == null) ? (o2 == null) : keyEquals(o1, o2);
     }
 
     @Pure
+    @SuppressWarnings("determinism:return.type.incompatible")
     private boolean valEquals(V o1, V o2) {
       return (o1 == null) ? (o2 == null) : o1.equals(o2);
     }
 
     @Pure
-    @SuppressWarnings("NonOverridingEquals")
+    @SuppressWarnings({"NonOverridingEquals","determinism:return.type.incompatible","determinism:argument.type.incompatible"})
     public boolean equals(Map.Entry<K, V> e /* Object o*/) {
       // if (! (o instanceof Map.Entry)) return false;
       // Map.Entry<K,V> e = (Map.Entry<K,V>)o;
@@ -396,6 +407,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
+    @SuppressWarnings({"determinism:return.type.incompatible","determinism:argument.type.incompatible","determinism:method.invocation.invalid"})
     public int hashCode() {
       V v;
       return (((key == null) ? 0 : keyHashCode(key))
@@ -405,17 +417,19 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
 
   /* Internal class for entry sets */
   private final class EntrySet extends AbstractSet<Map.Entry<K, V>> {
+    @SuppressWarnings("determinism:assignment.type.incompatible")
     Set<Map.Entry<WeakKey, V>> hashEntrySet = hash.entrySet();
 
     @Override
     public Iterator<Map.Entry<K, V>> iterator() {
 
-      return new Iterator<Map.Entry<K, V>>() {
+      return new @PolyDet Iterator<Map.Entry<K, V>>() {
         Iterator<Map.Entry<WeakKey, V>> hashIterator = hashEntrySet.iterator();
         Map.Entry<K, V> next = null;
 
         @Override
-        public boolean hasNext() {
+        @SuppressWarnings("determinism:cast.unsafe.constructor.invocation")
+        public @PolyDet("down") boolean hasNext() {
           while (hashIterator.hasNext()) {
             Map.Entry<WeakKey, V> ent = hashIterator.next();
             WeakKey wk = ent.getKey();
@@ -424,7 +438,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
               /* Weak key has been cleared by GC */
               continue;
             }
-            next = new Entry<K, V>(ent, k);
+            next = new @PolyDet Entry<K, V>(ent, k);
             return true;
           }
           return false;
@@ -439,6 +453,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
         }
 
         @Override
+        @SuppressWarnings("determinism:method.invocation.invalid")
         public void remove() {
           hashIterator.remove();
         }
@@ -447,27 +462,28 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    public boolean isEmpty() {
+    public @PolyDet("down") boolean isEmpty() {
       return !(iterator().hasNext());
     }
 
     @Pure
     @Override
-    public int size() {
+    public @PolyDet("down") int size() {
       int j = 0;
-      for (Iterator<Map.Entry<K, V>> i = iterator(); i.hasNext(); i.next()) j++;
+      for (Iterator<Map.@PolyDet("use") Entry<K, V>> i = iterator(); i.hasNext(); i.next()) j++;
       return j;
     }
 
     @Override
-    public boolean remove(Object o) {
+    @SuppressWarnings({"determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"})
+    public @PolyDet("down") boolean remove(Object o) {
       processQueue();
       if (!(o instanceof Map.Entry<?, ?>)) return false;
       @SuppressWarnings("unchecked")
-      Map.Entry<K, V> e = (Map.Entry<K, V>) o; // unchecked cast
-      Object ev = e.getValue();
-      WeakKey wk = WeakKeyCreate(e.getKey());
-      Object hv = hash.get(wk);
+      Map.@PolyDet Entry<K, V> e = (Map.Entry<K, V>) o; // unchecked cast
+      @PolyDet Object ev = e.getValue();
+      @PolyDet WeakKey wk = WeakKeyCreate(e.getKey());
+      @PolyDet Object hv = hash.get(wk);
       if ((hv == null) ? ((ev == null) && hash.containsKey(wk)) : hv.equals(ev)) {
         hash.remove(wk);
         return true;
@@ -477,9 +493,10 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
+    @SuppressWarnings({"determinism:return.type.incompatible","determinism:override.return.invalid"})
     public int hashCode() {
       int h = 0;
-      for (Iterator<Map.Entry<WeakKey, V>> i = hashEntrySet.iterator(); i.hasNext(); ) {
+      for (Iterator<Map.@PolyDet("use") Entry<WeakKey, V>> i = hashEntrySet.iterator(); i.hasNext(); ) {
         Map.Entry<WeakKey, V> ent = i.next();
         WeakKey wk = ent.getKey();
         Object v;
@@ -490,13 +507,14 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
     }
   }
 
-  private @Nullable Set<Map.Entry<K, V>> entrySet = null;
+  private @PolyDet("upDet") @Nullable Set<Map.Entry<K, V>> entrySet = null;
 
   /** Returns a <code>Set</code> view of the mappings in this map. */
   @SideEffectFree
   @Override
-  public Set<Map.Entry<K, V>> entrySet() {
-    if (entrySet == null) entrySet = new EntrySet();
+  @SuppressWarnings("determinism:return.type.incompatible")
+  public Set<Map.@PolyDet("down") Entry<K, V>> entrySet() {
+    if (entrySet == null) entrySet = new @PolyDet("upDet") EntrySet();
     return entrySet;
   }
 }

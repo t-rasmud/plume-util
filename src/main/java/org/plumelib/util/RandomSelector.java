@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.checkerframework.checker.determinism.qual.*;
+import org.checkerframework.framework.qual.HasQualifierParameter;
+
 /**
  * RandomSelector selects k elements uniformly at random from an arbitrary iterator, using O(k)
  * space. A naive algorithm would use O(n) space. For example, selecting 1 element from a FileStream
@@ -45,6 +48,7 @@ import java.util.Random;
  *
  * @param <T> the type of elements being selected over
  */
+@HasQualifierParameter(NonDet.class)
 public class RandomSelector<T> {
 
   // Rep Invariant: values != null && values.size() <= numElts &&
@@ -73,12 +77,13 @@ public class RandomSelector<T> {
   private Random generator;
 
   /** The values chosen. */
-  private ArrayList<T> values = new ArrayList<>();
+  private ArrayList<T> values = new @PolyDet ArrayList<>();
 
   /**
    * @param numElts the number of elements intended to be selected from the input elements
    *     <p>Sets 'numElts' = numElts
    */
+  @SuppressWarnings("determinism:this.invocation.invalid")
   public RandomSelector(int numElts) {
     this(numElts, new Random());
   }
@@ -116,7 +121,8 @@ public class RandomSelector<T> {
    *
    * @param next value to be added to this selector
    */
-  public void accept(T next) {
+  @SuppressWarnings("determinism:method.invocation.invalid")
+  public void accept(@PolyDet T next) {
 
     // if we are in coin toss mode, then we want to keep
     // with probability == keepProbability.
@@ -152,7 +158,7 @@ public class RandomSelector<T> {
    */
   public List<T> getValues() {
     // avoid concurrent mod errors and rep exposure
-    ArrayList<T> ret = new ArrayList<>();
+    @PolyDet ArrayList<T> ret = new @PolyDet ArrayList<>();
     ret.addAll(values);
     return ret;
   }

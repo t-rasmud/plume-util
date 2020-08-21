@@ -5,11 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import org.checkerframework.checker.lock.qual.GuardedByUnknown;
 import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.checker.determinism.qual.*;
+import org.checkerframework.framework.qual.*;
 
 /**
  * Just like {@code FileWriter}, but adds a {@link #getFileName()} method and overrides {@code
  * #toString()} to give the file name.
  */
+@HasQualifierParameter(NonDet.class)
 public final class FileWriterWithName extends FileWriter {
 
   /** The file being written by this. */

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
 import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * Routines for doing approximate ('fuzzy') floating-point comparisons. Those are comparisons that
@@ -251,7 +252,7 @@ public class FuzzyFloat {
    */
   @SuppressWarnings({"allcheckers:purity", "lock"}) // side effect to local state (arrays)
   @Pure
-  public boolean isElemMatch(double[] a1, double[] a2) {
+  public boolean isElemMatch(@PolyDet("down") double[] a1, @PolyDet("down") double[] a2) {
 
     // don't change our parameters
     a1 = a1.clone();
@@ -369,7 +370,7 @@ public class FuzzyFloat {
    */
   @SuppressWarnings({"allcheckers:purity", "lock"}) // side effect to local state (arrays)
   @Pure
-  public boolean isSubset(double[] smaller, double[] bigger) {
+  public boolean isSubset(@PolyDet("down") double[] smaller, @PolyDet("down") double[] bigger) {
 
     // don't change our parameters
     smaller = smaller.clone();

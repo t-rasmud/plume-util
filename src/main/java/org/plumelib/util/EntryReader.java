@@ -25,6 +25,8 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.regex.qual.Regex;
+import org.checkerframework.checker.determinism.qual.*;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 // TODO:
 // EntryReader has a public concept of "short entry", but I don't think that
@@ -105,7 +107,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
   ///
 
   /** Stack of readers. Used to support include files. */
-  private final ArrayDeque<FlnReader> readers = new ArrayDeque<>();
+  private final ArrayDeque<@PolyDet("use") FlnReader> readers = new @PolyDet ArrayDeque<>();
 
   /** Line that is pushed back to be reread. */
   @Nullable String pushbackLine = null;
@@ -150,6 +152,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
   }
 
   /** Descriptor for an entry (record, paragraph, etc.). */
+  @HasQualifierParameter(NonDet.class)
   public static class Entry {
     /** First line of the entry. */
     public final String firstLine;
@@ -379,6 +382,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    * @param reader source from which to read entries
    * @see #EntryReader(Reader,String,String,String)
    */
+  @SuppressWarnings("determinism:this.invocation.invalid")
   public EntryReader(Reader reader) {
     this(reader, reader.toString(), null, null);
   }
@@ -607,7 +611,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
     "lock:method.guarantee.violated"
   }) // readLine might throw, has side effects
   @Override
-  public boolean hasNext(@GuardSatisfied EntryReader this) {
+  public @PolyDet("down") boolean hasNext(@GuardSatisfied EntryReader this) {
     if (pushbackLine != null) {
       return true;
     }
@@ -673,7 +677,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
     }
 
     StringBuilder body = new StringBuilder(10000);
-    Entry entry = null;
+    @PolyDet Entry entry = null;
     String filename = getFileName();
     long lineNumber = getLineNumber();
 
@@ -893,7 +897,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
           "EntryReader sample program requires 1-3 args: filename [commentRegex [includeRegex]]");
       System.exit(1);
     }
-    String filename = args[0];
+    @Det String filename = args[0];
     String commentRegex = null;
     String includeRegex = null;
     if (args.length >= 2) {
@@ -918,7 +922,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
         System.exit(1);
       }
     }
-    EntryReader reader = new EntryReader(filename, commentRegex, includeRegex);
+    @Det EntryReader reader = new EntryReader(filename, commentRegex, includeRegex);
 
     String line = reader.readLine();
     while (line != null) {

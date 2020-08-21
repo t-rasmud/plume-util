@@ -30,6 +30,7 @@ import org.checkerframework.checker.signature.qual.ClassGetSimpleName;
 import org.checkerframework.checker.signature.qual.FullyQualifiedName;
 import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.reflection.Signatures;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * Utility functions related to reflection, Class, Method, ClassLoader, and classpath.
@@ -84,7 +85,7 @@ public final class ReflectionPlume {
   }
 
   /** Used by {@link #classForName}. */
-  private static HashMap<String, Class<?>> primitiveClasses = new HashMap<>(8);
+  private static @OrderNonDet HashMap<String, Class<?>> primitiveClasses = new HashMap<>(8);
 
   static {
     primitiveClasses.put("boolean", Boolean.TYPE);
@@ -119,7 +120,7 @@ public final class ReflectionPlume {
    */
   // The annotation encourages proper use, even though this can take a
   // fully-qualified name (only for a non-array).
-  public static Class<?> classForName(@ClassGetName String className)
+  public static Class<?> classForName(@Det @ClassGetName String className)
       throws ClassNotFoundException {
     Class<?> result = primitiveClasses.get(className);
     if (result != null) {
@@ -187,7 +188,7 @@ public final class ReflectionPlume {
         throws FileNotFoundException, IOException {
       FileInputStream fi = new FileInputStream(pathname);
       int numbytes = fi.available();
-      byte[] classBytes = new byte[numbytes];
+      @Det byte[] classBytes = new @Det byte[numbytes];
       int bytesRead = fi.read(classBytes);
       fi.close();
       if (bytesRead < numbytes) {
@@ -271,7 +272,7 @@ public final class ReflectionPlume {
    * array of Class objects, one for each arg type. Example keys include: "java.lang.String,
    * java.lang.String, java.lang.Class[]" and "int,int".
    */
-  static HashMap<String, Class<?>[]> args_seen = new HashMap<>();
+  static @OrderNonDet HashMap<String, Class<?>[]> args_seen = new HashMap<>();
 
   /**
    * Given a method signature, return the method.
@@ -289,6 +290,7 @@ public final class ReflectionPlume {
    * @throws ClassNotFoundException if the class is not found
    * @throws NoSuchMethodException if the method is not found
    */
+  @SuppressWarnings({"determinism:method.invocation.invalid","determinism:invalid.array.component.type","determinism:argument.type.incompatible","determinism:return.type.incompatible"})
   public static Method methodForName(String method)
       throws ClassNotFoundException, NoSuchMethodException, SecurityException {
 
@@ -320,22 +322,22 @@ public final class ReflectionPlume {
     String all_argnames = method.substring(oparenpos + 1, cparenpos).trim();
     Class<?>[] argclasses = args_seen.get(all_argnames);
     if (argclasses == null) {
-      @BinaryName String[] argnames;
+      @PolyDet("use") @BinaryName String @PolyDet[] argnames;
       if (all_argnames.equals("")) {
-        argnames = new String[0];
+        argnames = new @PolyDet("use") String @PolyDet[0];
       } else {
         @SuppressWarnings("signature") // string manipulation: splitting a method signature
-        @BinaryName String[] bnArgnames = all_argnames.split(" *, *");
+        @PolyDet("use") @BinaryName String[] bnArgnames = all_argnames.split(" *, *");
         argnames = bnArgnames;
       }
 
-      @MonotonicNonNull Class<?>[] argclasses_tmp = new Class<?>[argnames.length];
+      @MonotonicNonNull Class<?> [] argclasses_tmp = new Class<?> [argnames.length];
       for (int i = 0; i < argnames.length; i++) {
         @BinaryName String bnArgname = argnames[i];
         @ClassGetName String cgnArgname = Signatures.binaryNameToClassGetName(bnArgname);
         argclasses_tmp[i] = classForName(cgnArgname);
       }
-      Class<?>[] argclasses_res = (@NonNull Class<?>[]) argclasses_tmp;
+      Class<?> [] argclasses_res = (@NonNull Class<?>[]) argclasses_tmp;
       argclasses = argclasses_res;
       args_seen.put(all_argnames, argclasses_res);
     }
@@ -471,6 +473,7 @@ public final class ReflectionPlume {
    * @param <T> the (inferred) least upper bound of the arguments
    * @return the least upper bound of all the given classes
    */
+  @SuppressWarnings("determinism:return.type.incompatible")
   public static <T> @Nullable Class<T> leastUpperBound(@Nullable Class<T>[] classes) {
     Class<T> result = null;
     for (Class<T> clazz : classes) {
@@ -487,7 +490,7 @@ public final class ReflectionPlume {
    * @return the least upper bound of the classes of the given objects, or null if all arguments are
    *     null
    */
-  @SuppressWarnings("unchecked") // cast to Class<T>
+  @SuppressWarnings({"unchecked","determinism:return.type.incompatible"}) // cast to Class<T>
   public static <T> @Nullable Class<T> leastUpperBound(@PolyNull Object[] objects) {
     Class<T> result = null;
     for (Object obj : objects) {
@@ -506,7 +509,7 @@ public final class ReflectionPlume {
    * @return the least upper bound of the classes of the given objects, or null if all arguments are
    *     null
    */
-  @SuppressWarnings("unchecked") // cast to Class<T>
+  @SuppressWarnings({"unchecked","determinism:return.type.incompatible"}) // cast to Class<T>
   public static <T> @Nullable Class<T> leastUpperBound(List<? extends @Nullable Object> objects) {
     Class<T> result = null;
     for (Object obj : objects) {

@@ -23,7 +23,8 @@ public class DumpHeap {
   /** Initialize the fields of this class. */
   @SuppressWarnings({
     "nullness:assignment.type.incompatible",
-    "nullness:contracts.postcondition.not.satisfied"
+    "nullness:contracts.postcondition.not.satisfied",
+          "determinism:assignment.type.incompatible"
   }) // reflection
   @EnsuresNonNull({"hotspotMBean", "dumpHeapMethod"})
   private static synchronized void initializeFields() {

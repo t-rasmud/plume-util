@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.checkerframework.checker.determinism.qual.*;
+import org.checkerframework.framework.qual.HasQualifierParameter;
+
 // TODO: This does not use the Random value that is passed in.
 
 /**
@@ -25,6 +28,7 @@ import java.util.Random;
  * @param <T> the type of elements to be selected among
  * @see RandomSelector
  */
+@HasQualifierParameter(NonDet.class)
 public class MultiRandSelector<T> {
 
   /** Whether to toss a coin or select a given number of elements. */
@@ -40,7 +44,7 @@ public class MultiRandSelector<T> {
   private Partitioner<T, T> eq;
 
   /** Maps from partition representatives to the RandomSelector to use on that partition. */
-  private HashMap<T, RandomSelector<T>> map = new HashMap<>();
+  private @PolyDet("upDet") HashMap<T, RandomSelector<T>> map = new @PolyDet("upDet") HashMap<>();
 
   /**
    * Create a MultiRandSelector that chooses {@code numElts} elements from each bucket.
@@ -48,6 +52,7 @@ public class MultiRandSelector<T> {
    * @param numElts the number of elements to select from each bucket
    * @param eq partioner that determines how to partition the objects
    */
+  @SuppressWarnings("determinism:this.invocation.invalid")
   public MultiRandSelector(int numElts, Partitioner<T, T> eq) {
     this(numElts, new Random(), eq);
   }
@@ -58,6 +63,7 @@ public class MultiRandSelector<T> {
    * @param keepProbability the likelihood to select each element.
    * @param eq partioner that determines how to partition the objects
    */
+  @SuppressWarnings("determinism:this.invocation.invalid")
   public MultiRandSelector(double keepProbability, Partitioner<T, T> eq) {
     this(keepProbability, new Random(), eq);
   }
@@ -106,6 +112,7 @@ public class MultiRandSelector<T> {
    *
    * @param iter contains elements that are added to the pool to select from
    */
+  @SuppressWarnings("determinism:method.invocation.invalid")
   public void acceptIter(Iterator<T> iter) {
     while (iter.hasNext()) {
       accept(iter.next());
@@ -117,8 +124,8 @@ public class MultiRandSelector<T> {
    *
    * @param next element that is added to the pool to select from
    */
-  public void accept(T next) {
-    T equivClass = eq.assignToBucket(next);
+  public void accept(@PolyDet T next) {
+    @PolyDet T equivClass = eq.assignToBucket(next);
     if (equivClass == null) {
       return;
     }
@@ -126,8 +133,8 @@ public class MultiRandSelector<T> {
     if (delegation == null) {
       delegation =
           (coinTossMode
-              ? new RandomSelector<T>(keepProbability, r)
-              : new RandomSelector<T>(numElts, r));
+              ? new @PolyDet("upDet") RandomSelector<T>(keepProbability, r)
+              : new @PolyDet("upDet") RandomSelector<T>(numElts, r));
       map.put(equivClass, delegation);
     }
     delegation.accept(next);
@@ -146,8 +153,9 @@ public class MultiRandSelector<T> {
    *
    * @return an iterator of all objects selected
    */
+  @SuppressWarnings("determinism:argument.type.incompatible")
   public Iterator<T> valuesIter() {
-    ArrayList<T> ret = new ArrayList<>();
+    @PolyDet ArrayList<T> ret = new @PolyDet ArrayList<>();
     for (RandomSelector<T> rs : map.values()) {
       ret.addAll(rs.getValues());
     }

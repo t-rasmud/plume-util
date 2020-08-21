@@ -12,6 +12,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.value.qual.MinLen;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * LimitedSizeSet stores up to some maximum number of unique values. If more than that many elements
@@ -71,6 +72,7 @@ public class LimitedSizeSet<T> implements Serializable, Cloneable {
    *
    * @param elt the element to add to this set
    */
+  @SuppressWarnings("determinism:unary.increment.type.incompatible")
   public void add(T elt) {
     if (repNulled()) {
       return;
@@ -200,14 +202,14 @@ public class LimitedSizeSet<T> implements Serializable, Cloneable {
   }
 
   @SuppressWarnings(
-      "allcheckers:purity.not.sideeffectfree.assign.field") // side effect to local state (clone)
+          {"allcheckers:purity.not.sideeffectfree.assign.field","determinism:assignment.type.incompatible"}) // side effect to local state (clone)
   @SideEffectFree
   @Override
   public LimitedSizeSet<T> clone(@GuardSatisfied LimitedSizeSet<T> this) {
-    LimitedSizeSet<T> result;
+    @PolyDet LimitedSizeSet<T> result;
     try {
       @SuppressWarnings("unchecked")
-      LimitedSizeSet<T> resultAsLss = (LimitedSizeSet<T>) super.clone();
+      @PolyDet LimitedSizeSet<T> resultAsLss = (LimitedSizeSet<T>) super.clone();
       result = resultAsLss;
     } catch (CloneNotSupportedException e) {
       throw new Error(); // can't happen
@@ -238,6 +240,7 @@ public class LimitedSizeSet<T> implements Serializable, Cloneable {
 
   @SideEffectFree
   @Override
+  @SuppressWarnings("determinism:return.type.incompatible")
   public String toString(@GuardSatisfied LimitedSizeSet<T> this) {
     return ("[size=" + size() + "; " + (repNulled() ? "null" : ArraysPlume.toString(values)) + "]");
   }

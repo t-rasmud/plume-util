@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.determinism.qual.*;
 
 /** Graph utility methods. This class does not model a graph: all methods are static. */
 public final class GraphPlume {
@@ -54,17 +55,19 @@ public final class GraphPlume {
    * @param predecessors a graph, represented as a predecessor map
    * @return a map from each node to a list of its pre-dominators
    */
+  @SuppressWarnings({"determinism:annotation.type.incompatible","determinism:method.invocation.invalid",
+          "determinism:argument.type.incompatible","determinism:assignment.type.incompatible","determinism:return.type.incompatible"})
   public static <T extends @NonNull Object> Map<T, List<T>> dominators(
       Map<T, List<@KeyFor("#1") T>> predecessors) {
 
     // Map<@KeyFor({"preds","dom"}) T,List<@KeyFor({"preds","dom"}) T>> dom
     //   = new HashMap<>();
-    Map<T, List<T>> dom = new HashMap<>();
+    @PolyDet("upDet") Map<T, List<T>> dom = new @PolyDet("upDet") HashMap<>();
 
     @SuppressWarnings("keyfor") // every element of pred's value will be a key for dom
-    Map<T, List<@KeyFor({"dom"}) T>> preds = predecessors;
+    @PolyDet Map<T, List<@KeyFor({"dom"}) T>> preds = predecessors;
 
-    List<T> nodes = new ArrayList<>(preds.keySet());
+    @PolyDet List<T> nodes = new ArrayList<>(preds.keySet());
 
     // Compute roots & non-roots, for convenience
     List<@KeyFor({"preds", "dom"}) T> roots = new ArrayList<>();
@@ -145,6 +148,7 @@ public final class GraphPlume {
    * @param ps the PrintStream to which to print the graph
    * @param indent the number of spaces by which to indent the printed representation
    */
+  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:method.invocation.invalid"})
   public static <T extends @NonNull Object> void print(
       Map<T, List<T>> graph, PrintStream ps, int indent) {
     String indentString = "";
