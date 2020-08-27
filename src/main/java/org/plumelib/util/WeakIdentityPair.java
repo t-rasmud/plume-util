@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.checker.determinism.qual.*;
+import org.checkerframework.framework.qual.HasQualifierParameter;
 
 /**
  * Immutable pair class: type-safely holds two objects of possibly-different types.
@@ -14,6 +15,7 @@ import org.checkerframework.checker.determinism.qual.*;
  * elements with weak pointers, and its equals() method uses object equality to compare its
  * elements.
  */
+@HasQualifierParameter(NonDet.class)
 public class WeakIdentityPair<T1 extends Object, T2 extends Object> {
 
   /** The first element of the pair. */
@@ -23,7 +25,7 @@ public class WeakIdentityPair<T1 extends Object, T2 extends Object> {
 
   /** The hash code of this. */
   // Must cache the hashCode to prevent it from changing.
-  private final int hashCode;
+  private final @NonDet int hashCode;
 
   /**
    * Creates a new weakly-held pair of {@code a} and {@code b}.
@@ -31,7 +33,6 @@ public class WeakIdentityPair<T1 extends Object, T2 extends Object> {
    * @param a the first element of the pair
    * @param b the second element of the pair
    */
-  @SuppressWarnings("determinism:assignment.type.incompatible")
   public @PolyDet WeakIdentityPair(@PolyDet T1 a, @PolyDet T2 b) {
     if (a == null || b == null) {
       throw new IllegalArgumentException(
@@ -64,7 +65,7 @@ public class WeakIdentityPair<T1 extends Object, T2 extends Object> {
    * @return a WeakIdentityPair of (a, b)
    */
   public static <A extends Object, B extends Object> WeakIdentityPair<A, B> of(A a, B b) {
-    return new WeakIdentityPair<A, B>(a, b);
+    return new @PolyDet WeakIdentityPair<A, B>(a, b);
   }
 
   /**
@@ -103,7 +104,9 @@ public class WeakIdentityPair<T1 extends Object, T2 extends Object> {
       return false;
     }
     // generics are not checked at run time!
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked",
+            "determinism:invariant.cast.unsafe"  // Casting from Object to WeakIdentityPair
+    })
     WeakIdentityPair<T1, T2> other = (WeakIdentityPair<T1, T2>) obj;
 
     if (hashCode != other.hashCode) {
@@ -123,7 +126,7 @@ public class WeakIdentityPair<T1 extends Object, T2 extends Object> {
 
   @Override
   @Pure
-  public int hashCode(@GuardSatisfied WeakIdentityPair<T1, T2> this) {
+  public @NonDet int hashCode(@GuardSatisfied WeakIdentityPair<T1, T2> this) {
     return hashCode;
   }
 }
