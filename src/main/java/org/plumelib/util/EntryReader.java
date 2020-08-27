@@ -382,7 +382,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    * @param reader source from which to read entries
    * @see #EntryReader(Reader,String,String,String)
    */
-  @SuppressWarnings("determinism:this.invocation.invalid")
+  @SuppressWarnings("determinism:this.invocation.invalid")  // TODO: check why?
   public EntryReader(Reader reader) {
     this(reader, reader.toString(), null, null);
   }
@@ -676,7 +676,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
       return (null);
     }
 
-    StringBuilder body = new StringBuilder(10000);
+    @PolyDet StringBuilder body = new @PolyDet StringBuilder(10000);
     @PolyDet Entry entry = null;
     String filename = getFileName();
     long lineNumber = getLineNumber();
