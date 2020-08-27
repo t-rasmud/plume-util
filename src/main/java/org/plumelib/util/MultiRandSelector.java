@@ -112,7 +112,6 @@ public class MultiRandSelector<T> {
    *
    * @param iter contains elements that are added to the pool to select from
    */
-  @SuppressWarnings("determinism:method.invocation.invalid")
   public void acceptIter(Iterator<T> iter) {
     while (iter.hasNext()) {
       accept(iter.next());

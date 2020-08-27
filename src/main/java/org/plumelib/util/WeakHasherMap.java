@@ -116,7 +116,6 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
   private Hasher hasher = null;
 
   @Pure
-  @SuppressWarnings("determinism:return.type.incompatible")
   private boolean keyEquals(Object k1, Object k2) {
     return (hasher == null ? k1.equals(k2) : hasher.equals(k1, k2));
   }

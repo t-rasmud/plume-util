@@ -52,7 +52,6 @@ public class Pair<T1 extends @Nullable Object, T2 extends @Nullable Object> {
 
   @Override
   @Pure
-  @SuppressWarnings("determinism:return.type.incompatible")
   public boolean equals(@GuardSatisfied Pair<T1, T2> this, @GuardSatisfied @Nullable Object obj) {
     if (!(obj instanceof Pair<?, ?>)) {
       return false;

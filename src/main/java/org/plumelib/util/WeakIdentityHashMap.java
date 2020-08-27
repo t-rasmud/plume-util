@@ -890,7 +890,6 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     }
 
     @Override
-    @SuppressWarnings("determinism:argument.type.incompatible")
     public @PolyDet("down") Object[] toArray() {
       @PolyDet Collection<V> c = new @PolyDet ArrayList<V>(size());
       for (Iterator<V> i = iterator(); i.hasNext(); ) c.add(i.next());
@@ -960,7 +959,6 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     }
 
     @Override
-    @SuppressWarnings("determinism:argument.type.incompatible")
     public @PolyDet("down") Object[] toArray() {
       Collection<Map.@PolyDet("down") Entry<K, V>> c = new ArrayList<Map.@PolyDet("down") Entry<K, V>>(size());
       for (Iterator<Map.@PolyDet("down") Entry<K, V>> i = iterator(); i.hasNext(); )
@@ -1037,7 +1035,6 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
       return key + "=" + value;
     }
 
-    @SuppressWarnings("determinism:return.type.incompatible")
     private static boolean eq(@Nullable Object o1, @Nullable Object o2) {
       return (o1 == null ? o2 == null : o1.equals(o2));
     }

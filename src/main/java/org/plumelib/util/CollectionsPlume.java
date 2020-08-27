@@ -178,7 +178,7 @@ public final class CollectionsPlume {
    * @param e an enumeration to convert to a ArrayList
    * @return a vector containing the elements of the enumeration
    */
-  @SuppressWarnings({"JdkObsolete","determinism:argument.type.incompatible"})
+  @SuppressWarnings({"JdkObsolete"})
   public static <T extends @PolyDet("use") Object> @PolyDet ArrayList<@PolyDet("use") T> makeArrayList(@PolyDet Enumeration<@PolyDet("use") T> e) {
     @PolyDet ArrayList<@PolyDet("use") T> result = new @PolyDet ArrayList<>();
     while (e.hasMoreElements()) {
@@ -384,7 +384,7 @@ public final class CollectionsPlume {
       return e.hasMoreElements();
     }
 
-    @SuppressWarnings({"JdkObsolete","determinism:return.type.incompatible"})
+    @SuppressWarnings({"JdkObsolete"})
     @Override
     public @PolyDet("up") T next(@GuardSatisfied @PolyDet EnumerationIterator<@PolyDet("use") T> this) {
       return e.nextElement();
@@ -417,7 +417,6 @@ public final class CollectionsPlume {
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
     public @PolyDet("up") T nextElement() {
       return itor.next();
     }
@@ -452,7 +451,6 @@ public final class CollectionsPlume {
     }
 
     @Override
-      @SuppressWarnings("determinism:return.type.incompatible")
     public @PolyDet("up") T next(@GuardSatisfied MergedIterator2<T> this) {
       if (itor1.hasNext()) {
         return itor1.next();
@@ -503,7 +501,6 @@ public final class CollectionsPlume {
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
     public @PolyDet("up") T next(@GuardSatisfied MergedIterator<T> this) {
       hasNext(); // for side effect
       return current.next();
@@ -691,7 +688,6 @@ public final class CollectionsPlume {
    * @param random the Random instance to use to make selections
    * @return list of numElts elements from itor
    */
-  @SuppressWarnings("determinism:method.invocation.invalid")
   public static <T> List<T> randomElements(Iterator<T> itor, int numElts, Random random) {
     // The elements are chosen with the following probabilities,
     // where n == numElts:

@@ -121,7 +121,6 @@ public final class Intern {
    */
   private static final class IntegerHasher implements Hasher {
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return a1.equals(a2);
     }
@@ -141,7 +140,6 @@ public final class Intern {
    */
   private static final class LongHasher implements Hasher {
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return a1.equals(a2);
     }
@@ -205,7 +203,6 @@ public final class Intern {
    */
   private static final class DoubleHasher implements Hasher {
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
     public boolean equals(Object a1, Object a2) {
       return a1.equals(a2);
     }

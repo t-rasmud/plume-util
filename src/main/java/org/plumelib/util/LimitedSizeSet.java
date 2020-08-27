@@ -202,7 +202,7 @@ public class LimitedSizeSet<T> implements Serializable, Cloneable {
   }
 
   @SuppressWarnings(
-          {"allcheckers:purity.not.sideeffectfree.assign.field","determinism:assignment.type.incompatible"}) // side effect to local state (clone)
+          {"allcheckers:purity.not.sideeffectfree.assign.field"}) // side effect to local state (clone)
   @SideEffectFree
   @Override
   public LimitedSizeSet<T> clone(@GuardSatisfied LimitedSizeSet<T> this) {
