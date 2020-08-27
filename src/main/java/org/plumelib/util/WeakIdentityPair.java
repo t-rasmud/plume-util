@@ -5,6 +5,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * Immutable pair class: type-safely holds two objects of possibly-different types.
@@ -31,7 +32,7 @@ public class WeakIdentityPair<T1 extends Object, T2 extends Object> {
    * @param b the second element of the pair
    */
   @SuppressWarnings("determinism:assignment.type.incompatible")
-  public WeakIdentityPair(T1 a, T2 b) {
+  public @PolyDet WeakIdentityPair(@PolyDet T1 a, @PolyDet T2 b) {
     if (a == null || b == null) {
       throw new IllegalArgumentException(
           String.format("WeakIdentityPair cannot hold null: %s %s", a, b));
