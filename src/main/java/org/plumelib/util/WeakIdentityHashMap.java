@@ -269,7 +269,9 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
   }
 
   /** Expunge stale entries from the table. */
-  @SuppressWarnings({"allcheckers:purity","determinism:assignment.type.incompatible"}) // actually has side effects due to weak pointers
+  @SuppressWarnings({"allcheckers:purity",  // actually has side effects due to weak pointers
+          "determinism:assignment.type.incompatible"  // iteration over a PolyDet collection for assigning into another
+  })
   @SideEffectFree
   private void expungeStaleEntries() {
     Entry<K, V> e;
@@ -310,7 +312,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    */
   @Pure
   @Override
-  @SuppressWarnings("determinism:return.type.incompatible")
+  @SuppressWarnings("determinism:return.type.incompatible")  // safe to return size as PolyDet(down)
   public @PolyDet("down") int size() {
     if (size == 0) return 0;
     expungeStaleEntries();
@@ -342,7 +344,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    */
   @Pure
   @Override
-  @SuppressWarnings({"determinism:return.type.incompatible","determinism:assignment.type.incompatible"})
+  @SuppressWarnings({"determinism:return.type.incompatible","determinism:assignment.type.incompatible"})  // Iteration over a PolyDet collection for searching
   public @PolyDet("down") @Nullable V get(@Nullable Object key) {
     Object k = maskNull(key);
     int h = hasher(k);
@@ -365,7 +367,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    */
   @Pure
   @Override
-  @SuppressWarnings("determinism:return.type.incompatible")
+  @SuppressWarnings("determinism:return.type.incompatible")  // safe to return PolyDet boolean as PolyDet(down)
   public @PolyDet("down") boolean containsKey(@Nullable Object key) {
     return getEntry(key) != null;
   }
@@ -375,7 +377,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    * contains no mapping for this key.
    */
   @SideEffectFree
-  @SuppressWarnings("determinism:assignment.type.incompatible")
+  @SuppressWarnings("determinism:assignment.type.incompatible")  // Iteration over a PolyDet collection for searching
   @Nullable Entry<K, V> getEntry(@Nullable Object key) {
     Object k = maskNull(key);
     int h = hasher(k);
@@ -396,7 +398,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    *     mapping for key. A <code>null</code> return can also indicate that the HashMap previously
    *     associated <code>null</code> with the specified key.
    */
-  @SuppressWarnings({"NonAtomicVolatileUpdate","determinism:return.type.incompatible","determinism:assignment.type.incompatible","determinism:argument.type.incompatible"})
+  @SuppressWarnings({"NonAtomicVolatileUpdate","determinism:return.type.incompatible","determinism:assignment.type.incompatible","determinism:argument.type.incompatible"})  // Iteration over a PolyDet collection for searching
   @Override
   public @PolyDet("down") V put(@PolyDet("use") K key, @PolyDet("use") V value) {
     @SuppressWarnings("unchecked")
@@ -489,7 +491,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    * @throws NullPointerException if the specified map is null
    */
   @Override
-  @SuppressWarnings({"determinism:assignment.type.incompatible","determinism:argument.type.incompatible"})
+  @SuppressWarnings({"determinism:assignment.type.incompatible","determinism:argument.type.incompatible"})  // Iteration over a PolyDet collection for assigning into another
   public void putAll(Map<? extends K, ? extends V> m) {
     int numKeysToBeAdded = m.size();
     if (numKeysToBeAdded == 0) return;
@@ -526,7 +528,9 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    *     mapping for key. A <code>null</code> return can also indicate that the map previously
    *     associated <code>null</code> with the specified key.
    */
-  @SuppressWarnings({"NonAtomicVolatileUpdate","determinism:return.type.incompatible"})
+  @SuppressWarnings({"NonAtomicVolatileUpdate",
+          "determinism:return.type.incompatible"  // Iteration over a PolyDet collection for searching
+  })
   @Override
   public @PolyDet("down") @Nullable V remove(Object key) {
     Object k = maskNull(key);
@@ -553,7 +557,9 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
   }
 
   /** Special version of remove needed by Entry set. */
-  @SuppressWarnings({"NonAtomicVolatileUpdate","determinism:return.type.incompatible"})
+  @SuppressWarnings({"NonAtomicVolatileUpdate",
+          "determinism:return.type.incompatible"  // Iteration over a PolyDet collection for searching
+  })
   @Nullable Entry<K, V> removeMapping(@Nullable Object o) {
     if (!(o instanceof Map.Entry)) return null;
     @Nullable Entry<K, V>[] tab = getTable();
@@ -625,13 +631,15 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
   }
 
   /** The entries in this hash table extend WeakReference, using its main ref field as the key. */
-  @SuppressWarnings({"determinism:assignment.type.incompatible","determinism:return.type.incompatible"})
   private static class Entry<K, V> extends WeakReference<K> implements Map.Entry<K, V> {
     private V value;
     private final int hash;
     private @Nullable Entry<K, V> next;
 
     /** Create new entry. */
+    @SuppressWarnings({"determinism:super.invocation.invalid", // type of 'super' is NonDet
+            "determinism:assignment.type.incompatible"  // type of 'hash' is Det, not PolyDet
+    })
     Entry(K key, V value, ReferenceQueue<K> queue, int hash, Entry<K, V> next) {
       super(key, queue);
       this.value = value;
@@ -641,17 +649,20 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")  // unmaskNull returns 'NonDet'
     public @PolyDet K getKey() {
       return WeakIdentityHashMap.<K>unmaskNull(get());
     }
 
     @Pure
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare value as PolyDet
     public @PolyDet V getValue() {
       return value;
     }
 
     @Override
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare value as PolyDet
     public @PolyDet V setValue(V newValue) {
       V oldValue = value;
       value = newValue;
@@ -674,7 +685,9 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
       return false;
     }
 
-    @SuppressWarnings("allcheckers:purity") // side effects on local state
+    @SuppressWarnings({"allcheckers:purity",  // side effects on local state
+            "determinism:return.type.incompatible"  // v.hashCode returns NonDet
+    })
     @Pure
     @Override
     public int hashCode() {
@@ -710,7 +723,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     }
 
     @Override
-    @SuppressWarnings("determinism:assignment.type.incompatible")
+    @SuppressWarnings("determinism:assignment.type.incompatible")  // Iteration over a PolyDet collection for searching
     public @PolyDet("down") boolean hasNext() {
       @Nullable Entry<K, V>[] t = table;
 
@@ -756,7 +769,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
   private class ValueIterator extends HashIterator<V> {
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
+    @SuppressWarnings("determinism:return.type.incompatible")  // Safe to return next entry as PolyDet(up)
     public @PolyDet("up") V next() {
       return nextEntry().value;
     }
@@ -797,7 +810,6 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     return (ks != null ? ks : (our_keySet = new @PolyDet KeySet()));
   }
 
-  @SuppressWarnings("determinism:argument.type.incompatible")
   private class KeySet extends AbstractSet<K> {
     @Override
     public Iterator<K> iterator() {
@@ -812,13 +824,13 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:method.invocation.invalid")
+    @SuppressWarnings("determinism:method.invocation.invalid")  // type of 'WeakIdentityHashMap' is Det, not PolyDet
     public @PolyDet("down") boolean contains(@Nullable Object o) {
       return containsKey(o);
     }
 
     @Override
-    @SuppressWarnings("determinism:method.invocation.invalid")
+    @SuppressWarnings("determinism:method.invocation.invalid")  // type of 'WeakIdentityHashMap' is Det, not PolyDet
     public @PolyDet("down") boolean remove(@Nullable Object o) {
       if (containsKey(o)) {
         WeakIdentityHashMap.this.remove(o);
@@ -839,6 +851,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     }
 
     @Override
+    @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over a PolyDet collection for assigning into another
     public <T> @PolyDet("down") T @PolyDet[] toArray(T[] a) {
       Collection<K> c = new ArrayList<K>(size());
       for (Iterator<K> i = iterator(); i.hasNext(); ) c.add(i.next());
@@ -879,7 +892,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:method.invocation.invalid")
+    @SuppressWarnings("determinism:method.invocation.invalid")  // type of 'WeakIdentityHashMap' is Det, not PolyDet
     public @PolyDet("down") boolean contains(@Nullable Object o) {
       return containsValue(o);
     }
@@ -897,7 +910,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     }
 
     @Override
-    @SuppressWarnings("determinism:argument.type.incompatible")
+    @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over a PolyDet collection for assigning into another
     public <T> @PolyDet("down") T @PolyDet[] toArray(T[] a) {
       Collection<V> c = new ArrayList<V>(size());
       for (Iterator<V> i = iterator(); i.hasNext(); ) c.add(i.next());
@@ -918,9 +931,9 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    */
   @SideEffectFree
   @Override
-  @SuppressWarnings({"determinism:return.type.incompatible","determinism:assignment.type.incompatible","determinism:conditional.type.incompatible"})
+  @SuppressWarnings({"determinism:return.type.incompatible","determinism:assignment.type.incompatible","determinism:conditional.type.incompatible"})  // Cannot create EntrySet of type @PolyDet Set<@PolyDet("down") Entry<K, V>>
   public Set<Map.@PolyDet("down") Entry<K, V>> entrySet() {
-    @PolyDet Set<Map.@PolyDet("use") Entry<K, V>> es = entrySet;
+    @PolyDet Set<Map.@PolyDet("down") Entry<K, V>> es = entrySet;
     return (es != null ? es : (entrySet = new @PolyDet EntrySet()));
   }
 
@@ -932,7 +945,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings({"determinism:method.invocation.invalid","determinism:return.type.incompatible"})
+    @SuppressWarnings({"determinism:method.invocation.invalid","determinism:return.type.incompatible"})  // safe to return contains as PolyDet(down)
     public @PolyDet("down") boolean contains(@Nullable Object o) {
       if (!(o instanceof Map.Entry)) return false;
       Map.@PolyDet Entry<K, V> e = (Map.Entry<K, V>) o;
@@ -942,7 +955,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     }
 
     @Override
-    @SuppressWarnings({"determinism:return.type.incompatible","determinism:method.invocation.invalid"})
+    @SuppressWarnings({"determinism:return.type.incompatible","determinism:method.invocation.invalid"})  // safe to return removed element as PolyDet(down)
     public @PolyDet("down") boolean remove(@Nullable Object o) {
       return removeMapping(o) != null;
     }
@@ -967,7 +980,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     }
 
     @Override
-    @SuppressWarnings("determinism:argument.type.incompatible")
+    @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over a PolyDet collection for assigning into another
     public <T> @PolyDet("down") T @PolyDet[] toArray(T[] a) {
       Collection<Map.@PolyDet("down") Entry<K, V>> c = new ArrayList<Map.@PolyDet("down") Entry<K, V>>(size());
       for (Iterator<Map.@PolyDet("down") Entry<K, V>> i = iterator(); i.hasNext(); )
@@ -986,7 +999,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
       this.value = value;
     }
 
-    @SuppressWarnings("determinism:assignment.type.incompatible")
+    @SuppressWarnings("determinism:assignment.type.incompatible")  // Cannot declare 'key' and 'value' as PolyDet
     public OurSimpleEntry(Map.Entry<K, V> e) {
       this.key = e.getKey();
       this.value = e.getValue();
@@ -994,20 +1007,20 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare 'key' as PolyDet
     public @PolyDet K getKey() {
       return key;
     }
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare 'value' as PolyDet
     public @PolyDet V getValue() {
       return value;
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare 'value' as PolyDet
     public @PolyDet V setValue(V value) {
       V oldValue = this.value;
       this.value = value;
@@ -1016,7 +1029,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
+    @SuppressWarnings("determinism:return.type.incompatible")  // WeakIdentityHashMap.eq return NonDet
     public @PolyDet("up") boolean equals(@PolyDet("upDet") @Nullable Object o) {
       if (!(o instanceof Map.Entry)) return false;
       Map.Entry<K, V> e = (Map.Entry<K, V>) o;
