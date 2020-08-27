@@ -72,7 +72,7 @@ public class LimitedSizeSet<T> implements Serializable, Cloneable {
    *
    * @param elt the element to add to this set
    */
-  @SuppressWarnings("determinism:unary.increment.type.incompatible")
+  @SuppressWarnings("determinism:unary.increment.type.incompatible")  // Incrementing PolyDet field (TODO: should be ok to increment polydet ints)
   public void add(T elt) {
     if (repNulled()) {
       return;
@@ -240,8 +240,7 @@ public class LimitedSizeSet<T> implements Serializable, Cloneable {
 
   @SideEffectFree
   @Override
-  @SuppressWarnings("determinism:return.type.incompatible")
-  public String toString(@GuardSatisfied LimitedSizeSet<T> this) {
+  public @NonDet String toString(@GuardSatisfied LimitedSizeSet<T> this) {
     return ("[size=" + size() + "; " + (repNulled() ? "null" : ArraysPlume.toString(values)) + "]");
   }
 }
