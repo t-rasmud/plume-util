@@ -1469,7 +1469,7 @@ public final class UtilPlume {
    *     order
    */
   @Deprecated // use join(CharSequence, Object...) which has the arguments in the other order
-  public static <T> @PolyDet("up") String join(T[] a, CharSequence delim) {
+  public static <T extends @PolyDet Object> @PolyDet("up") String join(T @PolyDet [] a, @PolyDet CharSequence delim) {
     if (a.length == 0) {
       return "";
     }
@@ -1541,7 +1541,7 @@ public final class UtilPlume {
    *     order
    */
   @Deprecated // use join(CharSequence, Iterable) which has the arguments in the other order
-  public static String join(Iterable<?> v, CharSequence delim) {
+  public static @PolyDet("up") String join(@PolyDet Iterable<?> v, @PolyDet CharSequence delim) {
     StringBuilder sb = new StringBuilder();
     boolean first = true;
     Iterator<?> itor = v.iterator();
@@ -1568,7 +1568,7 @@ public final class UtilPlume {
    * @return the concatenation of the string representations of the values, with the delimiter
    *     between
    */
-  public static String join(CharSequence delim, Iterable<?> v) {
+  public static @PolyDet("up") String join(@PolyDet CharSequence delim, @PolyDet Iterable<? extends @Det Object> v) {
     StringBuilder sb = new StringBuilder();
     boolean first = true;
     Iterator<?> itor = v.iterator();
