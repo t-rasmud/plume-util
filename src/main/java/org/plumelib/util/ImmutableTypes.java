@@ -230,8 +230,7 @@ public class ImmutableTypes {
    * @param typeName the fully-qualified name of the type
    * @return true iff the class of the given name is immutable
    */
-  @SuppressWarnings({"determinism:method.invocation.invalid","determinism:return.type.incompatible"})
-  public static boolean isImmutable(String typeName) {
+  public static boolean isImmutable(@Det String typeName) {
     return immutableTypeNames.contains(typeName);
   }
 }
