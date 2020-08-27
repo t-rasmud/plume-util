@@ -145,7 +145,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
      * @param filename file from which to read
      * @throws IOException if there is trobule reading the file
      */
-    public FlnReader(String filename) throws IOException {
+    public @PolyDet FlnReader(@PolyDet String filename) throws IOException {
       super(UtilPlume.fileReader(filename));
       this.filename = filename;
     }
@@ -382,7 +382,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    * @param reader source from which to read entries
    * @see #EntryReader(Reader,String,String,String)
    */
-  @SuppressWarnings("determinism:this.invocation.invalid")  // TODO: check why?
+  @SuppressWarnings("determinism:this.invocation.invalid")  // type of 'this' is NonDet
   public EntryReader(Reader reader) {
     this(reader, reader.toString(), null, null);
   }
@@ -524,6 +524,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    * @return the string that was read, or null at end of file
    */
   @Override
+  @SuppressWarnings("determinism:method.invocation.invalid")  // expandFileName returns NonDet
   public @Nullable String readLine(@GuardSatisfied EntryReader this) throws IOException {
 
     // System.out.printf ("Entering size = %d%n", readers.size());

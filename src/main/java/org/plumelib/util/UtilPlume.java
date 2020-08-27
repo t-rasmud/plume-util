@@ -484,7 +484,6 @@ public final class UtilPlume {
    * @throws IOException if there is trouble writing the file
    */
   // Question:  should this be rewritten as a wrapper around bufferedFileOutputStream?
-  @SuppressWarnings({"determinism:invalid.array.component.type","determinism:conditional.type.incompatible"})
   public static BufferedWriter bufferedFileWriter(String filename, boolean append)
       throws IOException {
     if (filename.endsWith(".gz")) {
@@ -495,7 +494,7 @@ public final class UtilPlume {
       return Files.newBufferedWriter(
           Paths.get(filename),
           UTF_8,
-          append ? new StandardOpenOption @PolyDet[] {CREATE, APPEND} : new StandardOpenOption[] {CREATE});
+          append ? new @PolyDet("use") StandardOpenOption @PolyDet[] {CREATE, APPEND} : new @PolyDet("use") StandardOpenOption @PolyDet[] {CREATE});
     }
   }
 
@@ -716,20 +715,19 @@ public final class UtilPlume {
    *     SecurityManager.checkWrite(java.lang.String) method does not allow a file to be created
    * @see java.io.File#createTempFile(String, String, File)
    */
-  @SuppressWarnings("determinism:assignment.type.incompatible")
-  public static File createTempDir(String prefix, String suffix) throws IOException {
+  public static @NonDet File createTempDir(String prefix, String suffix) throws IOException {
     String fs = File.separator;
-    @PolyDet String path = System.getProperty("java.io.tmpdir") + fs + System.getProperty("user.name") + fs;
-    @PolyDet File pathFile = new @PolyDet File(path);
+    @NonDet String path = System.getProperty("java.io.tmpdir") + fs + System.getProperty("user.name") + fs;
+    File pathFile = new File(path);
     if (!pathFile.isDirectory()) {
       if (!pathFile.mkdirs()) {
         throw new IOException("Could not create directory: " + pathFile);
       }
     }
     // Call Java runtime to create a file with a unique name
-    @PolyDet File tmpfile = File.createTempFile(prefix + "_", "_", pathFile);
-    @PolyDet String tmpDirPath = tmpfile.getPath() + suffix;
-    @PolyDet File tmpDir = new @PolyDet File(tmpDirPath);
+    File tmpfile = File.createTempFile(prefix + "_", "_", pathFile);
+    String tmpDirPath = tmpfile.getPath() + suffix;
+    File tmpDir = new File(tmpDirPath);
     if (!tmpDir.mkdirs()) {
       throw new IOException("Could not create directory: " + tmpDir);
     }
@@ -808,8 +806,7 @@ public final class UtilPlume {
   }
 
   /** The user's home directory. */
-  @SuppressWarnings("determinism:assignment.type.incompatible")
-  static final String userHome = System.getProperty("user.home");
+  static final @NonDet String userHome = System.getProperty("user.home");
 
   /**
    * Does tilde expansion on a file name (to the user's home directory).
@@ -817,7 +814,7 @@ public final class UtilPlume {
    * @param name file whose name to expand
    * @return file with expanded file
    */
-  public static File expandFilename(File name) {
+  public static @NonDet File expandFilename(File name) {
     String path = name.getPath();
     String newname = expandFilename(path);
     @SuppressWarnings({"interning", "ReferenceEquality"})
@@ -835,7 +832,7 @@ public final class UtilPlume {
    * @param name filename to expand
    * @return expanded filename
    */
-  public static String expandFilename(String name) {
+  public static @NonDet String expandFilename(String name) {
     if (name.contains("~")) {
       return (name.replace("~", userHome));
     } else {
@@ -912,7 +909,7 @@ public final class UtilPlume {
    */
   public static String readerContents(Reader r) {
     try {
-      StringBuilder contents = new StringBuilder();
+      @PolyDet StringBuilder contents = new @PolyDet StringBuilder();
       int ch;
       while ((ch = r.read()) != -1) {
         contents.append((char) ch);
@@ -939,7 +936,7 @@ public final class UtilPlume {
 
     try {
       BufferedReader reader = UtilPlume.bufferedFileReader(file);
-      StringBuilder contents = new StringBuilder();
+      @PolyDet StringBuilder contents = new @PolyDet StringBuilder();
       String line = reader.readLine();
       while (line != null) {
         contents.append(line);
@@ -1214,7 +1211,6 @@ public final class UtilPlume {
    * @param command a command to execute on the command line
    * @return all the output of the command
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")
   public static String backticks(String... command) {
     return backticks(Arrays.asList(command));
   }
@@ -1226,7 +1222,7 @@ public final class UtilPlume {
    *     then its arguments)
    * @return all the output of the command
    */
-  public static String backticks(List<String> command) {
+  public static String backticks(List<@PolyDet String> command) {
     ProcessBuilder pb = new ProcessBuilder(command);
     pb.redirectErrorStream(true);
     // TimeLimitProcess p = new TimeLimitProcess(pb.start(), TIMEOUT_SEC * 1000);
@@ -1370,7 +1366,7 @@ public final class UtilPlume {
       throw new IllegalArgumentException();
     }
 
-    StringBuilder result = new StringBuilder();
+    @PolyDet StringBuilder result = new @PolyDet StringBuilder();
     @IndexOrHigh("target") int lastend = 0;
     int pos;
     while ((pos = target.indexOf(oldStr, lastend)) != -1) {
@@ -1521,8 +1517,8 @@ public final class UtilPlume {
    * @return the concatenation of the string representations of the values, each on its own line
    */
   @SafeVarargs
-  @SuppressWarnings({"varargs","determinism:return.type.incompatible"})
-  public static <T> String joinLines(T... a) {
+  @SuppressWarnings({"varargs"})
+  public static <T> @PolyDet("up") String joinLines(T... a) {
     return join(lineSep, a);
   }
 
@@ -1542,7 +1538,7 @@ public final class UtilPlume {
    */
   @Deprecated // use join(CharSequence, Iterable) which has the arguments in the other order
   public static String join(Iterable<?> v, CharSequence delim) {
-    StringBuilder sb = new StringBuilder();
+    @PolyDet StringBuilder sb = new @PolyDet StringBuilder();
     boolean first = true;
     Iterator<?> itor = v.iterator();
     while (itor.hasNext()) {
@@ -1569,7 +1565,7 @@ public final class UtilPlume {
    *     between
    */
   public static String join(CharSequence delim, Iterable<?> v) {
-    StringBuilder sb = new StringBuilder();
+    @PolyDet StringBuilder sb = new @PolyDet StringBuilder();
     boolean first = true;
     Iterator<?> itor = v.iterator();
     while (itor.hasNext()) {
@@ -1618,7 +1614,7 @@ public final class UtilPlume {
    * @return quoted version of orig
    */
   public static String escapeJava(String orig) {
-    StringBuilder sb = new StringBuilder();
+    @PolyDet StringBuilder sb = new @PolyDet StringBuilder();
     // The previous escape character was seen right before this position.
     @IndexOrHigh("orig") int postEsc = 0;
     int origLen = orig.length();
@@ -1694,8 +1690,7 @@ public final class UtilPlume {
    * @param c character to quote
    * @return quoted version of ch
    */
-  @SuppressWarnings("determinism:cast.unsafe.constructor.invocation")
-  public static String escapeJava(char c) {
+  public static @PolyDet("up") String escapeJava(char c) {
     switch (c) {
       case '\"':
         return "\\\"";
@@ -1712,7 +1707,7 @@ public final class UtilPlume {
       case '\t':
         return "\\t";
       default:
-        return new @PolyDet String(new @PolyDet char @PolyDet[] {c});
+        return new @PolyDet("up") String(new @PolyDet char @PolyDet[] {c});
     }
   }
 
@@ -1724,7 +1719,7 @@ public final class UtilPlume {
    * @return quoted version of orig
    */
   public static String escapeNonASCII(String orig) {
-    StringBuilder sb = new StringBuilder();
+    @PolyDet StringBuilder sb = new @PolyDet StringBuilder();
     int origLen = orig.length();
     for (int i = 0; i < origLen; i++) {
       char c = orig.charAt(i);
@@ -1741,8 +1736,7 @@ public final class UtilPlume {
    * @param c character to quote
    * @return quoted version of c
    */
-  @SuppressWarnings("determinism:cast.unsafe.constructor.invocation")
-  private static String escapeNonASCII(char c) {
+  private static @PolyDet("up") String escapeNonASCII(char c) {
     if (c == '"') {
       return "\\\"";
     } else if (c == '\\') {
@@ -1754,7 +1748,7 @@ public final class UtilPlume {
     } else if (c == '\t') {
       return "\\t";
     } else if (c >= ' ' && c <= '~') {
-      return new @PolyDet String(new @PolyDet char @PolyDet[] {c});
+      return new @PolyDet("up") String(new @PolyDet char @PolyDet[] {c});
     } else if (c < 256) {
       String octal = Integer.toOctalString(c);
       while (octal.length() < 3) {
@@ -1799,7 +1793,7 @@ public final class UtilPlume {
    * @return quoted version of orig
    */
   public static String unescapeJava(String orig) {
-    StringBuilder sb = new StringBuilder();
+    @PolyDet StringBuilder sb = new @PolyDet StringBuilder();
     // The previous escape character was seen just before this position.
     @LTEqLengthOf("orig") int postEsc = 0;
     int thisEsc = orig.indexOf('\\');
@@ -2180,8 +2174,7 @@ public final class UtilPlume {
    * @param val a numeric value
    * @return an abbreviated string representation of the value
    */
-  @SuppressWarnings("determinism:return.type.incompatible")
-  public static String abbreviateNumber(long val) {
+  public static @NonDet String abbreviateNumber(long val) {
 
     double dval = (double) val;
     String mag = "";
