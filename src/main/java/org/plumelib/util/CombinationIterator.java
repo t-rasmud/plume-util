@@ -78,14 +78,14 @@ public class CombinationIterator<T> implements Iterator<List<T>> {
 
   @Override
   @EnsuresNonNullIf(expression = "nextValue", result = true)
-  @SuppressWarnings("determinism:return.type.incompatible")
+  @SuppressWarnings("determinism:return.type.incompatible")  // Safe to return PolyDet(down) boolean for a PolyDet nextValue
   public @PolyDet("down") boolean hasNext(@GuardSatisfied CombinationIterator<T> this) {
     return nextValue != null;
   }
 
   /** Advance {@code nextValue} to the next value, or to null if there are no more values. */
   @RequiresNonNull("nextValue")
-  @SuppressWarnings("determinism:method.invocation.invalid")
+  @SuppressWarnings("determinism:method.invocation.invalid")  // Advancing PolyDet pointers
   private void advanceNext(@GuardSatisfied CombinationIterator<T> this) {
     for (int i = combinationSize - 1; i >= 0; i--) {
       if (iterators[i].hasNext()) {
@@ -100,7 +100,7 @@ public class CombinationIterator<T> implements Iterator<List<T>> {
   }
 
   @Override
-  @SuppressWarnings("determinism:argument.type.incompatible")
+  @SuppressWarnings("determinism:argument.type.incompatible")  // OK to pass PolyDet nextValue to ArrayList constructor
   public @PolyDet("up") List<T> next(@GuardSatisfied CombinationIterator<T> this) {
     if (!hasNext()) {
       throw new NoSuchElementException();
