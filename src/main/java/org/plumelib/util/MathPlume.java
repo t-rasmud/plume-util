@@ -1290,7 +1290,7 @@ public final class MathPlume {
    * @return the set: [min(nums)..max(nums)] - nums
    */
   @SuppressWarnings({"allcheckers:purity", "lock",
-          "determinism:assignment.type.incompatible"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:assignment.type.incompatible"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   @StaticallyExecutable
@@ -1501,7 +1501,7 @@ public final class MathPlume {
    * @return value to be returned by {@link #nonmodulusStrict(int[])}: a tuple of (r,m) where all
    *     numbers in {@code missing} are equal to r (ood m)
    */
-  @SuppressWarnings({"determinism:invalid.array.component.type"})  // null is treated as Det
+  @SuppressWarnings({"determinism:invalid.array.component.type"})  // null is treated as Det (array invariance)
   private static @PolyDet("up") int @Nullable @ArrayLen(2) @PolyDet("up") [] nonmodulusStrictIntInternal(
       Iterator<Integer> missing) {
     // Must not use regular modulus:  that can produce errors, eg
@@ -1626,7 +1626,7 @@ public final class MathPlume {
    * @return the set: [min(nums)..max(nums)] - nums
    */
   @SuppressWarnings({"allcheckers:purity", "lock",
-          "determinism:assignment.type.incompatible" // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:assignment.type.incompatible" // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   @StaticallyExecutable
@@ -1836,7 +1836,7 @@ public final class MathPlume {
    * @param missing the missing integers
    * @return value to be returned by {@link #nonmodulusStrict(long[])}
    */
-  @SuppressWarnings("determinism:invalid.array.component.type")  // null is treated as Det
+  @SuppressWarnings("determinism:invalid.array.component.type")  // null is treated as Det (array invariance)
   private static @PolyDet("up") long @Nullable @ArrayLen(2) @PolyDet("up")[] nonmodulusStrictLongInternal(
       Iterator<Long> missing) {
     // Must not use regular modulus:  that can produce errors, eg

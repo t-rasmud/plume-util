@@ -1707,7 +1707,7 @@ public final class ArraysPlume {
     @SuppressWarnings({
       "lowerbound:argument.type.incompatible", // TODO: annotate for Index Checker
       "index:argument.type.incompatible", // TODO: annotate for Index Checker
-            "determinism:assignment.type.incompatible"  // Iteration over an OrderNonDet collection for assigning into another
+            "determinism:assignment.type.incompatible"  // Iteration over OrderNonDet collection for assigning into another
     })
     void copyInto(@PolyDet("use") T @PolyDet[] dest, int destPos) {
       if (theArray != null) {
@@ -1731,7 +1731,7 @@ public final class ArraysPlume {
      *
      * @return the least upper bound of the classes of the elements of this
      */
-    @SuppressWarnings("determinism:argument.type.incompatible")  //TODO: check why
+    @SuppressWarnings("determinism:argument.type.incompatible")  // TODO: check why
     @Nullable @NonDet Class<?> leastUpperBound() {
       if (theArray != null) {
         return ReflectionPlume.leastUpperBound(theArray);
@@ -1752,7 +1752,7 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over an OrderNonDet collection for concatenation with another
+  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over OrderNonDet collection for concatenation with another
   public static <T> @PolyDet("use") T @PolyDet[] concat(@PolyDet("use") T @Nullable @PolyDet[] a, @PolyDet("use") T @Nullable @PolyDet[] b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
@@ -1766,7 +1766,7 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over an OrderNonDet collection for concatenation with another
+  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over OrderNonDet collection for concatenation with another
   public static <T> @PolyDet("use") T @PolyDet[] concat(T @Nullable @PolyDet [] a, @Nullable @PolyDet List<T> b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
@@ -1780,7 +1780,7 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over an OrderNonDet collection for concatenation with another
+  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over OrderNonDet collection for concatenation with another
   public static <T> @PolyDet("use") T @PolyDet[] concat(@PolyDet @Nullable List<@PolyDet("use") T> a, @PolyDet("use") T @Nullable @PolyDet[] b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
@@ -1793,7 +1793,7 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over an OrderNonDet collection for concatenation with another
+  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over OrderNonDet collection for concatenation with another
   public static <T> @PolyDet("use") T @PolyDet[] concat(@Nullable @PolyDet List<@PolyDet("use") T> a, @Nullable @PolyDet List<@PolyDet("use") T> b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
@@ -1806,7 +1806,7 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over an OrderNonDet collection for assigning into another
+  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over OrderNonDet collection for assigning into another
   private static <T> @PolyDet("use") T @PolyDet[] concat(@PolyDet ListOrArray<@PolyDet("use") T> a, @PolyDet ListOrArray<@PolyDet("use") T> b) {
     if (a.isNull() && b.isNull()) {
       @SuppressWarnings("unchecked")
@@ -2383,7 +2383,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock", // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") boolean @PolyDet[] a) {
@@ -2409,7 +2409,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid" // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") byte @PolyDet[] a) {
@@ -2435,7 +2435,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock", // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") char @PolyDet[] a) {
@@ -2461,7 +2461,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") float @PolyDet[] a) {
@@ -2487,7 +2487,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") short @PolyDet[] a) {
@@ -2513,7 +2513,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock", // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") int @PolyDet[] a) {
@@ -2540,7 +2540,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") double @PolyDet[] a) {
@@ -2566,7 +2566,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") long @PolyDet[] a) {
@@ -2592,7 +2592,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") String @PolyDet[] a) {
@@ -2617,7 +2617,7 @@ public final class ArraysPlume {
    * @return true iff a does not contain duplicate elements
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") Object @PolyDet[] a) {
@@ -2754,7 +2754,7 @@ public final class ArraysPlume {
    * @return function from [0..a.length) to range R that is the composition of a and b
    */
   @SuppressWarnings({"nullness",  // https://tinyurl.com/cfissue/1654
-          "determinism:assignment.type.incompatible"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:assignment.type.incompatible"  // Iteration over OrderNonDet collection for assigning into another
   })
   public static @PolyNull @PolyInterned int @SameLen("#1") [] fnCompose(
       @IndexFor("#2") int[] a, @PolyNull @PolyInterned int[] b) {
@@ -2774,7 +2774,7 @@ public final class ArraysPlume {
    * @return function from [0..a.length) to {range R} union {-1}, that is the composition of a and
    *     b.
    */
-  @SuppressWarnings("determinism:assignment.type.incompatible")  // Iteration over an OrderNonDet collection for assigning into another
+  @SuppressWarnings("determinism:assignment.type.incompatible")  // Iteration over OrderNonDet collection for assigning into another
   public static int @SameLen("#1") [] partialFnCompose(@IndexOrLow("#2") int[] a, int[] b) {
     @PolyDet("use") int @PolyDet[] result = new @PolyDet("use") int @PolyDet[a.length];
     for (int i = 0; i < a.length; i++) {
@@ -2806,7 +2806,7 @@ public final class ArraysPlume {
    * @return true iff smaller is a subset of bigger
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean isSubset(@PolyDet("use") long @PolyDet[] smaller, @PolyDet("use") long @PolyDet[] bigger) {
@@ -2840,7 +2840,7 @@ public final class ArraysPlume {
    * @return true iff smaller is a subset of bigger
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean isSubset(@PolyDet("use") double @PolyDet[] smaller, @PolyDet("use") double @PolyDet[] bigger) {
@@ -2874,7 +2874,7 @@ public final class ArraysPlume {
    * @return true iff smaller is a subset of bigger
    */
   @SuppressWarnings({"allcheckers:purity", "lock",  // side effect to local state (HashSet)
-          "determinism:method.invocation.invalid"  // Iteration over an OrderNonDet collection for assigning into another
+          "determinism:method.invocation.invalid"  // Iteration over OrderNonDet collection for assigning into another
   })
   @Pure
   public static @PolyDet("down") boolean isSubset(@PolyDet("use") String @PolyDet[] smaller, @PolyDet("use") String @PolyDet[] bigger) {
@@ -3467,7 +3467,7 @@ public final class ArraysPlume {
    */
   // "p.addToPart(i, ...)" is OK: i is < numNonemptyParts
   //  and p.size() = numNonemptyParts + numEmptyParts, both of which are non-negative.
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:method.invocation.invalid"})  // Iteration over an OrderNonDet collection for assigning into another
+  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:method.invocation.invalid"})  // Iteration over OrderNonDet collection for assigning into another
   public static <T> @PolyDet("up") List<@PolyDet("use") Partitioning<@PolyDet("use") T>> partitionIntoHelper(
       @PolyDet("up") Queue<@PolyDet("use") T> elts,
       @PolyDet("up") List</*@ LengthIs("#3")*/ @PolyDet("use") Partitioning<@PolyDet("use") T>> resultSoFar,
@@ -3564,7 +3564,7 @@ public final class ArraysPlume {
      * @param elt the element to add
      * @return a new partitioning just like this one, but with elt added to the ith part
      */
-    @SuppressWarnings({"determinism:cast.unsafe.constructor.invocation","determinism:method.invocation.invalid"})  // Iteration over an OrderNonDet collection for adding an element
+    @SuppressWarnings({"determinism:cast.unsafe.constructor.invocation","determinism:method.invocation.invalid"})  // Iteration over OrderNonDet collection for adding an element
     @PolyDet Partitioning<T> addToPart(@NonNegative int i, @PolyDet("use") T elt) {
       @PolyDet Partitioning<T> result = new Partitioning<>(this);
       if (size() == i) {

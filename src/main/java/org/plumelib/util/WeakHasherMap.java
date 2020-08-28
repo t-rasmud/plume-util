@@ -303,7 +303,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
    */
   @Pure
   @Override
-  @SuppressWarnings("determinism:return.type.incompatible")  // Retrieving a value corresponding to a  key from PolyDet hash returns PolyDet(down)
+  @SuppressWarnings("determinism:return.type.incompatible")  // Retrieving a value corresponding to a key from PolyDet hash returns PolyDet(down)
   public @Nullable @PolyDet("down") V get(Object key) { // type of argument is Object, not K
     @SuppressWarnings("unchecked")
     @PolyDet K kkey = (@PolyDet K) key;
@@ -383,7 +383,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
     }
 
     @Pure
-    @SuppressWarnings({"determinism:method.invocation.invalid"})  // type of 'this' is  NonDet
+    @SuppressWarnings({"determinism:method.invocation.invalid"})  // type of 'this' is NonDet
     private @NonDet boolean keyvalEquals(@PolyDet K o1, @PolyDet K o2) {
       return (o1 == null) ? (o2 == null) : keyEquals(o1, o2);
     }
@@ -471,7 +471,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
     }
 
     @Override
-    @SuppressWarnings({"determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"})  // remove not allowed on OrderNonDet collections, type  of 'this' is Det
+    @SuppressWarnings({"determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"})  // remove not allowed on OrderNonDet collections, type of 'this' is Det
     public @PolyDet("down") boolean remove(Object o) {
       processQueue();
       if (!(o instanceof Map.Entry<?, ?>)) return false;
@@ -489,7 +489,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings({"determinism:return.type.incompatible","determinism:override.return.invalid"})  // remove not allowed on OrderNonDet collections, type  of 'this' is Det
+    @SuppressWarnings({"determinism:return.type.incompatible","determinism:override.return.invalid"})  // remove not allowed on OrderNonDet collections, type of 'this' is Det
     public int hashCode() {
       int h = 0;
       for (Iterator<Map.@PolyDet("use") Entry<WeakKey, V>> i = hashEntrySet.iterator(); i.hasNext(); ) {
@@ -508,7 +508,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
   /** Returns a <code>Set</code> view of the mappings in this map. */
   @SideEffectFree
   @Override
-  @SuppressWarnings("determinism:assignment.type.incompatible")  // cannot create 'entrySet' of type @PolyDet Set<@PolyDet("down") Entry<K, V>>
+  @SuppressWarnings("determinism:assignment.type.incompatible")  // Cannot create EntrySet of type @PolyDet Set<@PolyDet("down") Entry<K, V>>
   public Set<Map.@PolyDet("down") Entry<K, V>> entrySet() {
     if (entrySet == null) entrySet = new @PolyDet EntrySet();
     return entrySet;
