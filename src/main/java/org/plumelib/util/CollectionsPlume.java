@@ -143,9 +143,9 @@ public final class CollectionsPlume {
     }
 
     if (o1 instanceof List<?> && o2 instanceof List<?>) {
-      @SuppressWarnings("determinism:invariant.cast.unsafe")  // Casting: Object to List
+      @SuppressWarnings("determinism:invariant.cast.unsafe")  // Casting from Object: to List
       @PolyDet List<?> l1 = (List<?>) o1;
-      @SuppressWarnings("determinism:invariant.cast.unsafe")  // Casting: Object to List
+      @SuppressWarnings("determinism:invariant.cast.unsafe")  // Casting from Object: to List
       @PolyDet List<?> l2 = (List<?>) o2;
       if (l1.size() != l2.size()) {
         return false;
