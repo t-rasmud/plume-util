@@ -3428,8 +3428,7 @@ public final class ArraysPlume {
    * @param k number of subsets into which to partition {@code elts}
    * @return a list of partitionings, where each contains exactly k subsets
    */
-  @SuppressWarnings("determinism:return.type.incompatible")  // TODO: check why
-  public static <T extends @NonNull Object> @PolyDet("up") List<@PolyDet("use") Partitioning<@PolyDet("use") T>> partitionInto(
+  public static <T extends @NonNull Object> @PolyDet List<@PolyDet("use") Partitioning<@PolyDet("use") T>> partitionInto(
       @PolyDet("up") Collection<@PolyDet("use") T> elts, @NonNegative int k) {
     return partitionInto(new @PolyDet("up") ArrayDeque<@PolyDet("use") T>(elts), k);
   }
@@ -3444,8 +3443,7 @@ public final class ArraysPlume {
    * @param k number of subsets into which to partition {@code elts}
    * @return a list of partitionings, where each contains exactly k subsets
    */
-  @SuppressWarnings("determinism:return.type.incompatible")  // TODO: check why
-  public static <T> @PolyDet("up") List<@PolyDet("use") Partitioning<@PolyDet("use") T>> partitionInto(
+  public static <T> @PolyDet List<@PolyDet("use") Partitioning<@PolyDet("use") T>> partitionInto(
           @PolyDet("up") Queue<@PolyDet("use") T> elts, @PolyDet @NonNegative int k) {
     if (elts.size() < k) {
       throw new IllegalArgumentException();

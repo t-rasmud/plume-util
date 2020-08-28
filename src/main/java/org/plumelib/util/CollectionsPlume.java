@@ -143,9 +143,9 @@ public final class CollectionsPlume {
     }
 
     if (o1 instanceof List<?> && o2 instanceof List<?>) {
-      @SuppressWarnings("determinism:invariant.cast.unsafe")  // TODO: Debug
+      @SuppressWarnings("determinism:invariant.cast.unsafe")  // Casting: Object to List
       @PolyDet List<?> l1 = (List<?>) o1;
-      @SuppressWarnings("determinism:invariant.cast.unsafe")  // TODO: Debug
+      @SuppressWarnings("determinism:invariant.cast.unsafe")  // Casting: Object to List
       @PolyDet List<?> l2 = (List<?>) o2;
       if (l1.size() != l2.size()) {
         return false;
@@ -675,8 +675,7 @@ public final class CollectionsPlume {
    * @param numElts number of elements to select
    * @return list of numElts elements from itor
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")  // TODO: check why?
-  public static <T> @NonDet List<T> randomElements(Iterator<T> itor, int numElts) {
+  public static <T> @NonDet List<T> randomElements(@NonDet Iterator<T> itor, @NonDet int numElts) {
     return randomElements(itor, numElts, r);
   }
 
