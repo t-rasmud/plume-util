@@ -58,7 +58,7 @@ public final class Intern {
    * @see String#intern
    */
   @SuppressWarnings({"interning",  // side-effects the array in place (dangerous, but convenient)
-          "determinism:assignment.type.incompatible"  // Iteration over an OrdderNonDet collection for performing harmless function
+          "determinism:assignment.type.incompatible"  // Iteration over OrderNonDet collection for performing harmless function
   })
   public static @Interned String @PolyValue @SameLen("#1") [] internStrings(
       String @PolyValue [] a) {
@@ -563,7 +563,7 @@ public final class Intern {
   // values between -128 and 127 (and Intern.valueOf is intended to promise
   // the same).  This does not currently take advantage of that.
   @SuppressWarnings({"interning", "allcheckers:purity", "lock",  // interning implementation
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible"  // Cannot declare as as PolyDet: internedIntegers
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible"  // No way to declare as PolyDet!?: internedIntegers
   })
   @Pure
   public static @Interned Integer intern(Integer a) {
@@ -610,7 +610,7 @@ public final class Intern {
   // values between -128 and 127 (and Long.valueOf is intended to promise
   // the same).  This could take advantage of that.
   @SuppressWarnings({"interning", "allcheckers:purity", "lock",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible"  // Cannot declare as PolyDet: internedLongs
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible"  // No way to declare as PolyDet!?: internedLongs
   })
   @Pure
   public static @Interned Long intern(Long a) {
@@ -660,7 +660,7 @@ public final class Intern {
    * @return a canonical representation for the int[] array
    */
   @SuppressWarnings({"interning", "allcheckers:purity", "lock",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: internedIntArrays
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedIntArrays
   })
   @Pure
   public static int @Interned @PolyValue @SameLen("#1") [] intern(@PolyDet("use") int @PolyValue [] a) {
@@ -693,7 +693,7 @@ public final class Intern {
    * @return a canonical representation for the long[] array
    */
   @SuppressWarnings({"interning", "allcheckers:purity", "lock",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: internedLongArrays
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedLongArrays
   })
   @Pure
   public static @PolyDet("use") long @Interned @PolyValue @SameLen("#1") @PolyDet[] intern(@PolyDet("use") long @PolyValue @PolyDet[] a) {
@@ -726,7 +726,7 @@ public final class Intern {
   // values between -128 and 127 (and Double.valueOf is intended to promise
   // the same).  This could take advantage of that.
   @SuppressWarnings({"interning", "allcheckers:purity", "lock",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible"  // Cannot declare as PolyDet: internedDoubles
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible"  // No way to declare as PolyDet!?: internedDoubles
   })
   @Pure
   public static @Interned Double intern(Double a) {
@@ -784,7 +784,7 @@ public final class Intern {
    * @return a canonical representation for the double[] array
    */
   @SuppressWarnings({"interning", "allcheckers:purity", "lock",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: internedDoubleArrays
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedDoubleArrays
   })
   @Pure
   public static @PolyDet("use") double @Interned @PolyValue @SameLen("#1") @PolyDet[] intern(@PolyDet("use") double @PolyValue @PolyDet[] a) {
@@ -821,7 +821,7 @@ public final class Intern {
     "lock",
     // Error Prone Warnings
     "ReferenceEquality",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible" // Cannot declare as PolyDet: internedStringArrays
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible" // No way to declare as PolyDet!?: internedStringArrays
   }) // cast is redundant (except in JSR 308)
   @Pure
   public static @PolyDet("use") @PolyNull @Interned String @Interned @PolyValue @SameLen("#1") [] intern(
@@ -867,7 +867,7 @@ public final class Intern {
     "allcheckers:purity",
     "lock",
     "cast",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: internedObjectArrays
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedObjectArrays
   }) // cast is redundant (except in JSR 308)
   @Pure
   public static @PolyDet("use") @PolyNull @Interned Object @Interned @PolyValue @SameLen("#1") @PolyDet[] intern(
@@ -945,7 +945,9 @@ public final class Intern {
    * @param end the index of the end of the subsequence to compute and intern
    * @return a subsequence of seq from start to end that is interned
    */
-  @SuppressWarnings("determinism")
+  @SuppressWarnings({"determinism:invalid.array.component.type",  // null is treated as Det (array invariance)
+          "determinism:argument.type.incompatible","determinism:return.type.incompatible","determinism:method.invocation.invalid"  // Cannot declare as PolyDet: internedIntSubsequence
+  })
   public static int @Interned [] internSubsequence(
       int @Interned [] seq,
       @IndexFor("#1") @LessThan("#3") int start,
@@ -955,7 +957,7 @@ public final class Intern {
     }
     Subsequence<int @Interned []> sai = new Subsequence<>(seq, start, end);
     WeakReference<int @Interned []> lookup = internedIntSubsequence.get(sai);
-    int[] result1 = (lookup != null) ? lookup.get() : null;
+    int [] result1 = (lookup != null) ? lookup.get() : null;
     if (result1 != null) {
       return result1;
     } else {
@@ -976,7 +978,7 @@ public final class Intern {
    * @see #internSubsequence(int[], int, int)
    */
   @SuppressWarnings({"allcheckers:purity", "lock",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: internedLongSubsequence
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedLongSubsequence
   }) // interning logic
   @Pure
   public static @PolyDet("use") long @Interned @PolyDet[] internSubsequence(
@@ -1009,7 +1011,7 @@ public final class Intern {
    * @see #internSubsequence(int[], int, int)
    */
   @SuppressWarnings({"allcheckers:purity", "lock",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: internedDoubleSubsequence
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedDoubleSubsequence
   }) // interning logic
   @Pure
   public static @PolyDet("use") double @Interned @PolyDet[] internSubsequence(
@@ -1042,7 +1044,7 @@ public final class Intern {
    * @see #internSubsequence(int[], int, int)
    */
   @SuppressWarnings({"allcheckers:purity", "lock",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: internedObjectSubsequence
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedObjectSubsequence
   }) // interning logic
   @Pure
   public static @PolyDet("use") @PolyNull @Interned Object @Interned @PolyDet[] internSubsequence(
@@ -1082,7 +1084,7 @@ public final class Intern {
    */
   @Pure
   @SuppressWarnings({"allcheckers:purity", "lock",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: internedStringSubsequence
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedStringSubsequence
   }) // interning logic
   public static @PolyDet("use") @PolyNull @Interned String @Interned @PolyDet[] internSubsequence(
           @PolyDet("use") @PolyNull @Interned String @Interned @PolyDet[] seq,

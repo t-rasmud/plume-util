@@ -290,7 +290,7 @@ public final class ReflectionPlume {
    * @throws ClassNotFoundException if the class is not found
    * @throws NoSuchMethodException if the method is not found
    */
-  @SuppressWarnings({"determinism:method.invocation.invalid","determinism:invalid.array.component.type","determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Iteration over an OrderNonDet collection for assigning values
+  @SuppressWarnings({"determinism:method.invocation.invalid","determinism:invalid.array.component.type","determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Iteration over OrderNonDet collection for assigning values
   public static Method methodForName(String method)
       throws ClassNotFoundException, NoSuchMethodException, SecurityException {
 
