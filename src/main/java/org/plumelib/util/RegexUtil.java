@@ -12,6 +12,7 @@ import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.EnsuresQualifierIf;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * Utility methods for regular expressions, most notably for testing whether a string is a regular
@@ -74,8 +75,7 @@ public final class RegexUtil {
      *
      * @param pse the PatternSyntaxException to be wrapped
      */
-    @SuppressWarnings("determinism:assignment.type.incompatible")
-    public CheckedPatternSyntaxException(PatternSyntaxException pse) {
+    public CheckedPatternSyntaxException(@Det PatternSyntaxException pse) {
       this.pse = pse;
     }
 
@@ -87,7 +87,7 @@ public final class RegexUtil {
      * @param index the approximate index in the pattern of the error, or {@code -1} if the index is
      *     not known
      */
-    public CheckedPatternSyntaxException(String desc, String regex, @GTENegativeOne int index) {
+    public CheckedPatternSyntaxException(@Det String desc, @Det String regex, @Det @GTENegativeOne int index) {
       this(new PatternSyntaxException(desc, regex, index));
     }
 

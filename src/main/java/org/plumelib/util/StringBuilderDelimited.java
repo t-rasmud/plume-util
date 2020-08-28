@@ -30,7 +30,7 @@ import org.checkerframework.checker.determinism.qual.*;
 public class StringBuilderDelimited implements Appendable, CharSequence {
 
   /** The StringBuilder to which this delegates work. */
-  private StringBuilder delegate = new StringBuilder();
+  private @PolyDet StringBuilder delegate = new @PolyDet StringBuilder();
   /** False iff some text has already been appended to this. */
   private boolean empty = true;
   /** The delimiter put between strings appended to this. */

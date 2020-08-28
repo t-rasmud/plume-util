@@ -52,7 +52,7 @@ public class MultiRandSelector<T> {
    * @param numElts the number of elements to select from each bucket
    * @param eq partioner that determines how to partition the objects
    */
-  @SuppressWarnings("determinism:this.invocation.invalid")
+  @SuppressWarnings("determinism:this.invocation.invalid")  // type of 'this' is NonDet
   public MultiRandSelector(int numElts, Partitioner<T, T> eq) {
     this(numElts, new Random(), eq);
   }
@@ -63,7 +63,7 @@ public class MultiRandSelector<T> {
    * @param keepProbability the likelihood to select each element.
    * @param eq partioner that determines how to partition the objects
    */
-  @SuppressWarnings("determinism:this.invocation.invalid")
+  @SuppressWarnings("determinism:this.invocation.invalid")  // type of 'this' is NonDet
   public MultiRandSelector(double keepProbability, Partitioner<T, T> eq) {
     this(keepProbability, new Random(), eq);
   }
@@ -90,7 +90,7 @@ public class MultiRandSelector<T> {
    * @param r the Random instance to use for making random choices
    * @param eq partioner that determines how to partition the objects
    */
-  public MultiRandSelector(double keepProbability, Random r, Partitioner<T, T> eq) {
+  public @PolyDet MultiRandSelector(@PolyDet double keepProbability, @PolyDet Random r, @PolyDet Partitioner<T, T> eq) {
     this(r, eq);
     this.coinTossMode = true;
     this.keepProbability = keepProbability;
@@ -152,7 +152,7 @@ public class MultiRandSelector<T> {
    *
    * @return an iterator of all objects selected
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")
+  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over OrderNonDet collection for assigning into another
   public Iterator<T> valuesIter() {
     @PolyDet ArrayList<T> ret = new @PolyDet ArrayList<>();
     for (RandomSelector<T> rs : map.values()) {

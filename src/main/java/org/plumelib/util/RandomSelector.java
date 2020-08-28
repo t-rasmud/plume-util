@@ -83,7 +83,7 @@ public class RandomSelector<T> {
    * @param numElts the number of elements intended to be selected from the input elements
    *     <p>Sets 'numElts' = numElts
    */
-  @SuppressWarnings("determinism:this.invocation.invalid")
+  @SuppressWarnings("determinism:this.invocation.invalid")  // type of 'this' is NonDet
   public RandomSelector(int numElts) {
     this(numElts, new Random());
   }
@@ -121,7 +121,7 @@ public class RandomSelector<T> {
    *
    * @param next value to be added to this selector
    */
-  @SuppressWarnings("determinism:method.invocation.invalid")
+  @SuppressWarnings("determinism:method.invocation.invalid")  // Adding NonDet Integers to 'values' (expected behavior)
   public void accept(@PolyDet T next) {
 
     // if we are in coin toss mode, then we want to keep

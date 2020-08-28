@@ -205,7 +205,9 @@ public class LimitedSizeIntSet implements Serializable, Cloneable {
   }
 
   @SuppressWarnings(
-          {"allcheckers:purity.not.sideeffectfree.assign.field","determinism:invariant.cast.unsafe"}) // side effect to local state (clone)
+          {"allcheckers:purity.not.sideeffectfree.assign.field",  // side effect to local state (clone)
+                  "determinism:invariant.cast.unsafe"  // casting from Object to LimitedSizeIntSet
+          })
   @SideEffectFree
   @Override
   public LimitedSizeIntSet clone(@GuardSatisfied LimitedSizeIntSet this) {
@@ -239,8 +241,7 @@ public class LimitedSizeIntSet implements Serializable, Cloneable {
 
   @SideEffectFree
   @Override
-  @SuppressWarnings("determinism:return.type.incompatible")
-  public String toString(@GuardSatisfied LimitedSizeIntSet this) {
+  public @NonDet String toString(@GuardSatisfied LimitedSizeIntSet this) {
     return ("[size=" + size() + "; " + Arrays.toString(values) + "]");
   }
 }

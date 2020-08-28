@@ -93,9 +93,11 @@ public final class CollectionsPlume {
    * @param o2 second value to compare
    * @return true iff o1 and o2 are deeply equal
    */
-  @SuppressWarnings({"allcheckers:purity", "lock", "determinism:return.type.incompatible"}) // side effect to static field deepEqualsUnderway
+  @SuppressWarnings({"allcheckers:purity", "lock", // side effect to static field deepEqualsUnderway
+          "determinism:method.invocation.invalid", "determinism:argument.type.incompatible"  // Iteration over OrderNonDet collection for searching: actually for equality check
+  })
   @Pure
-  public static boolean deepEquals(@Nullable Object o1, @Nullable Object o2) {
+  public static @NonDet boolean deepEquals(@Nullable Object o1, @Nullable Object o2) {
     @SuppressWarnings("interning")
     boolean sameObject = (o1 == o2);
     if (sameObject) {
@@ -130,8 +132,8 @@ public final class CollectionsPlume {
       return Arrays.equals((short[]) o1, (short[]) o2);
     }
 
-    @SuppressWarnings({"allcheckers:purity", "lock", "determinism"}) // creates local state
-    WeakIdentityPair<Object, Object> mypair = new WeakIdentityPair<>(o1, o2);
+    @SuppressWarnings({"allcheckers:purity", "lock"})  // creates local state
+    @PolyDet WeakIdentityPair<Object, Object> mypair = new @PolyDet WeakIdentityPair<Object, Object>(o1, o2);
     if (deepEqualsUnderway.contains(mypair)) {
       return true;
     }
@@ -141,9 +143,9 @@ public final class CollectionsPlume {
     }
 
     if (o1 instanceof List<?> && o2 instanceof List<?>) {
-      @SuppressWarnings("determinism:invariant.cast.unsafe")
+      @SuppressWarnings("determinism:invariant.cast.unsafe")  // TODO: Debug
       @PolyDet List<?> l1 = (List<?>) o1;
-      @SuppressWarnings("determinism:invariant.cast.unsafe")
+      @SuppressWarnings("determinism:invariant.cast.unsafe")  // TODO: Debug
       @PolyDet List<?> l2 = (List<?>) o2;
       if (l1.size() != l2.size()) {
         return false;
@@ -241,7 +243,7 @@ public final class CollectionsPlume {
    * @param objs list of elements to create combinations of
    * @return list of lists of length dims, each of which combines elements from objs
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")
+  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over OrderNonDet collection for creating another
   public static <T> List<@PolyDet("use") List<@PolyDet("use") T>> createCombinations(
       @Positive int dims, @NonNegative int start, List<@PolyDet("use") T> objs) {
 
@@ -298,7 +300,7 @@ public final class CollectionsPlume {
    * @param cnt maximum element value
    * @return list of lists of length arity, each of which combines integers from start to cnt
    */
-  @SuppressWarnings({"determinism:assignment.type.incompatible","determinism:argument.type.incompatible"})
+  @SuppressWarnings({"determinism:assignment.type.incompatible","determinism:argument.type.incompatible"})  // Iteration over OrderNonDet collection for creating another
   public static ArrayList<@PolyDet("use") ArrayList<@PolyDet("use") Integer>> createCombinations(
       int arity, @NonNegative int start, int cnt) {
 
@@ -491,7 +493,9 @@ public final class CollectionsPlume {
     // Initialize to an empty iterator to prime the pump.
     Iterator<T> current = new @PolyDet ArrayList<T>().iterator();
 
-    @SuppressWarnings({"allcheckers:purity", "lock:method.guarantee.violated", "determinism:assignment.type.incompatible"})
+    @SuppressWarnings({"allcheckers:purity", "lock:method.guarantee.violated",
+            "determinism:assignment.type.incompatible"  // Assigning PolyDet(up) pointer to 'current' when 'current' is empty
+    })
     @Override
     public @PolyDet("down") boolean hasNext(@GuardSatisfied MergedIterator<T> this) {
       while (!current.hasNext() && itorOfItors.hasNext()) {
@@ -542,7 +546,9 @@ public final class CollectionsPlume {
     /** True iff {@link #current} is an object from the wrapped iterator. */
     boolean currentValid = false;
 
-    @SuppressWarnings({"allcheckers:purity", "lock:method.guarantee.violated", "determinism"}) // benevolent side effects
+    @SuppressWarnings({"allcheckers:purity", "lock:method.guarantee.violated",  // benevolent side effects
+            "determinism:assignment.type.incompatible", "determinism:argument.type.incompatible", "determinism:return.type.incompatible"  // Iteration over OrderNonDet collection for searching
+    })
     @Override
     public @PolyDet("down") boolean hasNext(@GuardSatisfied FilteredIterator<T> this) {
       while (!currentValid && itor.hasNext()) {
@@ -594,8 +600,8 @@ public final class CollectionsPlume {
      *
      * @param itor an itorator whose first and last elements to discard
      */
-    @SuppressWarnings("determinism:assignment.type.incompatible")
-    public @PolyDet RemoveFirstAndLastIterator(@PolyDet Iterator<T> itor) {
+    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning PolyDet(up) pointer to PolyDet 'current'
+    public @PolyDet("up") RemoveFirstAndLastIterator(@PolyDet Iterator<T> itor) {
       this.itor = itor;
       if (itor.hasNext()) {
         first = itor.next();
@@ -611,7 +617,7 @@ public final class CollectionsPlume {
     }
 
     @Override
-    @SuppressWarnings("determinism:assignment.type.incompatible")
+    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning PolyDet(up) pointer to PolyDet 'current'
     public @PolyDet("up") T next(@GuardSatisfied RemoveFirstAndLastIterator<T> this) {
       if (!itor.hasNext()) {
         throw new NoSuchElementException();
@@ -669,7 +675,7 @@ public final class CollectionsPlume {
    * @param numElts number of elements to select
    * @return list of numElts elements from itor
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")
+  @SuppressWarnings("determinism:argument.type.incompatible")  // TODO: check why?
   public static <T> @NonDet List<T> randomElements(Iterator<T> itor, int numElts) {
     return randomElements(itor, numElts, r);
   }
@@ -688,12 +694,12 @@ public final class CollectionsPlume {
    * @param random the Random instance to use to make selections
    * @return list of numElts elements from itor
    */
-  public static <T> List<T> randomElements(Iterator<T> itor, int numElts, Random random) {
+  public static <T> @NonDet List<T> randomElements(Iterator<T> itor, int numElts, Random random) {
     // The elements are chosen with the following probabilities,
     // where n == numElts:
     //   n n/2 n/3 n/4 n/5 ...
 
-    RandomSelector<T> rs = new RandomSelector<>(numElts, random);
+    @NonDet RandomSelector<T> rs = new @NonDet RandomSelector<>(numElts, random);
 
     while (itor.hasNext()) {
       rs.accept(itor.next());
@@ -844,7 +850,7 @@ public final class CollectionsPlume {
    * @param key the value to look up in the set
    * @return the object in this set that is equal to key, or null
    */
-  @SuppressWarnings("determinism:return.type.incompatible")
+  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over OrderNonDet collection for searching
   public static @Nullable Object getFromSet(Set<?> set, Object key) {
     if (key == null) {
       return null;

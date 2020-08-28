@@ -68,8 +68,7 @@ public class Pair<T1 extends @Nullable Object, T2 extends @Nullable Object> {
   // But then the class would not be useful for mutable pairs.
   @Override
   @Pure
-  @SuppressWarnings("determinism:return.type.incompatible")
-  public int hashCode(@GuardSatisfied Pair<T1, T2> this) {
+  public @NonDet int hashCode(@GuardSatisfied Pair<T1, T2> this) {
     return (((a == null) ? 0 : a.hashCode()) + ((b == null) ? 0 : b.hashCode()));
   }
 }

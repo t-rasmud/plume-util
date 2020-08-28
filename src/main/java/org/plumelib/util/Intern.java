@@ -57,7 +57,9 @@ public final class Intern {
    * @return an interned version of a
    * @see String#intern
    */
-  @SuppressWarnings({"interning","determinism:assignment.type.incompatible"}) // side-effects the array in place (dangerous, but convenient)
+  @SuppressWarnings({"interning",  // side-effects the array in place (dangerous, but convenient)
+          "determinism:assignment.type.incompatible"  // Iteration over OrderNonDet collection for performing harmless function
+  })
   public static @Interned String @PolyValue @SameLen("#1") [] internStrings(
       String @PolyValue [] a) {
     for (int i = 0; i < a.length; i++) {
@@ -159,14 +161,12 @@ public final class Intern {
    */
   private static final class IntArrayHasher implements Hasher {
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public boolean equals(Object a1, Object a2) {
+    public @NonDet boolean equals(Object a1, Object a2) {
       return Arrays.equals((int[]) a1, (int[]) a2);
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public int hashCode(Object o) {
+    public @NonDet int hashCode(Object o) {
       return Arrays.hashCode((int[]) o);
     }
   }
@@ -179,14 +179,12 @@ public final class Intern {
    */
   private static final class LongArrayHasher implements Hasher {
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public boolean equals(Object a1, Object a2) {
+    public @NonDet boolean equals(Object a1, Object a2) {
       return Arrays.equals((long[]) a1, (long[]) a2);
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public int hashCode(Object o) {
+    public @NonDet int hashCode(Object o) {
       return Arrays.hashCode((long[]) o);
     }
   }
@@ -240,8 +238,7 @@ public final class Intern {
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public int hashCode(Object o) {
+    public @NonDet int hashCode(Object o) {
       double[] a = (double[]) o;
       // Not Arrays.hashCode(a), for consistency with equals method
       // immediately above.
@@ -264,14 +261,12 @@ public final class Intern {
    */
   private static final class StringArrayHasher implements Hasher {
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public boolean equals(Object a1, Object a2) {
+    public @NonDet boolean equals(Object a1, Object a2) {
       return Arrays.equals((String[]) a1, (String[]) a2);
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public int hashCode(Object o) {
+    public @NonDet int hashCode(Object o) {
       return Arrays.hashCode((String[]) o);
     }
   }
@@ -284,14 +279,12 @@ public final class Intern {
    */
   private static final class ObjectArrayHasher implements Hasher {
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public boolean equals(Object a1, Object a2) {
+    public @NonDet boolean equals(Object a1, Object a2) {
       return Arrays.equals((@Nullable Object[]) a1, (@Nullable Object[]) a2);
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public int hashCode(Object o) {
+    public @NonDet int hashCode(Object o) {
       return Arrays.hashCode((Object[]) o);
     }
   }
@@ -569,7 +562,9 @@ public final class Intern {
   // TODO: JLS 5.1.7 requires that the boxing conversion interns integer
   // values between -128 and 127 (and Intern.valueOf is intended to promise
   // the same).  This does not currently take advantage of that.
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"}) // interning implementation
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock",  // interning implementation
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible"  // No way to declare as PolyDet!?: internedIntegers
+  })
   @Pure
   public static @Interned Integer intern(Integer a) {
     WeakReference<@Interned Integer> lookup = internedIntegers.get(a);
@@ -614,7 +609,9 @@ public final class Intern {
   // TODO: JLS 5.1.7 requires that the boxing conversion interns integer
   // values between -128 and 127 (and Long.valueOf is intended to promise
   // the same).  This could take advantage of that.
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock",
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible"  // No way to declare as PolyDet!?: internedLongs
+  })
   @Pure
   public static @Interned Long intern(Long a) {
     WeakReference<@Interned Long> lookup = internedLongs.get(a);
@@ -662,25 +659,27 @@ public final class Intern {
    * @param a the array to canonicalize
    * @return a canonical representation for the int[] array
    */
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock",
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedIntArrays
+  })
   @Pure
-  public static int @Interned @PolyValue @SameLen("#1") [] intern(int @PolyValue [] a) {
+  public static int @Interned @PolyValue @SameLen("#1") [] intern(@PolyDet("use") int @PolyValue [] a) {
     // Throwable stack = new Throwable("debug traceback");
     // stack.fillInStackTrace();
     // stack.printStackTrace();
 
-    WeakReference<int @Interned []> lookup = internedIntArrays.get(a);
+    WeakReference<@PolyDet("use") int @Interned @PolyDet[]> lookup = internedIntArrays.get(a);
     @SuppressWarnings({
       "samelen:assignment.type.incompatible", // for this map, get() can be annotated as
       // @SameLen("#1")
       "value" // for this map, get() can be annotated as @PolyAll (except not interning); also see
       // https://github.com/kelloggm/checker-framework/issues/177
     })
-    int @PolyValue @SameLen("a") [] result1 = (lookup != null) ? lookup.get() : null;
+    @PolyDet("use") int @PolyValue @SameLen("a") @PolyDet[] result1 = (lookup != null) ? lookup.get() : null;
     if (result1 != null) {
       return result1;
     } else {
-      @Interned int[] result = (int @Interned @PolyValue []) a;
+      @PolyDet("use") @Interned int @PolyDet[] result = (@PolyDet("use") int @Interned @PolyValue @PolyDet[]) a;
       internedIntArrays.put(result, new WeakReference<>(result));
       return result;
     }
@@ -693,23 +692,25 @@ public final class Intern {
    * @param a the array to canonicalize
    * @return a canonical representation for the long[] array
    */
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock",
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedLongArrays
+  })
   @Pure
-  public static long @Interned @PolyValue @SameLen("#1") [] intern(long @PolyValue [] a) {
+  public static @PolyDet("use") long @Interned @PolyValue @SameLen("#1") @PolyDet[] intern(@PolyDet("use") long @PolyValue @PolyDet[] a) {
     // System.out.printf("intern %s %s long[] %s%n", a.getClass(),
     //                   a, Arrays.toString (a));
-    WeakReference<long @Interned []> lookup = internedLongArrays.get(a);
+    WeakReference<@PolyDet("use") long @Interned @PolyDet[]> lookup = internedLongArrays.get(a);
     @SuppressWarnings({
       "samelen:assignment.type.incompatible", // for this map, get() can be annotated as
       // @SameLen("#1")
       "value" // for this map, get() can be annotated as @PolyAll (except not interning); also see
       // https://github.com/kelloggm/checker-framework/issues/177
     })
-    long @PolyValue @SameLen("a") [] result1 = (lookup != null) ? lookup.get() : null;
+    @PolyDet("use") long @PolyValue @SameLen("a") @PolyDet[] result1 = (lookup != null) ? lookup.get() : null;
     if (result1 != null) {
       return result1;
     } else {
-      @Interned long[] result = (long @Interned @PolyValue []) a;
+      @PolyDet("use") @Interned long @PolyDet[] result = (@PolyDet("use") long @Interned @PolyValue @PolyDet[]) a;
       internedLongArrays.put(result, new WeakReference<>(result));
       return result;
     }
@@ -724,7 +725,9 @@ public final class Intern {
   // TODO: JLS 5.1.7 requires that the boxing conversion interns integer
   // values between -128 and 127 (and Double.valueOf is intended to promise
   // the same).  This could take advantage of that.
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock",
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible"  // No way to declare as PolyDet!?: internedDoubles
+  })
   @Pure
   public static @Interned Double intern(Double a) {
     // Double.NaN == Double.Nan  always evaluates to false.
@@ -780,21 +783,23 @@ public final class Intern {
    * @param a the array to canonicalize
    * @return a canonical representation for the double[] array
    */
-  @SuppressWarnings({"interning", "allcheckers:purity", "lock", "determinism"})
+  @SuppressWarnings({"interning", "allcheckers:purity", "lock",
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedDoubleArrays
+  })
   @Pure
-  public static double @Interned @PolyValue @SameLen("#1") [] intern(double @PolyValue [] a) {
-    WeakReference<double @Interned []> lookup = internedDoubleArrays.get(a);
+  public static @PolyDet("use") double @Interned @PolyValue @SameLen("#1") @PolyDet[] intern(@PolyDet("use") double @PolyValue @PolyDet[] a) {
+    WeakReference<@PolyDet("use") double @Interned @PolyDet[]> lookup = internedDoubleArrays.get(a);
     @SuppressWarnings({
       "samelen:assignment.type.incompatible", // for this map, get() can be annotated as
       // @SameLen("#1")
       "value" // for this map, get() can be annotated as @PolyAll (except not interning); also see
       // https://github.com/kelloggm/checker-framework/issues/177
     })
-    double @PolyValue @SameLen("a") [] result1 = (lookup != null) ? lookup.get() : null;
+    @PolyDet("use") double @PolyValue @SameLen("a") @PolyDet[] result1 = (lookup != null) ? lookup.get() : null;
     if (result1 != null) {
       return result1;
     } else {
-      @Interned double[] result = (double @Interned @PolyValue []) a;
+      @PolyDet("use") @Interned double @PolyDet[] result = (@PolyDet("use") double @Interned @PolyValue @PolyDet[]) a;
       internedDoubleArrays.put(result, new WeakReference<>(result));
       return result;
     }
@@ -816,11 +821,11 @@ public final class Intern {
     "lock",
     // Error Prone Warnings
     "ReferenceEquality",
-          "determinism"
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible" // No way to declare as PolyDet!?: internedStringArrays
   }) // cast is redundant (except in JSR 308)
   @Pure
-  public static @PolyNull @Interned String @Interned @PolyValue @SameLen("#1") [] intern(
-      @PolyNull @Interned String @PolyValue [] a) {
+  public static @PolyDet("use") @PolyNull @Interned String @Interned @PolyValue @SameLen("#1") [] intern(
+          @PolyDet("use") @PolyNull @Interned String @PolyValue [] a) {
 
     // Make sure each element is already interned
     if (assertsEnabled) {
@@ -831,10 +836,10 @@ public final class Intern {
       }
     }
 
-    WeakReference<@Nullable @Interned String @Interned []> lookup = internedStringArrays.get(a);
-    @Nullable @Interned String @Interned [] result = (lookup != null) ? lookup.get() : null;
+    WeakReference<@PolyDet("use") @Nullable @Interned String @Interned @PolyDet[]> lookup = internedStringArrays.get(a);
+    @PolyDet("use") @Nullable @Interned String @Interned @PolyDet[] result = (lookup != null) ? lookup.get() : null;
     if (result == null) {
-      result = (@Nullable @Interned String @Interned []) a;
+      result = (@PolyDet("use") @Nullable @Interned String @Interned @PolyDet[]) a;
       internedStringArrays.put(result, new WeakReference<>(result));
     }
     @SuppressWarnings({
@@ -845,7 +850,7 @@ public final class Intern {
       "value" // for this map, get() can be annotated as @PolyAll (except not interning); also see
       // https://github.com/kelloggm/checker-framework/issues/177
     })
-    @PolyNull @Interned String @Interned @PolyValue @SameLen("a") [] polyresult = result;
+    @PolyDet("use") @PolyNull @Interned String @Interned @PolyValue @SameLen("a") @PolyDet[] polyresult = result;
     return polyresult;
   }
 
@@ -862,15 +867,15 @@ public final class Intern {
     "allcheckers:purity",
     "lock",
     "cast",
-          "determinism"
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedObjectArrays
   }) // cast is redundant (except in JSR 308)
   @Pure
-  public static @PolyNull @Interned Object @Interned @PolyValue @SameLen("#1") [] intern(
-      @PolyNull @Interned @PolyValue Object[] a) {
-    WeakReference<@Nullable @Interned Object @Interned []> lookup = internedObjectArrays.get(a);
-    @Nullable @Interned Object @Interned [] result = (lookup != null) ? lookup.get() : null;
+  public static @PolyDet("use") @PolyNull @Interned Object @Interned @PolyValue @SameLen("#1") @PolyDet[] intern(
+          @PolyDet("use") @PolyNull @Interned @PolyValue Object @PolyDet[] a) {
+    WeakReference<@PolyDet("use") @Nullable @Interned Object @Interned @PolyDet[]> lookup = internedObjectArrays.get(a);
+    @PolyDet("use") @Nullable @Interned Object @Interned @PolyDet[] result = (lookup != null) ? lookup.get() : null;
     if (result == null) {
-      result = (@Nullable @Interned Object @Interned []) a;
+      result = (@PolyDet("use") @Nullable @Interned Object @Interned @PolyDet[]) a;
       internedObjectArrays.put(result, new WeakReference<>(result));
     }
     @SuppressWarnings({
@@ -881,7 +886,7 @@ public final class Intern {
       "value" // for this map, get() can be annotated as @PolyAll (except not interning); also see
       // https://github.com/kelloggm/checker-framework/issues/177
     }) // PolyNull/PolyValue:  value = parameter a, so same type & nullness as for parameter a
-    @PolyNull @Interned Object @Interned @PolyValue @SameLen("a") [] polyresult = result;
+    @PolyDet("use") @PolyNull @Interned Object @Interned @PolyValue @SameLen("a") @PolyDet[] polyresult = result;
     return polyresult;
   }
 
@@ -970,23 +975,25 @@ public final class Intern {
    * @return a subsequence of seq from start to end that is interned
    * @see #internSubsequence(int[], int, int)
    */
-  @SuppressWarnings({"allcheckers:purity", "lock", "determinism"}) // interning logic
+  @SuppressWarnings({"allcheckers:purity", "lock",
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedLongSubsequence
+  }) // interning logic
   @Pure
-  public static long @Interned [] internSubsequence(
-      long @Interned [] seq,
+  public static @PolyDet("use") long @Interned @PolyDet[] internSubsequence(
+          @PolyDet("use") long @Interned @PolyDet[] seq,
       @IndexFor("#1") @LessThan("#3") int start,
       @NonNegative @LTLengthOf(value = "#1", offset = "#2 - 1") int end) {
     if (assertsEnabled && !Intern.isInterned(seq)) {
       throw new IllegalArgumentException();
     }
-    Subsequence<long @Interned []> sai = new Subsequence<>(seq, start, end);
-    WeakReference<long @Interned []> lookup = internedLongSubsequence.get(sai);
-    long[] result1 = (lookup != null) ? lookup.get() : null;
+    Subsequence<@PolyDet("use") long @Interned @PolyDet[]> sai = new Subsequence<>(seq, start, end);
+    WeakReference<@PolyDet("use") long @Interned @PolyDet[]> lookup = internedLongSubsequence.get(sai);
+    @PolyDet("use") long @PolyDet[] result1 = (lookup != null) ? lookup.get() : null;
     if (result1 != null) {
       return result1;
     } else {
-      long[] subseq_uninterned = ArraysPlume.subarray(seq, start, end - start);
-      long @Interned [] subseq = Intern.intern(subseq_uninterned);
+      @PolyDet("use") long @PolyDet[] subseq_uninterned = ArraysPlume.subarray(seq, start, end - start);
+      @PolyDet("use") long @Interned @PolyDet[] subseq = Intern.intern(subseq_uninterned);
       internedLongSubsequence.put(sai, new WeakReference<>(subseq));
       return subseq;
     }
@@ -1001,23 +1008,25 @@ public final class Intern {
    * @return a subsequence of seq from start to end that is interned
    * @see #internSubsequence(int[], int, int)
    */
-  @SuppressWarnings({"allcheckers:purity", "lock", "determinism"}) // interning logic
+  @SuppressWarnings({"allcheckers:purity", "lock",
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedDoubleSubsequence
+  }) // interning logic
   @Pure
-  public static double @Interned [] internSubsequence(
-      double @Interned [] seq,
+  public static @PolyDet("use") double @Interned @PolyDet[] internSubsequence(
+          @PolyDet("use") double @Interned @PolyDet[] seq,
       @IndexFor("#1") @LessThan("#3") int start,
       @NonNegative @LTLengthOf(value = "#1", offset = "#2 - 1") int end) {
     if (assertsEnabled && !Intern.isInterned(seq)) {
       throw new IllegalArgumentException();
     }
-    Subsequence<double @Interned []> sai = new Subsequence<>(seq, start, end);
-    WeakReference<double @Interned []> lookup = internedDoubleSubsequence.get(sai);
-    double[] result1 = (lookup != null) ? lookup.get() : null;
+    Subsequence<@PolyDet("use") double @Interned @PolyDet[]> sai = new Subsequence<>(seq, start, end);
+    WeakReference<@PolyDet("use") double @Interned @PolyDet[]> lookup = internedDoubleSubsequence.get(sai);
+    @PolyDet("use") double @PolyDet[] result1 = (lookup != null) ? lookup.get() : null;
     if (result1 != null) {
       return result1;
     } else {
-      double[] subseq_uninterned = ArraysPlume.subarray(seq, start, end - start);
-      double @Interned [] subseq = Intern.intern(subseq_uninterned);
+      @PolyDet("use") double @PolyDet[] subseq_uninterned = ArraysPlume.subarray(seq, start, end - start);
+      @PolyDet("use") double @Interned @PolyDet[] subseq = Intern.intern(subseq_uninterned);
       internedDoubleSubsequence.put(sai, new WeakReference<>(subseq));
       return subseq;
     }
@@ -1032,26 +1041,28 @@ public final class Intern {
    * @return a subsequence of seq from start to end that is interned
    * @see #internSubsequence(int[], int, int)
    */
-  @SuppressWarnings({"allcheckers:purity", "lock", "determinism"}) // interning logic
+  @SuppressWarnings({"allcheckers:purity", "lock",
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedObjectSubsequence
+  }) // interning logic
   @Pure
-  public static @PolyNull @Interned Object @Interned [] internSubsequence(
-      @PolyNull @Interned Object @Interned [] seq,
+  public static @PolyDet("use") @PolyNull @Interned Object @Interned @PolyDet[] internSubsequence(
+          @PolyDet("use") @PolyNull @Interned Object @Interned @PolyDet[] seq,
       @IndexFor("#1") @LessThan("#3") int start,
       @NonNegative @LTLengthOf(value = "#1", offset = "#2 - 1") int end) {
     if (assertsEnabled && !Intern.isInterned(seq)) {
       throw new IllegalArgumentException();
     }
-    Subsequence<@PolyNull @Interned Object @Interned []> sai =
+    Subsequence<@PolyDet("use") @PolyNull @Interned Object @Interned @PolyDet[]> sai =
         new Subsequence<@PolyNull @Interned Object @Interned []>(seq, start, end);
     @SuppressWarnings("nullness") // same nullness as key
-    WeakReference<@PolyNull @Interned Object @Interned []> lookup =
+    WeakReference<@PolyDet("use") @PolyNull @Interned Object @Interned @PolyDet[]> lookup =
         internedObjectSubsequence.get(sai);
-    @PolyNull @Interned Object[] result1 = (lookup != null) ? lookup.get() : null;
+    @PolyDet("use") @PolyNull @Interned Object @PolyDet[] result1 = (lookup != null) ? lookup.get() : null;
     if (result1 != null) {
       return result1;
     } else {
-      @PolyNull @Interned Object[] subseq_uninterned = ArraysPlume.subarray(seq, start, end - start);
-      @PolyNull @Interned Object @Interned [] subseq = Intern.intern(subseq_uninterned);
+      @PolyDet("use") @PolyNull @Interned Object @PolyDet[] subseq_uninterned = ArraysPlume.subarray(seq, start, end - start);
+      @PolyDet("use") @PolyNull @Interned Object @Interned @PolyDet[] subseq = Intern.intern(subseq_uninterned);
       @SuppressWarnings({"nullness", "UnusedVariable"}) // safe because map does no side effects
       Object
           ignore = // assignment just so there is a place to hang the @SuppressWarnings annotation
@@ -1070,25 +1081,27 @@ public final class Intern {
    * @see #internSubsequence(int[], int, int)
    */
   @Pure
-  @SuppressWarnings({"allcheckers:purity", "lock", "determinism"}) // interning logic
-  public static @PolyNull @Interned String @Interned [] internSubsequence(
-      @PolyNull @Interned String @Interned [] seq,
+  @SuppressWarnings({"allcheckers:purity", "lock",
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // No way to declare as PolyDet!?: internedStringSubsequence
+  }) // interning logic
+  public static @PolyDet("use") @PolyNull @Interned String @Interned @PolyDet[] internSubsequence(
+          @PolyDet("use") @PolyNull @Interned String @Interned @PolyDet[] seq,
       @IndexFor("#1") @LessThan("#3") int start,
       @NonNegative @LTLengthOf(value = "#1", offset = "#2 - 1") int end) {
     if (assertsEnabled && !Intern.isInterned(seq)) {
       throw new IllegalArgumentException();
     }
-    Subsequence<@PolyNull @Interned String @Interned []> sai =
+    Subsequence<@PolyDet("use") @PolyNull @Interned String @Interned @PolyDet[]> sai =
         new Subsequence<@PolyNull @Interned String @Interned []>(seq, start, end);
     @SuppressWarnings("nullness") // same nullness as key
-    WeakReference<@PolyNull @Interned String @Interned []> lookup =
+    WeakReference<@PolyDet("use") @PolyNull @Interned String @Interned @PolyDet[]> lookup =
         internedStringSubsequence.get(sai);
-    @PolyNull @Interned String[] result1 = (lookup != null) ? lookup.get() : null;
+    @PolyDet("use") @PolyNull @Interned String @PolyDet[] result1 = (lookup != null) ? lookup.get() : null;
     if (result1 != null) {
       return result1;
     } else {
-      @PolyNull @Interned String[] subseq_uninterned = ArraysPlume.subarray(seq, start, end - start);
-      @PolyNull @Interned String @Interned [] subseq = Intern.intern(subseq_uninterned);
+      @PolyDet("use") @PolyNull @Interned String @PolyDet[] subseq_uninterned = ArraysPlume.subarray(seq, start, end - start);
+      @PolyDet("use") @PolyNull @Interned String @Interned @PolyDet[] subseq = Intern.intern(subseq_uninterned);
       @SuppressWarnings({"nullness", "UnusedVariable"}) // safe because map does no side effects
       Object
           ignore = // assignment just so there is a place to hang the @SuppressWarnings annotation
@@ -1155,15 +1168,14 @@ public final class Intern {
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public int hashCode(@GuardSatisfied Subsequence<T> this) {
+    public @NonDet int hashCode(@GuardSatisfied Subsequence<T> this) {
       return seq.hashCode() + start * 30 - end * 2;
     }
 
     // For debugging
     @SideEffectFree
     @Override
-    public String toString(@GuardSatisfied Subsequence<T> this) {
+    public @NonDet String toString(@GuardSatisfied Subsequence<T> this) {
       return "SAI(" + start + "," + end + ") from: " + ArraysPlume.toString(seq);
     }
   }
@@ -1185,8 +1197,7 @@ public final class Intern {
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")
-    public int hashCode(Object o) {
+    public @NonDet int hashCode(Object o) {
       return o.hashCode();
     }
   }

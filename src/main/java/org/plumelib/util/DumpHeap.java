@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.determinism.qual.*;
 
 /** Defines a method {@link #dumpHeap} that dumps the heap to an .hprof file. */
 public class DumpHeap {
@@ -15,7 +16,7 @@ public class DumpHeap {
    * The HotSpot Diagnostic MBean. Its type is Object, in case HotSpotDiagnosticMXBean is not
    * available at compile time.
    */
-  private static volatile @MonotonicNonNull Object hotspotMBean;
+  private static volatile @NonDet @MonotonicNonNull Object hotspotMBean;
 
   /** The method com.sun.management.HotSpotDiagnosticMXBean#dumpHeap. */
   private static @MonotonicNonNull Method dumpHeapMethod;
@@ -23,8 +24,7 @@ public class DumpHeap {
   /** Initialize the fields of this class. */
   @SuppressWarnings({
     "nullness:assignment.type.incompatible",
-    "nullness:contracts.postcondition.not.satisfied",
-          "determinism:assignment.type.incompatible"
+    "nullness:contracts.postcondition.not.satisfied"
   }) // reflection
   @EnsuresNonNull({"hotspotMBean", "dumpHeapMethod"})
   private static synchronized void initializeFields() {
