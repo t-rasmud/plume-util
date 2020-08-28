@@ -382,7 +382,7 @@ public class EntryReader extends LineNumberReader implements Iterable<String>, I
    * @param reader source from which to read entries
    * @see #EntryReader(Reader,String,String,String)
    */
-  @SuppressWarnings("determinism:this.invocation.invalid")  // type of 'this' is NonDet
+  @SuppressWarnings("determinism:this.invocation.invalid")  // Cannot declare as PolyDet: type of 'this' is NonDet
   public EntryReader(Reader reader) {
     this(reader, reader.toString(), null, null);
   }

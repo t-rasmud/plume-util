@@ -637,8 +637,8 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     private @Nullable Entry<K, V> next;
 
     /** Create new entry. */
-    @SuppressWarnings({"determinism:super.invocation.invalid", // type of 'super' is NonDet
-            "determinism:assignment.type.incompatible"  // type of 'hash' is Det, not PolyDet
+    @SuppressWarnings({"determinism:super.invocation.invalid", // Cannot declare as PolyDet: type of 'super' is NonDet
+            "determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: type of 'hash' is Det
     })
     Entry(K key, V value, ReferenceQueue<K> queue, int hash, Entry<K, V> next) {
       super(key, queue);
@@ -656,13 +656,13 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare value as PolyDet
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: value
     public @PolyDet V getValue() {
       return value;
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare value as PolyDet
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: value
     public @PolyDet V setValue(V newValue) {
       V oldValue = value;
       value = newValue;
@@ -824,13 +824,13 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:method.invocation.invalid")  // type of 'WeakIdentityHashMap' is Det, not PolyDet
+    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakIdentityHashMap' is Det
     public @PolyDet("down") boolean contains(@Nullable Object o) {
       return containsKey(o);
     }
 
     @Override
-    @SuppressWarnings("determinism:method.invocation.invalid")  // type of 'WeakIdentityHashMap' is Det, not PolyDet
+    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakIdentityHashMap' is Det
     public @PolyDet("down") boolean remove(@Nullable Object o) {
       if (containsKey(o)) {
         WeakIdentityHashMap.this.remove(o);
@@ -892,7 +892,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:method.invocation.invalid")  // type of 'WeakIdentityHashMap' is Det, not PolyDet
+    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakIdentityHashMap' is Det
     public @PolyDet("down") boolean contains(@Nullable Object o) {
       return containsValue(o);
     }
@@ -1007,20 +1007,20 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare 'key' as PolyDet
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: key
     public @PolyDet K getKey() {
       return key;
     }
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare 'value' as PolyDet
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: value
     public @PolyDet V getValue() {
       return value;
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare 'value' as PolyDet
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: value
     public @PolyDet V setValue(V value) {
       V oldValue = this.value;
       this.value = value;

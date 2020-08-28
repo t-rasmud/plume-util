@@ -83,7 +83,7 @@ public class RandomSelector<T> {
    * @param numElts the number of elements intended to be selected from the input elements
    *     <p>Sets 'numElts' = numElts
    */
-  @SuppressWarnings("determinism:this.invocation.invalid")  // type of 'this' is NonDet
+  @SuppressWarnings("determinism:this.invocation.invalid")  // Cannot declare as PolyDet: type of 'this' is NonDet
   public RandomSelector(int numElts) {
     this(numElts, new Random());
   }

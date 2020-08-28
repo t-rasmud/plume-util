@@ -52,7 +52,7 @@ public class MultiRandSelector<T> {
    * @param numElts the number of elements to select from each bucket
    * @param eq partioner that determines how to partition the objects
    */
-  @SuppressWarnings("determinism:this.invocation.invalid")  // type if 'this' is NonDet
+  @SuppressWarnings("determinism:this.invocation.invalid")  // Cannot declare as PolyDet: type of 'this' is NonDet
   public MultiRandSelector(int numElts, Partitioner<T, T> eq) {
     this(numElts, new Random(), eq);
   }
@@ -63,7 +63,7 @@ public class MultiRandSelector<T> {
    * @param keepProbability the likelihood to select each element.
    * @param eq partioner that determines how to partition the objects
    */
-  @SuppressWarnings("determinism:this.invocation.invalid")  // type if 'this' is NonDet
+  @SuppressWarnings("determinism:this.invocation.invalid")  // Cannot declare as PolyDet: type of 'this' is NonDet
   public MultiRandSelector(double keepProbability, Partitioner<T, T> eq) {
     this(keepProbability, new Random(), eq);
   }
