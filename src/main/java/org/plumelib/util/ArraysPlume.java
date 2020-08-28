@@ -1731,7 +1731,7 @@ public final class ArraysPlume {
      *
      * @return the least upper bound of the classes of the elements of this
      */
-    @SuppressWarnings("determinism:argument.type.incompatible")  // Cannot declare as PolyDet: theList
+    @SuppressWarnings("determinism:argument.type.incompatible")  // Cannot declare as PolyDet: theList and theArray; fields in a static class
     @Nullable @NonDet Class<?> leastUpperBound() {
       if (theArray != null) {
         return ReflectionPlume.leastUpperBound(theArray);

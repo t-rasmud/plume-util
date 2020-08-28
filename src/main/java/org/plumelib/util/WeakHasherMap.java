@@ -146,7 +146,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
     private int hash; /* Hashcode of key, stored here since the key
 				   may be tossed by the GC */
 
-    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakHasherMap' is Det
+    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakHasherMap' is Det; Det checker doesn't add default for outer class receiver
     private WeakKey(@PolyDet K k) {
       super(k);
       hash = keyHashCode(k);
@@ -157,7 +157,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
       else return new @PolyDet WeakKey(k);
     }
 
-    @SuppressWarnings({"determinism:method.invocation.invalid"})  // Cannot declare as PolyDet: type of 'WeakHasherMap' is Det
+    @SuppressWarnings({"determinism:method.invocation.invalid"})  // Cannot declare as PolyDet: type of 'WeakHasherMap' is Det; Det checker doesn't add default for outer class receiver
     private WeakKey(@PolyDet K k, ReferenceQueue<? super K> q) {
       super(k, q);
       hash = keyHashCode(k);
@@ -174,7 +174,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
     @Override
 
     @SuppressWarnings({"determinism:return.type.incompatible",  // keyEquals returns NonDet
-            "determinism:method.invocation.invalid"   // Cannot declare as PolyDet: type of 'this' is NonDet
+            "determinism:method.invocation.invalid"   // Cannot declare as PolyDet: type of 'this' is NonDet; Det checker doesn't add default for outer class receiver
     })
     public boolean equals(@Nullable Object o) {
       if (o == null) return false; // never happens
@@ -369,7 +369,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: key
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: key; Det checker doesn't recognize PolyDet upper bounds (https://github.com/t-rasmud/checker-framework/issues/136)
     public @PolyDet K getKey() {
       return key;
     }
@@ -408,7 +408,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
     @Override
 
     @SuppressWarnings({"determinism:return.type.incompatible",  // keyHashCode returns NonDet
-            "determinism:method.invocation.invalid"  // Cannot declare as PolyDet: key
+            "determinism:method.invocation.invalid"  // Cannot declare as PolyDet: key; Det checker doesn't recognize PolyDet upper bounds (https://github.com/t-rasmud/checker-framework/issues/136)
     })
     public int hashCode() {
       V v;

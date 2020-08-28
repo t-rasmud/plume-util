@@ -946,7 +946,7 @@ public final class Intern {
    * @return a subsequence of seq from start to end that is interned
    */
   @SuppressWarnings({"determinism:invalid.array.component.type",  // null is treated as Det (array invariance)
-          "determinism:argument.type.incompatible","determinism:return.type.incompatible","determinism:method.invocation.invalid"  // Cannot declare as PolyDet: internedIntSubsequence
+          "determinism:argument.type.incompatible","determinism:return.type.incompatible","determinism:method.invocation.invalid"  // Cannot declare as PolyDet: internedIntSubsequence; PolyDet on a static field is illegal
   })
   public static int @Interned [] internSubsequence(
       int @Interned [] seq,
