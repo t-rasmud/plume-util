@@ -105,7 +105,7 @@ public class WeakIdentityPair<T1 extends Object, T2 extends Object> {
     }
     // generics are not checked at run time!
     @SuppressWarnings({"unchecked",
-            "determinism:invariant.cast.unsafe"  // Casting: from Object to WeakIdentityPair
+            "determinism:invariant.cast.unsafe"  // Casting from Object: to WeakIdentityPair
     })
     WeakIdentityPair<T1, T2> other = (WeakIdentityPair<T1, T2>) obj;
 
