@@ -206,7 +206,7 @@ public class LimitedSizeIntSet implements Serializable, Cloneable {
 
   @SuppressWarnings(
           {"allcheckers:purity.not.sideeffectfree.assign.field",  // side effect to local state (clone)
-                  "determinism:invariant.cast.unsafe"  // casting from Object to LimitedSizeIntSet
+                  "determinism:invariant.cast.unsafe"  // Casting: from Object to LimitedSizeIntSet
           })
   @SideEffectFree
   @Override

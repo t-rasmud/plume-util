@@ -430,7 +430,7 @@ public final class WeakHasherMap<K, V> extends AbstractMap<K, V> implements Map<
         Map.Entry<K, V> next = null;
 
         @Override
-        @SuppressWarnings("determinism:cast.unsafe.constructor.invocation")  // Casting invariant 'Entry'
+        @SuppressWarnings("determinism:cast.unsafe.constructor.invocation")  // Casting: invariant 'Entry'
         public @PolyDet("down") boolean hasNext() {
           while (hashIterator.hasNext()) {
             Map.Entry<WeakKey, V> ent = hashIterator.next();
