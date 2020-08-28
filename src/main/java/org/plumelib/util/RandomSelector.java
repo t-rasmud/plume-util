@@ -121,7 +121,7 @@ public class RandomSelector<T> {
    *
    * @param next value to be added to this selector
    */
-  @SuppressWarnings("determinism:method.invocation.invalid")  // Adding NonDet Integers to 'values' (expected behavior)
+  @SuppressWarnings("determinism:method.invocation.invalid")  // Randomness (expected behavior): Adding NonDet Integers to 'values'
   public void accept(@PolyDet T next) {
 
     // if we are in coin toss mode, then we want to keep
