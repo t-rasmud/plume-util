@@ -1465,14 +1465,14 @@ public final class UtilPlume {
    *     order
    */
   @Deprecated // use join(CharSequence, Object...) which has the arguments in the other order
-  public static <T> @PolyDet("up") String join(T[] a, CharSequence delim) {
+  public static <T extends @PolyDet Object> @PolyDet("up") String join(T @PolyDet [] a, @PolyDet CharSequence delim) {
     if (a.length == 0) {
       return "";
     }
     if (a.length == 1) {
       return String.valueOf(a[0]);
     }
-    StringBuilder sb = new StringBuilder(String.valueOf(a[0]));
+    StringBuilder sb = new @PolyDet("up") StringBuilder(String.valueOf(a[0]));
     for (int i = 1; i < a.length; i++) {
       sb.append(delim).append(a[i]);
     }
@@ -1537,7 +1537,7 @@ public final class UtilPlume {
    *     order
    */
   @Deprecated // use join(CharSequence, Iterable) which has the arguments in the other order
-  public static String join(Iterable<?> v, CharSequence delim) {
+  public static @PolyDet("up") String join(@PolyDet Iterable<?> v, @PolyDet CharSequence delim) {
     @PolyDet StringBuilder sb = new @PolyDet StringBuilder();
     boolean first = true;
     Iterator<?> itor = v.iterator();
@@ -1564,7 +1564,7 @@ public final class UtilPlume {
    * @return the concatenation of the string representations of the values, with the delimiter
    *     between
    */
-  public static String join(CharSequence delim, Iterable<?> v) {
+  public static @PolyDet("up") String join(@PolyDet CharSequence delim, @PolyDet Iterable<? extends @PolyDet Object> v) {
     @PolyDet StringBuilder sb = new @PolyDet StringBuilder();
     boolean first = true;
     Iterator<?> itor = v.iterator();
@@ -1587,7 +1587,7 @@ public final class UtilPlume {
    * @param v list of values to concatenate
    * @return the concatenation of the string representations of the values, each on its own line
    */
-  public static String joinLines(Iterable<?> v) {
+  public static @PolyDet("up") String joinLines(Iterable<? extends @PolyDet Object> v) {
     return join(lineSep, v);
   }
 
