@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.checkerframework.checker.determinism.qual.*;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.determinism.qual.*;
 
 /** Graph utility methods. This class does not model a graph: all methods are static. */
 public final class GraphPlume {
