@@ -867,7 +867,7 @@ public final class Intern {
     "allcheckers:purity",
     "lock",
     "cast",
-          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  //  Cannot declare as PolyDet: internedObjectArrays; PolyDet on a static field is illegal
+          "determinism:method.invocation.invalid","determinism:argument.type.incompatible","determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: internedObjectArrays; PolyDet on a static field is illegal
   }) // cast is redundant (except in JSR 308)
   @Pure
   public static @PolyDet("use") @PolyNull @Interned Object @Interned @PolyValue @SameLen("#1") @PolyDet[] intern(
