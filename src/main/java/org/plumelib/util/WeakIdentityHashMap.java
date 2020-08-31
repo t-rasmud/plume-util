@@ -23,6 +23,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * This class combines the features of {@link java.util.WeakHashMap} and {@link
@@ -625,8 +626,8 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
     private @Nullable Entry<K, V> next;
 
     /** Create new entry. */
-    @SuppressWarnings({"determinism:super.invocation.invalid", // Cannot declare as PolyDet: type of 'super' is NonDet
-            "determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: type of 'hash' is Det
+    @SuppressWarnings({"determinism:super.invocation.invalid", // Cannot declare as PolyDet: type of 'super' is NonDet; CF doesn't provide a way to annotate 'super'?
+            "determinism:assignment.type.incompatible"  // Cannot declare as PolyDet: type of 'hash' is Det; field in a static class
     })
     Entry(K key, V value, ReferenceQueue<K> queue, int hash, Entry<K, V> next) {
       super(key, queue);
@@ -643,14 +644,14 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'value'
-    public V getValue() {
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'value'; field in a static class
+    public @PolyDet V getValue() {
       return value;
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'value'
-    public V setValue(V newValue) {
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'value'; field in a static class
+    public @PolyDet V setValue(V newValue) {
       V oldValue = value;
       value = newValue;
       return oldValue;
@@ -811,14 +812,14 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakIdentityHashMap' is Det
-    public boolean contains(@Nullable Object o) {
+    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakIdentityHashMap' is Det; Det checker doesn't add default for outer class receiver
+    public @PolyDet("down") boolean contains(@Nullable Object o) {
       return containsKey(o);
     }
 
     @Override
-    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakIdentityHashMap' is Det
-    public boolean remove(@Nullable Object o) {
+    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakIdentityHashMap' is Det; Det checker doesn't add default for outer class receiver
+    public @PolyDet("down") boolean remove(@Nullable Object o) {
       if (containsKey(o)) {
         WeakIdentityHashMap.this.remove(o);
         return true;
@@ -878,8 +879,8 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakIdentityHashMap' is Det
-    public boolean contains(@Nullable Object o) {
+    @SuppressWarnings("determinism:method.invocation.invalid")  // Cannot declare as PolyDet: type of 'WeakIdentityHashMap' is Det; Det checker doesn't add default for outer class receiver
+    public @PolyDet("down") boolean contains(@Nullable Object o) {
       return containsValue(o);
     }
 
@@ -983,7 +984,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
       this.value = value;
     }
 
-    @SuppressWarnings("determinism:assignment.type.incompatible")  // Cannot declare as PolyDet: 'key' and 'value'
+    @SuppressWarnings("determinism:assignment.type.incompatible")  // Cannot declare as PolyDet: 'key' and 'value'; fields in a static class
     public OurSimpleEntry(Map.Entry<K, V> e) {
       this.key = e.getKey();
       this.value = e.getValue();
@@ -991,21 +992,21 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'key'
-    public K getKey() {
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'key'; field in a static class
+    public @PolyDet K getKey() {
       return key;
     }
 
     @Pure
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'value'
-    public V getValue() {
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'value'; field in a static class
+    public @PolyDet V getValue() {
       return value;
     }
 
     @Override
-    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'value'
-    public V setValue(V value) {
+    @SuppressWarnings("determinism:return.type.incompatible")  // Cannot declare as PolyDet: 'value'; field in a static class
+    public @PolyDet V setValue(V value) {
       V oldValue = this.value;
       this.value = value;
       return oldValue;
