@@ -1731,7 +1731,7 @@ public final class ArraysPlume {
      *
      * @return the least upper bound of the classes of the elements of this
      */
-    @SuppressWarnings("determinism:argument.type.incompatible")  // Cannot assign invariant PolyDet collection to another PolyDet collection(theArray and theList)
+    @SuppressWarnings("determinism:argument.type.incompatible")  // Cannot assign List<T extends @NonDet Object> to List<? extends @Det Object> (theList)
     @Nullable @NonDet Class<?> leastUpperBound() {
       if (theArray != null) {
         return ReflectionPlume.leastUpperBound(theArray);
