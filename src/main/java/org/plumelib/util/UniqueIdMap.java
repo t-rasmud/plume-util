@@ -1,6 +1,7 @@
 package org.plumelib.util;
 
 import java.util.concurrent.atomic.AtomicLong;
+import org.checkerframework.checker.determinism.qual.*;
 
 /**
  * Provides a unique ID for classes that you cannot modify. The unique ID is useful because it makes
@@ -15,7 +16,7 @@ public class UniqueIdMap<E> {
   private final AtomicLong nextUid = new AtomicLong(0);
 
   /** A mapping from objects to their IDs. */
-  private WeakIdentityHashMap<E, Long> map = new WeakIdentityHashMap<>();
+  private @Det WeakIdentityHashMap<@Det E, @Det Long> map = new WeakIdentityHashMap<>();
 
   /**
    * Get the unique ID for the given object. If the object's ID has not been previously requested, a
@@ -24,7 +25,8 @@ public class UniqueIdMap<E> {
    * @param object the object to get a unique ID for
    * @return the unique ID for the given object
    */
-  public long get(E object) {
+  @SuppressWarnings("determinism:argument.type.incompatible") // mappings are deterministic
+  public @PolyDet long get(@PolyDet E object) {
     Long id = map.get(object);
     if (id != null) {
       return id;

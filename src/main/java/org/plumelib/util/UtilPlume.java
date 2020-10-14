@@ -46,6 +46,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import org.checkerframework.checker.determinism.qual.*;
 import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.checkerframework.checker.index.qual.NonNegative;
@@ -55,7 +56,6 @@ import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-import org.checkerframework.checker.determinism.qual.*;
 
 /** Utility functions that do not belong elsewhere in the plume package. */
 public final class UtilPlume {
@@ -497,7 +497,9 @@ public final class UtilPlume {
       return Files.newBufferedWriter(
           Paths.get(filename),
           UTF_8,
-          append ? new @PolyDet("use") StandardOpenOption @PolyDet[] {CREATE, APPEND} : new @PolyDet("use") StandardOpenOption @PolyDet[] {CREATE});
+          append
+              ? new @PolyDet("use") StandardOpenOption @PolyDet [] {CREATE, APPEND}
+              : new @PolyDet("use") StandardOpenOption @PolyDet [] {CREATE});
     }
   }
 
@@ -1305,7 +1307,7 @@ public final class UtilPlume {
    * @param to output stream
    */
   public static void streamCopy(InputStream from, OutputStream to) {
-    @PolyDet("use") byte @PolyDet[] buffer = new @PolyDet("use") byte @PolyDet[1024];
+    @PolyDet("use") byte @PolyDet [] buffer = new @PolyDet("use") byte @PolyDet [1024];
     int bytes;
     try {
       while (true) {
@@ -1340,7 +1342,8 @@ public final class UtilPlume {
    * @return the list of lines read from the stream
    * @throws IOException if there is an error reading from the stream
    */
-  public static @PolyDet List<@PolyDet("use") String> streamLines(InputStream stream) throws IOException {
+  public static @PolyDet List<@PolyDet("use") String> streamLines(InputStream stream)
+      throws IOException {
     @PolyDet List<@PolyDet("use") String> outputLines = new @PolyDet ArrayList<>();
     try (BufferedReader rdr = new BufferedReader(new InputStreamReader(stream, UTF_8))) {
       String line;
@@ -1455,7 +1458,10 @@ public final class UtilPlume {
    * @return the printed representation of {@code o}, with each line (except the first) prefixed by
    *     the given prefix
    */
-  public static String prefixLinesExceptFirst(String prefix, @Nullable Object o) {
+  @SuppressWarnings("determinism") // toString on @RequiresDetToString
+  @RequiresDetToString
+  public static @PolyDet String prefixLinesExceptFirst(
+      @PolyDet String prefix, @PolyDet @Nullable Object o) {
     if (o == null) {
       return "null";
     }
@@ -1470,11 +1476,13 @@ public final class UtilPlume {
    * @return the printed representation of {@code o}, with each line prefixed by {@code indent}
    *     space characters
    */
+  @SuppressWarnings("determinism:return.type.incompatible") // toString on @RequiresDetToString
+  @RequiresDetToString
   public static String indentLines(@NonNegative int indent, @Nullable Object o) {
     if (indent == 0) {
       return (o == null) ? "null" : o.toString();
     }
-    String prefix = new String(new char[indent]).replace('\0', ' ');
+    String prefix = new String(new char @PolyDet [indent]).replace('\0', ' ');
     return prefixLines(prefix, o);
   }
 
@@ -1487,11 +1495,13 @@ public final class UtilPlume {
    * @return the printed representation of {@code o}, with each line (except the first) prefixed by
    *     {@code indent} space characters
    */
+  @SuppressWarnings("determinism:return.type.incompatible") // toString on @RequiresDetToString
+  @RequiresDetToString
   public static String indentLinesExceptFirst(@NonNegative int indent, @Nullable Object o) {
     if (indent == 0) {
       return (o == null) ? "null" : o.toString();
     }
-    String prefix = new String(new char[indent]).replace('\0', ' ');
+    String prefix = new String(new @PolyDet char @PolyDet [indent]).replace('\0', ' ');
     return prefixLinesExceptFirst(prefix, o);
   }
 
@@ -1517,7 +1527,8 @@ public final class UtilPlume {
       s = s.substring(delimpos + 1);
     }
     resultList.add(s);
-    @PolyDet("use") String @PolyDet[] result = resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet[resultList.size()]);
+    @PolyDet("use") String @PolyDet [] result =
+        resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet [resultList.size()]);
     return result;
   }
 
@@ -1546,7 +1557,8 @@ public final class UtilPlume {
       s = s.substring(delimpos + delimlen);
     }
     resultList.add(s);
-    @PolyDet("use") String @PolyDet[] result = resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet[resultList.size()]);
+    @PolyDet("use") String @PolyDet [] result =
+        resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet [resultList.size()]);
     return result;
   }
 
@@ -1584,7 +1596,8 @@ public final class UtilPlume {
    *     order
    */
   @Deprecated // use join(CharSequence, Object...) which has the arguments in the other order
-  public static <T extends @PolyDet Object> @PolyDet("up") String join(T @PolyDet [] a, @PolyDet CharSequence delim) {
+  public static <T extends @PolyDet Object> @PolyDet("up") String join(
+      T @PolyDet [] a, @PolyDet CharSequence delim) {
     if (a.length == 0) {
       return "";
     }
@@ -1683,7 +1696,8 @@ public final class UtilPlume {
    * @return the concatenation of the string representations of the values, with the delimiter
    *     between
    */
-  public static @PolyDet("up") String join(@PolyDet CharSequence delim, @PolyDet Iterable<? extends @PolyDet Object> v) {
+  public static @PolyDet("up") String join(
+      @PolyDet CharSequence delim, @PolyDet Iterable<? extends @PolyDet Object> v) {
     @PolyDet StringBuilder sb = new @PolyDet StringBuilder();
     boolean first = true;
     Iterator<?> itor = v.iterator();
@@ -1826,7 +1840,7 @@ public final class UtilPlume {
       case '\t':
         return "\\t";
       default:
-        return new @PolyDet("up") String(new @PolyDet char @PolyDet[] {c});
+        return new @PolyDet("up") String(new @PolyDet char @PolyDet [] {c});
     }
   }
 
@@ -1867,7 +1881,7 @@ public final class UtilPlume {
     } else if (c == '\t') {
       return "\\t";
     } else if (c >= ' ' && c <= '~') {
-      return new @PolyDet("up") String(new @PolyDet char @PolyDet[] {c});
+      return new @PolyDet("up") String(new @PolyDet char @PolyDet [] {c});
     } else if (c < 256) {
       String octal = Integer.toOctalString(c);
       while (octal.length() < 3) {
