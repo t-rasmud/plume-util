@@ -42,6 +42,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import org.checkerframework.checker.index.qual.IndexOrHigh;
@@ -49,6 +51,7 @@ import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
@@ -1360,7 +1363,9 @@ public final class UtilPlume {
    * @param oldStr the substring to replace
    * @param newStr the replacement
    * @return target with all instances of oldStr replaced by newStr
+   * @deprecated use String.replace
    */
+  @Deprecated // use String.replace
   public static String replaceString(String target, String oldStr, String newStr) {
     if (oldStr.equals("")) {
       throw new IllegalArgumentException();
@@ -1379,13 +1384,126 @@ public final class UtilPlume {
   }
 
   /**
+   * Returns the target with an occurrence of oldStr at the start replaced by newStr. Returns the
+   * target if it does not strt with oldStr.
+   *
+   * <p>An alternative to this is to use regular expressions: {@code target.replaceFirst("^" +
+   * Pattern.quote(oldStr), newStr)}
+   *
+   * @param target the string to do replacement in
+   * @param oldStr the prefix to replace
+   * @param newStr the replacement
+   * @return the target with an occurrence of oldStr at the start replaced by newStr; returns the
+   *     target if it does not start with oldStr
+   */
+  @SuppressWarnings("index:argument.type.incompatible") // startsWith implies indexes fit
+  public static String replacePrefix(String target, String oldStr, String newStr) {
+    if (target.startsWith(oldStr)) {
+      if (newStr.isEmpty()) {
+        return target.substring(oldStr.length());
+      } else {
+        return newStr + target.substring(oldStr.length());
+      }
+    } else {
+      return target;
+    }
+  }
+
+  /**
+   * Returns the target with an occurrence of oldStr at the end replaced by newStr. Returns the
+   * target if it does not end with oldStr.
+   *
+   * <p>An alternative to this is to use regular expressions: {@code
+   * target.replaceLast(Pattern.quote(oldStr) + "$", newStr)}
+   *
+   * @param target the string to do replacement in
+   * @param oldStr the substring to replace
+   * @param newStr the replacement
+   * @return the target with an occurrence of oldStr at the start replaced by newStr; returns the
+   *     target if it does not start with oldStr
+   */
+  @SuppressWarnings("lowerbound:argument.type.incompatible") // endsWith implies indexes fit
+  public static String replaceSuffix(String target, String oldStr, String newStr) {
+    if (target.endsWith(oldStr)) {
+      if (newStr.isEmpty()) {
+        return target.substring(0, target.length() - oldStr.length());
+      } else {
+        return target.substring(0, target.length() - oldStr.length()) + newStr;
+      }
+    } else {
+      return target;
+    }
+  }
+
+  /**
+   * Return the printed represenation of a value, with each line prefixed by another string.
+   *
+   * @param prefix the prefix to place before each line
+   * @param o the value to be printed
+   * @return the printed representation of {@code o}, with each line prefixed by the given prefix
+   */
+  public static String prefixLines(String prefix, @Nullable Object o) {
+    return prefix + prefixLinesExceptFirst(prefix, o);
+  }
+
+  /**
+   * Return the printed represenation of a value, with each line (except the first) prefixed by
+   * another string.
+   *
+   * @param prefix the prefix to place before each line
+   * @param o the value to be printed
+   * @return the printed representation of {@code o}, with each line (except the first) prefixed by
+   *     the given prefix
+   */
+  public static String prefixLinesExceptFirst(String prefix, @Nullable Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace(System.lineSeparator(), System.lineSeparator() + prefix);
+  }
+
+  /**
+   * Return the printed representation of a value, with line indented by {@code indent} spaces.
+   *
+   * @param indent the number of spaces to indent
+   * @param o the value whose printed representation string to increase indentation of
+   * @return the printed representation of {@code o}, with each line prefixed by {@code indent}
+   *     space characters
+   */
+  public static String indentLines(@NonNegative int indent, @Nullable Object o) {
+    if (indent == 0) {
+      return (o == null) ? "null" : o.toString();
+    }
+    String prefix = new String(new char[indent]).replace('\0', ' ');
+    return prefixLines(prefix, o);
+  }
+
+  /**
+   * Return the printed representation of a value, with each line (except the first) indented by
+   * {@code indent} spaces.
+   *
+   * @param indent the number of spaces to indent
+   * @param o the value whose printed representation string to increase indentation of
+   * @return the printed representation of {@code o}, with each line (except the first) prefixed by
+   *     {@code indent} space characters
+   */
+  public static String indentLinesExceptFirst(@NonNegative int indent, @Nullable Object o) {
+    if (indent == 0) {
+      return (o == null) ? "null" : o.toString();
+    }
+    String prefix = new String(new char[indent]).replace('\0', ' ');
+    return prefixLinesExceptFirst(prefix, o);
+  }
+
+  // TODO.  What is the point?  Deprecate?
+  /**
    * Return an array of Strings representing the characters between successive instances of the
    * delimiter character. Always returns an array of length at least 1 (it might contain only the
    * empty string).
    *
    * <p>Consider using the built-in <a
-   * href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#split-java.lang.String-">String.split</a>
-   * method.
+   * href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html#split(java.lang.String)">String.split</a>
+   * method, which takes a regular expression whereas this method takes a string.
    *
    * @see #split(String s, String delim)
    * @param s the string to split
@@ -1406,7 +1524,7 @@ public final class UtilPlume {
   /**
    * Return an array of Strings representing the characters between successive instances of the
    * delimiter String. Always returns an array of length at least 1 (it might contain only the empty
-   * string).
+   * string), which takes a regular expression whereas this method takes a string.
    *
    * <p>Consider using the built-in <a
    * href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#split-java.lang.String-">String.split</a>
@@ -1442,6 +1560,7 @@ public final class UtilPlume {
    * @param s the string to split
    * @return an array of Strings, one for each line in the argument
    */
+  @SuppressWarnings("value:statically.executable.not.pure") // pure wrt `equals()` but not `==`
   @SideEffectFree
   @StaticallyExecutable
   public static String[] splitLines(String s) {
@@ -2202,6 +2321,40 @@ public final class UtilPlume {
     @SuppressWarnings("formatter") // format string computed from precision and mag
     String result = String.format("%,1." + precision + "f" + mag, dval);
     return result;
+  }
+
+  // From
+  // https://stackoverflow.com/questions/37413816/get-number-of-placeholders-in-formatter-format-string
+  /** Regex that matches a format specifier. Some correspond to arguments and some do not. */
+  private static @Regex(6) Pattern formatSpecifier =
+      Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
+
+  /**
+   * Returns the number of arguments that the given format string takes. This is the number of
+   * specifiers that take arguments (some, like {@code %n} and {@code %%}, do not take arguments).
+   *
+   * @param s a string
+   * @return the number of format specifiers in the string
+   */
+  public static int countFormatArguments(String s) {
+    int result = 0;
+    int maxIndex = 0;
+    Matcher matcher = formatSpecifier.matcher(s);
+    while (matcher.find()) {
+      String argumentIndex = matcher.group(1);
+      if (argumentIndex != null) {
+        @SuppressWarnings("lowerbound:argument.type.incompatible") // group contains >= 2 chars
+        int thisIndex = Integer.parseInt(argumentIndex.substring(0, argumentIndex.length() - 1));
+        maxIndex = Math.max(maxIndex, thisIndex);
+        continue;
+      }
+      String conversion = matcher.group(6);
+      assert conversion != null : "@AssumeAssertion(nullness): nonempty capturing group";
+      if (!(conversion.equals("%") || conversion.equals("n"))) {
+        result++;
+      }
+    }
+    return Math.max(maxIndex, result);
   }
 
   ///////////////////////////////////////////////////////////////////////////

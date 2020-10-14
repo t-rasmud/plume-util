@@ -108,6 +108,7 @@ public final class UtilPlumeTest {
   // public static String setDefault(Properties p, String key, String value)
   // public static void streamCopy(java.io.InputStream from, java.io.OutputStream to)
 
+  @SuppressWarnings("deprecation")
   @Test
   public void test_replaceString() {
 
@@ -121,6 +122,54 @@ public final class UtilPlumeTest {
         .equals("heyo doyy wey heyo doyy");
     assert UtilPlume.replaceString("hello dolly well hello dolly", "q", "yyy")
         .equals("hello dolly well hello dolly");
+  }
+
+  @Test
+  public void test_replacePrefix() {
+
+    // public static String replacePrefix(String target, String oldStr, String newStr)
+
+    assert UtilPlume.replacePrefix("abcdefg", "abc", "hijk").equals("hijkdefg");
+    assert UtilPlume.replacePrefix("abcdefg", "bcd", "hijk").equals("abcdefg");
+    assert UtilPlume.replacePrefix("abcdefg", "abc", "").equals("defg");
+    assert UtilPlume.replacePrefix("abcdefg", "bcd", "").equals("abcdefg");
+  }
+
+  @Test
+  public void test_replaceSuffix() {
+
+    // public static String replaceSuffix(String target, String oldStr, String newStr)
+
+    assert UtilPlume.replaceSuffix("abcdefg", "defg", "hijk").equals("abchijk");
+    assert UtilPlume.replaceSuffix("abcdefg", "cdef", "hijk").equals("abcdefg");
+    assert UtilPlume.replaceSuffix("abcdefg", "defg", "").equals("abc");
+    assert UtilPlume.replaceSuffix("abcdefg", "cdef", "").equals("abcdefg");
+  }
+
+  @Test
+  public void test_prefixLines() {
+
+    // public static String prefixLines(String prefix, String s) {
+
+    assertEquals(
+        UtilPlume.joinLines("  1", "  2", "  3"),
+        UtilPlume.prefixLines("  ", UtilPlume.joinLines("1", "2", "3")));
+    assertEquals(
+        UtilPlume.joinLines("  ", "  1", "  ", "  2", "  "),
+        UtilPlume.prefixLines("  ", UtilPlume.joinLines("", "1", "", "2", "")));
+  }
+
+  @Test
+  public void test_indentLines() {
+
+    // public static String indentLines(int indent, String s) {
+
+    assertEquals(
+        UtilPlume.prefixLines("  ", UtilPlume.joinLines("1", "2", "3")),
+        UtilPlume.indentLines(2, UtilPlume.joinLines("1", "2", "3")));
+    assertEquals(
+        UtilPlume.prefixLines("  ", UtilPlume.joinLines("", "1", "", "2", "")),
+        UtilPlume.indentLines(2, UtilPlume.joinLines("", "1", "", "2", "")));
   }
 
   @Test
@@ -398,6 +447,23 @@ public final class UtilPlumeTest {
     assertTrue(UtilPlume.abbreviateNumber(98765432).equals("98.8M"));
     assertTrue(UtilPlume.abbreviateNumber(987654321).equals("988M"));
     assertTrue(UtilPlume.abbreviateNumber(9876543210L).equals("9.88G"));
+  }
+
+  @Test
+  public void testCountFormatArguments() {
+    assertEquals(0, UtilPlume.countFormatArguments("No specifiier."));
+    assertEquals(0, UtilPlume.countFormatArguments("This is 100%"));
+    assertEquals(0, UtilPlume.countFormatArguments("This is 100%% excellent."));
+    assertEquals(0, UtilPlume.countFormatArguments("Newline%n is not%na specifier."));
+    assertEquals(1, UtilPlume.countFormatArguments("This is my %s"));
+    assertEquals(1, UtilPlume.countFormatArguments("This is my %s."));
+    assertEquals(2, UtilPlume.countFormatArguments("Two %d and %d"));
+    assertEquals(3, UtilPlume.countFormatArguments("%f and %s and %d makes three"));
+    assertEquals(
+        3, UtilPlume.countFormatArguments("Hi! My name is %s and I have %d dogs and a %d cats."));
+
+    assertEquals(2, UtilPlume.countFormatArguments("%f and %1$f and %d and %1$f makes two"));
+    assertEquals(14, UtilPlume.countFormatArguments("%f and %14$f makes fourteen"));
   }
 
   @Test

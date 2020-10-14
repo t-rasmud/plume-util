@@ -27,8 +27,10 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * This class combines the features of {@link java.util.WeakHashMap} and {@link
- * java.util.IdentityHashMap}. The implementation is a modified version of {@link
- * java.util.WeakHashMap} from JDK 1.5, which differs from the original in two ways:
+ * java.util.IdentityHashMap}. That is, keys are weak and are compared using reference equality.
+ *
+ * <p>The implementation is a modified version of {@link java.util.WeakHashMap} from JDK 1.5, which
+ * differs from the original in two ways:
  *
  * <ul>
  *   <li>uses of hashCode() are replaced by System.identityHashCode()
@@ -97,7 +99,8 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
  * exception for its correctness: <i>the fail-fast behavior of iterators should be used only to
  * detect bugs.</i>
  *
- * <p>This class is a member of the <a href="{@docRoot}/../guide/collections/index.html">Java
+ * <p>This class is a member of the <a
+ * href="https://docs.oracle.com/javase/8/docs/technotes/guides/collections/overview.html">Java
  * Collections Framework</a>.
  *
  * @version 1.30, 02/19/04
@@ -108,13 +111,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
  * @see java.util.HashMap
  * @see java.lang.ref.WeakReference
  */
-@SuppressWarnings({
-  // Java compiler warnings
-  "unchecked",
-  "rawtypes",
-  // Checker Framework warnings
-  "allcheckers" // old, non-typesafe Sun code, not worth annotating or checking
-})
+@SuppressWarnings("allcheckers") // old, non-typesafe Sun code, not worth annotating or checking
 public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
 
   /** The default initial capacity -- MUST be a power of two. */
