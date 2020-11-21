@@ -84,8 +84,9 @@ checkerFramework {
     '-Werror',
     // '-AcheckPurityAnnotations',
     '-ArequirePrefixInWarningSuppressions',
-        // ":deterministic" is for the purity checker
-    '-AwarnUnneededSuppressions', '-AwarnUnneededSuppressionsExceptions=purity|method.guarantee.violated|:deterministic',
+    '-AwarnUnneededSuppressions',
+    // ":deterministic" is for the purity checker
+    '-AwarnUnneededSuppressionsExceptions=purity|method.guarantee.violated|:deterministic',
     '-AusePolyDefault',
     '-AsuppressWarnings=determinism:type.argument.invalid.hasqualparam,determinism:enhancedfor.type.incompatible,determinism:invalid.array.assignment,determinism:invalid.field.assignment,determinism:throw.type.invalid,determinism:type.argument.type.incompatible,determinism:invalid.upper.bound.on.type.argument',
     '-Xmaxerrs', '10000',
