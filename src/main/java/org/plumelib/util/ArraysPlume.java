@@ -3153,7 +3153,7 @@ public final class ArraysPlume {
      */
     @Pure
     @SuppressWarnings(
-        "allcheckers:override.param.invalid") // CF bug: doesn't expand annotations on array
+        "nullness:override.param.invalid") // CF bug: doesn't expand annotations on array
     // elements with @Poly
     // The signature on this method is unnecessarily strict because it
     // requires that the component types be identical.  The signature should
@@ -3206,7 +3206,7 @@ public final class ArraysPlume {
      */
     @Pure
     @SuppressWarnings(
-        "allcheckers:override.param.invalid") // CF bug: doesn't expand annotations on array
+        "nullness:override.param.invalid") // CF bug: doesn't expand annotations on array
     // elements with @Poly
     // The signature on this method is unnecessarily strict because it
     // requires that the component types be identical.  The signature should
@@ -3268,7 +3268,7 @@ public final class ArraysPlume {
      */
     @Pure
     @SuppressWarnings(
-        "allcheckers:override.param.invalid") // CF bug: doesn't expand annotations on array
+        "nullness:override.param.invalid") // CF bug: doesn't expand annotations on array
     // elements with @Poly
     // The signature on this method is unnecessarily strict because it
     // requires that the component types be identical.  The signature should
@@ -3388,7 +3388,7 @@ public final class ArraysPlume {
      */
     @Pure
     @SuppressWarnings(
-        "allcheckers:override.param.invalid") // CF bug: doesn't expand annotations on array
+        "nullness:override.param.invalid") // CF bug: doesn't expand annotations on array
     // elements with @Poly
     // The signature on this method is unnecessarily strict because it
     // requires that the component types be identical.  The signature should
@@ -3456,7 +3456,7 @@ public final class ArraysPlume {
      */
     @Pure
     @SuppressWarnings(
-        "allcheckers:override.param.invalid") // CF bug: doesn't expand annotations on array
+        "nullness:override.param.invalid") // CF bug: doesn't expand annotations on array
     // elements with @Poly
     // The signature on this method is unnecessarily strict because it
     // requires that the component types be identical.  The signature should
