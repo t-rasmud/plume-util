@@ -30,6 +30,8 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +42,9 @@ import java.util.BitSet;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1206,6 +1210,37 @@ public final class UtilPlume {
     return hash(result);
   }
 
+  ///////////////////////////////////////////////////////////////////////////
+  /// Map
+  ///
+
+  /**
+   * Convert a map to a string, printing the runtime class of keys and values.
+   *
+   * @param m a map
+   * @return a string representation of the map
+   */
+  public String mapToStringAndClass(Map<?, ?> m) {
+    @PolyDet StringJoiner result = new @PolyDet StringJoiner(System.lineSeparator());
+    for (Map.Entry<?, ?> e : m.entrySet()) {
+      result.add("    " + toStringAndClass(e.getKey()) + " => " + toStringAndClass(e.getValue()));
+    }
+    return result.toString();
+  }
+
+  /**
+   * Returns a string representation of a value and its run-time class.
+   *
+   * @param o an object
+   * @return a string representation of the value and its run-time class
+   */
+  public String toStringAndClass(@Nullable Object o) {
+    if (o == null) {
+      return "null";
+    } else {
+      return o + " [" + o.getClass() + "]";
+    }
+  }
   ///////////////////////////////////////////////////////////////////////////
   /// ProcessBuilder
   ///
@@ -2416,13 +2451,13 @@ public final class UtilPlume {
   }
 
   ///////////////////////////////////////////////////////////////////////////
-  /// sleep
+  /// System
   ///
 
   /**
-   * Like Thread.sleep, but does not throw any exceptions, so it is easier for clients to use.
-   * Causes the currently executing thread to sleep (temporarily cease execution) for the specified
-   * number of milliseconds.
+   * Like Thread.sleep, but does not throw any checked exceptions, so it is easier for clients to
+   * use. Causes the currently executing thread to sleep (temporarily cease execution) for the
+   * specified number of milliseconds.
    *
    * @param millis the length of time to sleep in milliseconds
    */
@@ -2432,6 +2467,68 @@ public final class UtilPlume {
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
     }
+  }
+
+  /** The Runtime instance for the current execution. */
+  private static Runtime runtime = Runtime.getRuntime();
+
+  /**
+   * Returns the amount of used memory in the JVM. To force a garbage collection, which gives a more
+   * accurate overapproximation of the memory used, but is also slower, use {@link
+   * #usedMemory(boolean)}
+   *
+   * @return the amount of used memory
+   */
+  public static long usedMemory() {
+    return usedMemory(false);
+  }
+
+  /**
+   * Returns the amount of used memory in the JVM.
+   *
+   * @param forceGc if true, force a garbage collection, which gives a more accurate
+   *     overapproximation of the memory used, but is also slower
+   * @return the amount of used memory
+   */
+  public static long usedMemory(boolean forceGc) {
+    if (forceGc) {
+      gc();
+    }
+    // Implementation note:
+    // MemoryUsage.getUsed() == Runtime.totalMemory() - Runtime.freeMemory()
+    return (runtime.totalMemory() - runtime.freeMemory());
+  }
+
+  /**
+   * Perform garbage collection. Like System.gc, but waits to return until garbage collection has
+   * completed.
+   */
+  public static void gc() {
+    long oldCollectionCount = getCollectionCount();
+    System.gc();
+    while (getCollectionCount() == oldCollectionCount) {
+      try {
+        Thread.sleep(1); // 1 millisecond
+      } catch (InterruptedException e) {
+        // nothing to do
+      }
+    }
+  }
+
+  /**
+   * Return the number of garbage collections that have occurred.
+   *
+   * @return the number of garbage collections that have occurred
+   */
+  private static long getCollectionCount() {
+    long result = 0;
+    for (GarbageCollectorMXBean b : ManagementFactory.getGarbageCollectorMXBeans()) {
+      long count = b.getCollectionCount();
+      if (count != -1) {
+        result += count;
+      }
+    }
+    return result;
   }
 
   ///////////////////////////////////////////////////////////////////////////

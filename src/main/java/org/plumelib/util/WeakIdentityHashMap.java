@@ -648,7 +648,6 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
       return oldValue;
     }
 
-    @SuppressWarnings("allcheckers:purity") // side effects on local state
     @Pure
     @Override
     public boolean equals(@Nullable Object o) {
@@ -664,7 +663,6 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
       return false;
     }
 
-    @SuppressWarnings("allcheckers:purity") // side effects on local state
     @Pure
     @Override
     public int hashCode() {
