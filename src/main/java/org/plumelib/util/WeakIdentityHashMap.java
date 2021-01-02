@@ -27,8 +27,10 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * This class combines the features of {@link java.util.WeakHashMap} and {@link
- * java.util.IdentityHashMap}. The implementation is a modified version of {@link
- * java.util.WeakHashMap} from JDK 1.5, which differs from the original in two ways:
+ * java.util.IdentityHashMap}. That is, keys are weak and are compared using reference equality.
+ *
+ * <p>The implementation is a modified version of {@link java.util.WeakHashMap} from JDK 1.5, which
+ * differs from the original in two ways:
  *
  * <ul>
  *   <li>uses of hashCode() are replaced by System.identityHashCode()
@@ -97,7 +99,8 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
  * exception for its correctness: <i>the fail-fast behavior of iterators should be used only to
  * detect bugs.</i>
  *
- * <p>This class is a member of the <a href="{@docRoot}/../guide/collections/index.html">Java
+ * <p>This class is a member of the <a
+ * href="https://docs.oracle.com/javase/8/docs/technotes/guides/collections/overview.html">Java
  * Collections Framework</a>.
  *
  * @version 1.30, 02/19/04
@@ -114,7 +117,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
   "rawtypes",
   // Checker Framework warnings
   "allcheckers" // old, non-typesafe Sun code, not worth annotating or checking
-})
+}) // old, non-typesafe Sun code, not worth annotating or checking
 public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
 
   /** The default initial capacity -- MUST be a power of two. */
@@ -262,9 +265,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
   }
 
   /** Expunge stale entries from the table. */
-  @SuppressWarnings({
-    "allcheckers:purity", // actually has side effects due to weak pointers
-  })
+  @SuppressWarnings("allcheckers:purity") // actually has side effects due to weak pointers
   @SideEffectFree
   private void expungeStaleEntries() {
     Entry<K, V> e;
@@ -387,8 +388,9 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    *     mapping for key. A <code>null</code> return can also indicate that the HashMap previously
    *     associated <code>null</code> with the specified key.
    */
+  @SuppressWarnings("NonAtomicVolatileUpdate")
   @Override
-  public V put(K key, V value) {
+  public @Nullable V put(K key, V value) {
     @SuppressWarnings("unchecked")
     K k = (K) maskNull(key);
     int h = System.identityHashCode(k);
@@ -420,7 +422,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    * @param newCapacity the new capacity, MUST be a power of two; must be greater than current
    *     capacity unless current capacity is MAXIMUM_CAPACITY (in which case value is irrelevant)
    */
-  void resize(WeakIdentityHashMap<K, V> this, int newCapacity) {
+  void resize(int newCapacity) {
     @Nullable Entry<K, V>[] oldTable = getTable();
     int oldCapacity = oldTable.length;
     if (oldCapacity == MAXIMUM_CAPACITY) {
@@ -515,7 +517,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
    *     mapping for key. A <code>null</code> return can also indicate that the map previously
    *     associated <code>null</code> with the specified key.
    */
-  @SuppressWarnings({"NonAtomicVolatileUpdate"})
+  @SuppressWarnings("NonAtomicVolatileUpdate")
   @Override
   public @Nullable V remove(Object key) {
     Object k = maskNull(key);
@@ -542,7 +544,7 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
   }
 
   /** Special version of remove needed by Entry set. */
-  @SuppressWarnings({"NonAtomicVolatileUpdate"})
+  @SuppressWarnings("NonAtomicVolatileUpdate")
   @Nullable Entry<K, V> removeMapping(@Nullable Object o) {
     if (!(o instanceof Map.Entry)) return null;
     @Nullable Entry<K, V>[] tab = getTable();
@@ -646,7 +648,6 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
       return oldValue;
     }
 
-    @SuppressWarnings("allcheckers:purity") // side effects on local state
     @Pure
     @Override
     public boolean equals(@Nullable Object o) {
@@ -662,9 +663,6 @@ public class WeakIdentityHashMap<K, V> extends AbstractMap<K, V> implements Map<
       return false;
     }
 
-    @SuppressWarnings({
-      "allcheckers:purity", // side effects on local state
-    })
     @Pure
     @Override
     public int hashCode() {

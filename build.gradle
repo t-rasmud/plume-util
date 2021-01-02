@@ -2,7 +2,7 @@ plugins {
   id 'java-library'
 
   // To create a fat jar build/libs/plume-util-all.jar, run: ./gradlew shadowJar
-  id 'com.github.johnrengelman.shadow' version '6.0.0'
+  id 'com.github.johnrengelman.shadow' version '6.1.0'
 
   // Formatting is disabled due to poor handling of type annotations; wait until
   // this issue is fixed: https://github.com/google/google-java-format/issues/5
@@ -13,7 +13,7 @@ plugins {
   id("net.ltgt.errorprone") version "1.2.1"
 
   // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.5.9'
+  id 'org.checkerframework' version '0.5.12'
 }
 
 repositories {
@@ -22,11 +22,11 @@ repositories {
 
 dependencies {
   // https://mvnrepository.com/artifact/org.plumelib/reflection-util
-  implementation 'org.plumelib:reflection-util:0.2.2'
+  implementation 'org.plumelib:reflection-util:1.0.2'
 
   errorprone 'com.google.errorprone:error_prone_core:2.4.0'
 
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
@@ -76,16 +76,20 @@ checkerFramework {
     // 'org.checkerframework.checker.nullness.NullnessChecker',
     // 'org.checkerframework.checker.regex.RegexChecker',
     // 'org.checkerframework.checker.signature.SignatureChecker'
-    'org.checkerframework.checker.determinism.DeterminismChecker'
+    'org.checkerframework.checker.determinism.DeterminismChecker',
+    'org.checkerframework.common.util.count.AnnotationStatistics',
   ]
   extraJavacArgs = [
+    '-Aannotations', '-Anolocations', // for AnnotationStatistics
     '-Werror',
     // '-AcheckPurityAnnotations',
     '-ArequirePrefixInWarningSuppressions',
     '-AwarnUnneededSuppressions',
+    // ":deterministic" is for the purity checker
+    '-AwarnUnneededSuppressionsExceptions=purity|method.guarantee.violated|:deterministic',
     '-AusePolyDefault',
     '-AsuppressWarnings=determinism:type.argument.invalid.hasqualparam,determinism:enhancedfor.type.incompatible,determinism:invalid.array.assignment,determinism:invalid.field.assignment,determinism:throw.type.invalid,determinism:type.argument.type.incompatible,determinism:invalid.upper.bound.on.type.argument',
-    '-Xmaxerrs', '10000'
+    '-Xmaxerrs', '10000',
   ]
 }
 // To use a locally-built Checker Framework, run gradle with "-PcfLocal".
@@ -95,7 +99,6 @@ if (project.hasProperty("cfLocal")) {
     compileOnly files(cfHome + "/checker/dist/checker-qual.jar")
     testCompileOnly files(cfHome + "/checker/dist/checker-qual.jar")
     checkerFramework files(cfHome + "/checker/dist/checker.jar")
-    checkerFrameworkAnnotatedJDK files(cfHome + "/checker/dist/jdk8.jar")
   }
 }
 
@@ -105,8 +108,8 @@ if (project.hasProperty("cfLocal")) {
 javadoc {
   options.addStringOption('Xwerror', '-Xdoclint:all')
   options.addStringOption('private', '-quiet')
-  // These copied files don't have exhaustive Javadoc comments.
-  exclude 'com/app/com4j/api/**/WeakHasherMap.java'
+  // WeakIdentityHashMap leads to lots of Javadoc warnings due to missing Javadoc.
+  // How can I generate Javadoc for it while still being strict for all other files?
   exclude '**/WeakIdentityHashMap.java'
   if (JavaVersion.current().compareTo(org.gradle.api.JavaVersion.VERSION_1_9) >= 0) {
       options.addStringOption("-release", "8");
@@ -123,6 +126,7 @@ javadoc {
 check.dependsOn javadoc
 
 task javadocWeb(type: Javadoc) {
+  description "Upload API documentation to website."
   source = sourceSets.main.allJava
   destinationDir = file("/cse/web/research/plumelib/${project.name}/api")
   classpath = project.sourceSets.main.compileClasspath
@@ -143,7 +147,7 @@ configurations {
   requireJavadoc
 }
 dependencies {
-  requireJavadoc "org.plumelib:require-javadoc:0.3.1"
+  requireJavadoc "org.plumelib:require-javadoc:1.0.0"
 }
 task requireJavadoc(type: JavaExec) {
   description = 'Ensures that Javadoc documentation exists.'

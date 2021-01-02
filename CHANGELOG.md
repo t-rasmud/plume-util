@@ -1,8 +1,36 @@
 # Plume-Util change log
 
-## 1.1.6 (forthcoming)
+## 1.2.1 (forthcoming)
 
-Add UtilPlume.sleep method
+- New methods:
+   - `UtilPlume.usedMemory` with no formal parameter
+
+## 1.2.0
+
+- New methods:
+   - `UtilPlume.toStringAndClass`
+   - `UtilPlume.mapToStringAndClass`
+   - `UtilPlume.gc`
+   - `UtilPlume.usedMemory`
+- Remove field `UniqueId.nextUid`
+
+## 1.1.7
+
+- New class `UniqueIdMap`
+- New methods:
+   - `UtilPlume.replacePrefix`
+   - `UtilPlume.replaceSuffix`
+
+## 1.1.6
+
+- New interface `UniqueId` for objects that have a unique ID.
+- New methods:
+   - `UtilPlume.sleep`
+   - `UtilPlume.countFormatArguments`
+   - `UtilPlume.prefixLines`
+   - `UtilPlume.prefixLinesExceptFirst`
+   - `UtilPlume.indentLines`
+   - `UtilPlume.indentLinesExceptFirst`
 
 ## 1.1.5
 

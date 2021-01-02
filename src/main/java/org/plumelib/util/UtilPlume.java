@@ -30,6 +30,8 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,19 +42,24 @@ import java.util.BitSet;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.StringJoiner;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import org.checkerframework.checker.determinism.qual.*;
 import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-import org.checkerframework.checker.determinism.qual.*;
 
 /** Utility functions that do not belong elsewhere in the plume package. */
 public final class UtilPlume {
@@ -494,7 +501,9 @@ public final class UtilPlume {
       return Files.newBufferedWriter(
           Paths.get(filename),
           UTF_8,
-          append ? new @PolyDet("use") StandardOpenOption @PolyDet[] {CREATE, APPEND} : new @PolyDet("use") StandardOpenOption @PolyDet[] {CREATE});
+          append
+              ? new @PolyDet("use") StandardOpenOption @PolyDet [] {CREATE, APPEND}
+              : new @PolyDet("use") StandardOpenOption @PolyDet [] {CREATE});
     }
   }
 
@@ -1202,6 +1211,37 @@ public final class UtilPlume {
   }
 
   ///////////////////////////////////////////////////////////////////////////
+  /// Map
+  ///
+
+  /**
+   * Convert a map to a string, printing the runtime class of keys and values.
+   *
+   * @param m a map
+   * @return a string representation of the map
+   */
+  public String mapToStringAndClass(Map<?, ?> m) {
+    @PolyDet StringJoiner result = new @PolyDet StringJoiner(System.lineSeparator());
+    for (Map.Entry<?, ?> e : m.entrySet()) {
+      result.add("    " + toStringAndClass(e.getKey()) + " => " + toStringAndClass(e.getValue()));
+    }
+    return result.toString();
+  }
+
+  /**
+   * Returns a string representation of a value and its run-time class.
+   *
+   * @param o an object
+   * @return a string representation of the value and its run-time class
+   */
+  public String toStringAndClass(@Nullable Object o) {
+    if (o == null) {
+      return "null";
+    } else {
+      return o + " [" + o.getClass() + "]";
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////////
   /// ProcessBuilder
   ///
 
@@ -1302,7 +1342,7 @@ public final class UtilPlume {
    * @param to output stream
    */
   public static void streamCopy(InputStream from, OutputStream to) {
-    @PolyDet("use") byte @PolyDet[] buffer = new @PolyDet("use") byte @PolyDet[1024];
+    @PolyDet("use") byte @PolyDet [] buffer = new @PolyDet("use") byte @PolyDet [1024];
     int bytes;
     try {
       while (true) {
@@ -1337,7 +1377,8 @@ public final class UtilPlume {
    * @return the list of lines read from the stream
    * @throws IOException if there is an error reading from the stream
    */
-  public static @PolyDet List<@PolyDet("use") String> streamLines(InputStream stream) throws IOException {
+  public static @PolyDet List<@PolyDet("use") String> streamLines(InputStream stream)
+      throws IOException {
     @PolyDet List<@PolyDet("use") String> outputLines = new @PolyDet ArrayList<>();
     try (BufferedReader rdr = new BufferedReader(new InputStreamReader(stream, UTF_8))) {
       String line;
@@ -1360,7 +1401,9 @@ public final class UtilPlume {
    * @param oldStr the substring to replace
    * @param newStr the replacement
    * @return target with all instances of oldStr replaced by newStr
+   * @deprecated use String.replace
    */
+  @Deprecated // use String.replace
   public static String replaceString(String target, String oldStr, String newStr) {
     if (oldStr.equals("")) {
       throw new IllegalArgumentException();
@@ -1379,13 +1422,133 @@ public final class UtilPlume {
   }
 
   /**
+   * Returns the target with an occurrence of oldStr at the start replaced by newStr. Returns the
+   * target if it does not strt with oldStr.
+   *
+   * <p>An alternative to this is to use regular expressions: {@code target.replaceFirst("^" +
+   * Pattern.quote(oldStr), newStr)}
+   *
+   * @param target the string to do replacement in
+   * @param oldStr the prefix to replace
+   * @param newStr the replacement
+   * @return the target with an occurrence of oldStr at the start replaced by newStr; returns the
+   *     target if it does not start with oldStr
+   */
+  @SuppressWarnings("index:argument.type.incompatible") // startsWith implies indexes fit
+  public static String replacePrefix(String target, String oldStr, String newStr) {
+    if (target.startsWith(oldStr)) {
+      if (newStr.isEmpty()) {
+        return target.substring(oldStr.length());
+      } else {
+        return newStr + target.substring(oldStr.length());
+      }
+    } else {
+      return target;
+    }
+  }
+
+  /**
+   * Returns the target with an occurrence of oldStr at the end replaced by newStr. Returns the
+   * target if it does not end with oldStr.
+   *
+   * <p>An alternative to this is to use regular expressions: {@code
+   * target.replaceLast(Pattern.quote(oldStr) + "$", newStr)}
+   *
+   * @param target the string to do replacement in
+   * @param oldStr the substring to replace
+   * @param newStr the replacement
+   * @return the target with an occurrence of oldStr at the start replaced by newStr; returns the
+   *     target if it does not start with oldStr
+   */
+  @SuppressWarnings("lowerbound:argument.type.incompatible") // endsWith implies indexes fit
+  public static String replaceSuffix(String target, String oldStr, String newStr) {
+    if (target.endsWith(oldStr)) {
+      if (newStr.isEmpty()) {
+        return target.substring(0, target.length() - oldStr.length());
+      } else {
+        return target.substring(0, target.length() - oldStr.length()) + newStr;
+      }
+    } else {
+      return target;
+    }
+  }
+
+  /**
+   * Return the printed represenation of a value, with each line prefixed by another string.
+   *
+   * @param prefix the prefix to place before each line
+   * @param o the value to be printed
+   * @return the printed representation of {@code o}, with each line prefixed by the given prefix
+   */
+  public static String prefixLines(String prefix, @Nullable Object o) {
+    return prefix + prefixLinesExceptFirst(prefix, o);
+  }
+
+  /**
+   * Return the printed represenation of a value, with each line (except the first) prefixed by
+   * another string.
+   *
+   * @param prefix the prefix to place before each line
+   * @param o the value to be printed
+   * @return the printed representation of {@code o}, with each line (except the first) prefixed by
+   *     the given prefix
+   */
+  @SuppressWarnings("determinism") // toString on @RequiresDetToString
+  @RequiresDetToString
+  public static @PolyDet String prefixLinesExceptFirst(
+      @PolyDet String prefix, @PolyDet @Nullable Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace(System.lineSeparator(), System.lineSeparator() + prefix);
+  }
+
+  /**
+   * Return the printed representation of a value, with line indented by {@code indent} spaces.
+   *
+   * @param indent the number of spaces to indent
+   * @param o the value whose printed representation string to increase indentation of
+   * @return the printed representation of {@code o}, with each line prefixed by {@code indent}
+   *     space characters
+   */
+  @SuppressWarnings("determinism:return.type.incompatible") // toString on @RequiresDetToString
+  @RequiresDetToString
+  public static String indentLines(@NonNegative int indent, @Nullable Object o) {
+    if (indent == 0) {
+      return (o == null) ? "null" : o.toString();
+    }
+    String prefix = new String(new char @PolyDet [indent]).replace('\0', ' ');
+    return prefixLines(prefix, o);
+  }
+
+  /**
+   * Return the printed representation of a value, with each line (except the first) indented by
+   * {@code indent} spaces.
+   *
+   * @param indent the number of spaces to indent
+   * @param o the value whose printed representation string to increase indentation of
+   * @return the printed representation of {@code o}, with each line (except the first) prefixed by
+   *     {@code indent} space characters
+   */
+  @SuppressWarnings("determinism:return.type.incompatible") // toString on @RequiresDetToString
+  @RequiresDetToString
+  public static String indentLinesExceptFirst(@NonNegative int indent, @Nullable Object o) {
+    if (indent == 0) {
+      return (o == null) ? "null" : o.toString();
+    }
+    String prefix = new String(new @PolyDet char @PolyDet [indent]).replace('\0', ' ');
+    return prefixLinesExceptFirst(prefix, o);
+  }
+
+  // TODO.  What is the point?  Deprecate?
+  /**
    * Return an array of Strings representing the characters between successive instances of the
    * delimiter character. Always returns an array of length at least 1 (it might contain only the
    * empty string).
    *
    * <p>Consider using the built-in <a
-   * href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#split-java.lang.String-">String.split</a>
-   * method.
+   * href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html#split(java.lang.String)">String.split</a>
+   * method, which takes a regular expression whereas this method takes a string.
    *
    * @see #split(String s, String delim)
    * @param s the string to split
@@ -1399,14 +1562,15 @@ public final class UtilPlume {
       s = s.substring(delimpos + 1);
     }
     resultList.add(s);
-    @PolyDet("use") String @PolyDet[] result = resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet[resultList.size()]);
+    @PolyDet("use") String @PolyDet [] result =
+        resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet [resultList.size()]);
     return result;
   }
 
   /**
    * Return an array of Strings representing the characters between successive instances of the
    * delimiter String. Always returns an array of length at least 1 (it might contain only the empty
-   * string).
+   * string), which takes a regular expression whereas this method takes a string.
    *
    * <p>Consider using the built-in <a
    * href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#split-java.lang.String-">String.split</a>
@@ -1428,7 +1592,8 @@ public final class UtilPlume {
       s = s.substring(delimpos + delimlen);
     }
     resultList.add(s);
-    @PolyDet("use") String @PolyDet[] result = resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet[resultList.size()]);
+    @PolyDet("use") String @PolyDet [] result =
+        resultList.toArray(new @NonNull @PolyDet("use") String @PolyDet [resultList.size()]);
     return result;
   }
 
@@ -1442,6 +1607,7 @@ public final class UtilPlume {
    * @param s the string to split
    * @return an array of Strings, one for each line in the argument
    */
+  @SuppressWarnings("value:statically.executable.not.pure") // pure wrt `equals()` but not `==`
   @SideEffectFree
   @StaticallyExecutable
   public static String[] splitLines(String s) {
@@ -1465,7 +1631,8 @@ public final class UtilPlume {
    *     order
    */
   @Deprecated // use join(CharSequence, Object...) which has the arguments in the other order
-  public static <T extends @PolyDet Object> @PolyDet("up") String join(T @PolyDet [] a, @PolyDet CharSequence delim) {
+  public static <T extends @PolyDet Object> @PolyDet("up") String join(
+      T @PolyDet [] a, @PolyDet CharSequence delim) {
     if (a.length == 0) {
       return "";
     }
@@ -1564,7 +1731,8 @@ public final class UtilPlume {
    * @return the concatenation of the string representations of the values, with the delimiter
    *     between
    */
-  public static @PolyDet("up") String join(@PolyDet CharSequence delim, @PolyDet Iterable<? extends @PolyDet Object> v) {
+  public static @PolyDet("up") String join(
+      @PolyDet CharSequence delim, @PolyDet Iterable<? extends @PolyDet Object> v) {
     @PolyDet StringBuilder sb = new @PolyDet StringBuilder();
     boolean first = true;
     Iterator<?> itor = v.iterator();
@@ -1707,7 +1875,7 @@ public final class UtilPlume {
       case '\t':
         return "\\t";
       default:
-        return new @PolyDet("up") String(new @PolyDet char @PolyDet[] {c});
+        return new @PolyDet("up") String(new @PolyDet char @PolyDet [] {c});
     }
   }
 
@@ -1748,7 +1916,7 @@ public final class UtilPlume {
     } else if (c == '\t') {
       return "\\t";
     } else if (c >= ' ' && c <= '~') {
-      return new @PolyDet("up") String(new @PolyDet char @PolyDet[] {c});
+      return new @PolyDet("up") String(new @PolyDet char @PolyDet [] {c});
     } else if (c < 256) {
       String octal = Integer.toOctalString(c);
       while (octal.length() < 3) {
@@ -2204,6 +2372,40 @@ public final class UtilPlume {
     return result;
   }
 
+  // From
+  // https://stackoverflow.com/questions/37413816/get-number-of-placeholders-in-formatter-format-string
+  /** Regex that matches a format specifier. Some correspond to arguments and some do not. */
+  private static @Regex(6) Pattern formatSpecifier =
+      Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
+
+  /**
+   * Returns the number of arguments that the given format string takes. This is the number of
+   * specifiers that take arguments (some, like {@code %n} and {@code %%}, do not take arguments).
+   *
+   * @param s a string
+   * @return the number of format specifiers in the string
+   */
+  public static int countFormatArguments(String s) {
+    int result = 0;
+    int maxIndex = 0;
+    Matcher matcher = formatSpecifier.matcher(s);
+    while (matcher.find()) {
+      String argumentIndex = matcher.group(1);
+      if (argumentIndex != null) {
+        @SuppressWarnings("lowerbound:argument.type.incompatible") // group contains >= 2 chars
+        int thisIndex = Integer.parseInt(argumentIndex.substring(0, argumentIndex.length() - 1));
+        maxIndex = Math.max(maxIndex, thisIndex);
+        continue;
+      }
+      String conversion = matcher.group(6);
+      assert conversion != null : "@AssumeAssertion(nullness): nonempty capturing group";
+      if (!(conversion.equals("%") || conversion.equals("n"))) {
+        result++;
+      }
+    }
+    return Math.max(maxIndex, result);
+  }
+
   ///////////////////////////////////////////////////////////////////////////
   /// StringTokenizer
   ///
@@ -2249,13 +2451,13 @@ public final class UtilPlume {
   }
 
   ///////////////////////////////////////////////////////////////////////////
-  /// sleep
+  /// System
   ///
 
   /**
-   * Like Thread.sleep, but does not throw any exceptions, so it is easier for clients to use.
-   * Causes the currently executing thread to sleep (temporarily cease execution) for the specified
-   * number of milliseconds.
+   * Like Thread.sleep, but does not throw any checked exceptions, so it is easier for clients to
+   * use. Causes the currently executing thread to sleep (temporarily cease execution) for the
+   * specified number of milliseconds.
    *
    * @param millis the length of time to sleep in milliseconds
    */
@@ -2265,6 +2467,68 @@ public final class UtilPlume {
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
     }
+  }
+
+  /** The Runtime instance for the current execution. */
+  private static Runtime runtime = Runtime.getRuntime();
+
+  /**
+   * Returns the amount of used memory in the JVM. To force a garbage collection, which gives a more
+   * accurate overapproximation of the memory used, but is also slower, use {@link
+   * #usedMemory(boolean)}
+   *
+   * @return the amount of used memory
+   */
+  public static long usedMemory() {
+    return usedMemory(false);
+  }
+
+  /**
+   * Returns the amount of used memory in the JVM.
+   *
+   * @param forceGc if true, force a garbage collection, which gives a more accurate
+   *     overapproximation of the memory used, but is also slower
+   * @return the amount of used memory
+   */
+  public static long usedMemory(boolean forceGc) {
+    if (forceGc) {
+      gc();
+    }
+    // Implementation note:
+    // MemoryUsage.getUsed() == Runtime.totalMemory() - Runtime.freeMemory()
+    return (runtime.totalMemory() - runtime.freeMemory());
+  }
+
+  /**
+   * Perform garbage collection. Like System.gc, but waits to return until garbage collection has
+   * completed.
+   */
+  public static void gc() {
+    long oldCollectionCount = getCollectionCount();
+    System.gc();
+    while (getCollectionCount() == oldCollectionCount) {
+      try {
+        Thread.sleep(1); // 1 millisecond
+      } catch (InterruptedException e) {
+        // nothing to do
+      }
+    }
+  }
+
+  /**
+   * Return the number of garbage collections that have occurred.
+   *
+   * @return the number of garbage collections that have occurred
+   */
+  private static long getCollectionCount() {
+    long result = 0;
+    for (GarbageCollectorMXBean b : ManagementFactory.getGarbageCollectorMXBeans()) {
+      long count = b.getCollectionCount();
+      if (count != -1) {
+        result += count;
+      }
+    }
+    return result;
   }
 
   ///////////////////////////////////////////////////////////////////////////
