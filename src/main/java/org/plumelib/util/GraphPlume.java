@@ -149,7 +149,7 @@ public final class GraphPlume {
    * @param ps the PrintStream to which to print the graph
    * @param indent the number of spaces by which to indent the printed representation
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:method.invocation.invalid"})  // true positive; user output; collection ordering: printing OrderNonDet map
+  // true positive; user output; collection ordering: printing OrderNonDet map
   public static <T extends @NonNull Object> void print(
       Map<T, List<T>> graph, PrintStream ps, int indent) {
     String indentString = "";
