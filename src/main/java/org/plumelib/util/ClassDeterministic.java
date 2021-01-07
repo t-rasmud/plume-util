@@ -26,11 +26,10 @@ public class ClassDeterministic {
    * @param c the Class whose annotations to return
    * @return the class's annotations
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // Det checker doesn't type refine sorted arrays
   public static @PolyDet("down") Annotation @PolyDet("down") [] getAnnotations(Class<?> c) {
     @PolyDet Annotation @PolyDet("upDet") [] result = c.getAnnotations();
-    Arrays.sort(result, annotationComparator);
-    return result;
+    return DeterminismUtils.sort(result, annotationComparator);
   }
 
   /**
