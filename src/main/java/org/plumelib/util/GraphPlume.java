@@ -56,7 +56,7 @@ public final class GraphPlume {
    * @return a map from each node to a list of its pre-dominators
    */
   @SuppressWarnings({"determinism:annotation.type.incompatible",  // Irrelevant to determinism checker - array type of @KeyFor values is NonDet
-          "determinism:method.invocation.invalid", "determinism:argument.type.incompatible", "determinism:assignment.type.incompatible", "determinism:return.type.incompatible"  // Iteration over OrderNonDet collection to create another
+          "determinism:method.invocation.invalid", "determinism:argument.type.incompatible", "determinism:assignment.type.incompatible", "determinism:return.type.incompatible"  // Iteration over OrderNonDet collection for creating another
   })
   public static <T extends @NonNull Object> Map<T, List<T>> dominators(
       Map<T, List<@KeyFor("#1") T>> predecessors) {
