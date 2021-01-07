@@ -209,8 +209,9 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
+  @SuppressWarnings("determinism:invalid.array.component.type")  // TODO FIX
   public static @PolyDet("use") int @ArrayLen(2) [] minAndMax(int[] a) {
-    return new @PolyDet("use") int @PolyDet [] {min(a), max(a)};
+    return new @PolyDet("use") int [] {min(a), max(a)};
   }
 
   /**
@@ -222,22 +223,9 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings({
-    "determinism:return.type.incompatible", // Iteration over OrderNonDet collection for aggregation
-    "determinism:array.initializer.type.incompatible" // Iteration over OrderNonDet collection for aggregation
-  })
+  @SuppressWarnings("determinism:invalid.array.component.type")  // TODO FIX
   public static @PolyDet("down") long @ArrayLen(2) [] minAndMax(long[] a) {
-    if (a.length == 0) {
-      // return null;
-      throw new ArrayIndexOutOfBoundsException("Empty array passed to minAndMax(long[])");
-    }
-    long resultMin = a[0];
-    long resultMax = a[0];
-    for (int i = 1; i < a.length; i++) {
-      resultMin = Math.min(resultMin, a[i]);
-      resultMax = Math.max(resultMax, a[i]);
-    }
-    return new @PolyDet("use") long @PolyDet [] {resultMin, resultMax};
+    return new @PolyDet("down") long [] {min(a), max(a)};
   }
 
   /**
@@ -290,14 +278,8 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static int sum(int[] a) {
-    int sum = 0;
-    for (int i = 0; i < a.length; i++) {
-      sum += a[i];
-    }
-    return sum;
+    return reduce(a, Integer::sum);
   }
 
   /**
