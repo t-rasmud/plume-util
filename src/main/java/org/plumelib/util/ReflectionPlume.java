@@ -508,7 +508,9 @@ public final class ReflectionPlume {
    * @return the least upper bound of the classes of the given objects, or null if all arguments are
    *     null
    */
-  @SuppressWarnings("unchecked")  // cast to Class<T>
+  @SuppressWarnings({"unchecked",  // cast to Class<T>
+    "determinism:return.type.incompatible" // WHY?
+  })
   public static <T> @PolyDet("up") @Nullable Class<T> leastUpperBound(List<? extends @NonDet @Nullable Object> objects) {
     Class<T> result = null;
     for (Object obj : objects) {
