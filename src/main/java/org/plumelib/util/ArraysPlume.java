@@ -367,7 +367,7 @@ public final class ArraysPlume {
     "determinism:return.type.incompatible",
     "determinism:array.initializer.type.incompatible"
   }) // Iteration over OrderNonDet collection for aggregation
-  public static @PolyDet("down") long @ArrayLen(2) [] minAndMax(long[] a) {
+  public static @PolyDet("use") long @ArrayLen(2) [] minAndMax(long[] a) {
     if (a.length == 0) {
       // return null;
       throw new ArrayIndexOutOfBoundsException("Empty array passed to minAndMax(long[])");
