@@ -96,9 +96,8 @@ public final class CollectionsPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to static field deepEqualsUnderway
-    "determinism:method.invocation.invalid",
-    "determinism:argument.type.incompatible" // Iteration over OrderNonDet collection for searching:
-                                             // actually for equality check
+    "determinism:method.invocation.invalid", // Iteration over OrderNonDet collection for searching: actually for equality check
+    "determinism:argument.type.incompatible" // Iteration over OrderNonDet collection for searching: actually for equality check
   })
   @Pure
   public static @NonDet boolean deepEquals(@Nullable Object o1, @Nullable Object o2) {
@@ -248,8 +247,7 @@ public final class CollectionsPlume {
    * @return list of lists of length dims, each of which combines elements from objs
    */
   @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for
-                                                // creating another
+      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for creating another
   public static <T> List<@PolyDet("use") List<@PolyDet("use") T>> createCombinations(
       @Positive int dims, @NonNegative int start, List<@PolyDet("use") T> objs) {
 
@@ -309,9 +307,9 @@ public final class CollectionsPlume {
    * @return list of lists of length arity, each of which combines integers from start to cnt
    */
   @SuppressWarnings({
-    "determinism:assignment.type.incompatible",
-    "determinism:argument.type.incompatible"
-  }) // Iteration over OrderNonDet collection for creating another
+    "determinism:assignment.type.incompatible", // Iteration over OrderNonDet collection for creating another
+    "determinism:argument.type.incompatible" // Iteration over OrderNonDet collection for creating another
+  })
   public static ArrayList<@PolyDet("use") ArrayList<@PolyDet("use") Integer>> createCombinations(
       int arity, @NonNegative int start, int cnt) {
 
@@ -510,8 +508,7 @@ public final class CollectionsPlume {
     @SuppressWarnings({
       "allcheckers:purity",
       "lock:method.guarantee.violated",
-      "determinism:assignment.type.incompatible" // Assigning PolyDet(up) pointer to 'current' when
-                                                 // 'current' is empty
+      "determinism:assignment.type.incompatible" // Assigning PolyDet(up) pointer to 'current' when 'current' is empty
     })
     @Override
     public @PolyDet("down") boolean hasNext(@GuardSatisfied MergedIterator<T> this) {
@@ -566,8 +563,8 @@ public final class CollectionsPlume {
     @SuppressWarnings({
       "allcheckers:purity",
       "lock:method.guarantee.violated", // benevolent side effects
-      "determinism:assignment.type.incompatible",
-      "determinism:argument.type.incompatible",
+      "determinism:assignment.type.incompatible", // Iteration over OrderNonDet collection for searching
+      "determinism:argument.type.incompatible", // Iteration over OrderNonDet collection for searching
       "determinism:return.type.incompatible" // Iteration over OrderNonDet collection for searching
     })
     @Override
