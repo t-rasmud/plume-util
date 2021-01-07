@@ -650,7 +650,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
-  public static @PolyDet long gcd(long a, long b) {
+  public static long gcd(long a, long b) {
 
     // Euclid's method
     if (b == 0) {
@@ -724,7 +724,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
-  public static @PolyDet double gcd(double a, double b) {
+  public static double gcd(double a, double b) {
 
     if (a == Double.POSITIVE_INFINITY
         || a == Double.NEGATIVE_INFINITY
@@ -814,7 +814,7 @@ public final class MathPlume {
   @Deprecated // use modNonnegative()
   @Pure
   @StaticallyExecutable
-  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet int modPositive(
+  public static @NonNegative @LessThan("#2") @PolyUpperBound int modPositive(
       int x, @PolyUpperBound int y) {
     return modNonnegative(x, y);
   }
@@ -834,7 +834,7 @@ public final class MathPlume {
   })
   @Pure
   @StaticallyExecutable
-  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet int modNonnegative(
+  public static @NonNegative @LessThan("#2") @PolyUpperBound int modNonnegative(
       int x, @PolyUpperBound int y) {
     int result = x % y;
     if (result < 0) {
