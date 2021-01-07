@@ -10,6 +10,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import org.checkerframework.checker.determinism.qual.*;
 
+import static org.checkerframework.checker.determinism.DeterminismUtil.*;
+
 /**
  * Deterministic versions of {@code java.lang.Class} methods, which return arrays in sorted order.
  */
@@ -26,10 +28,10 @@ public class ClassDeterministic {
    * @param c the Class whose annotations to return
    * @return the class's annotations
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Annotation @PolyDet("down") [] getAnnotations(Class<?> c) {
     @PolyDet Annotation @PolyDet("upDet") [] result = c.getAnnotations();
-    return DeterminismUtils.sort(result, annotationComparator);
+    return sort(result, annotationComparator);
   }
 
   /**
@@ -38,11 +40,10 @@ public class ClassDeterministic {
    * @param c the Class whose declared annotations to return
    * @return the class's declared annotations
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Annotation @PolyDet("down") [] getDeclaredAnnotations(Class<?> c) {
     @PolyDet Annotation @PolyDet("upDet") [] result = c.getDeclaredAnnotations();
-    Arrays.sort(result, annotationComparator);
-    return result;
+    return sort(result, annotationComparator);
   }
 
   /**
@@ -51,11 +52,10 @@ public class ClassDeterministic {
    * @param c the Class whose member classes to return
    * @return the class's member classes
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Class<?> @PolyDet("down") [] getClasses(Class<?> c) {
     @PolyDet Class<?> @PolyDet("upDet")[] result = c.getClasses();
-    Arrays.sort(result, classComparator);
-    return result;
+    return sort(result, classComparator);
   }
 
   /**
@@ -64,11 +64,10 @@ public class ClassDeterministic {
    * @param c the Class whose declared member classes to return
    * @return the class's declared member classes
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Class<?> @PolyDet("down")[] getDeclaredClasses(Class<?> c) {
     @PolyDet Class<?> @PolyDet("upDet")[] result = c.getDeclaredClasses();
-    Arrays.sort(result, classComparator);
-    return result;
+    return sort(result, classComparator);
   }
 
   /**
@@ -78,13 +77,12 @@ public class ClassDeterministic {
    * @param c the Class whose enum constants to return
    * @return the class's enum constants
    */
-  public static <T> T @Nullable [] getEnumConstants(Class<T> c) {
+  public static <T> @PolyDet("down") T @Nullable [] getEnumConstants(Class<T> c) {
     T[] result = c.getEnumConstants();
     if (result == null) {
       return null;
     }
-    Arrays.sort(result, toStringComparator);
-    return result;
+    return sort(result, toStringComparator);
   }
 
   /**
@@ -93,11 +91,10 @@ public class ClassDeterministic {
    * @param c the Class whose constructors to return
    * @return the class's constructors
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Constructor<?> @PolyDet("down") [] getConstructors(Class<?> c) {
     @PolyDet Constructor<?> @PolyDet("upDet")[] result = c.getConstructors();
-    Arrays.sort(result, constructorComparator);
-    return result;
+    return sort(result, constructorComparator);
   }
 
   /**
@@ -106,11 +103,10 @@ public class ClassDeterministic {
    * @param c the Class whose declared constructors to return
    * @return the class's declared constructors
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Constructor<?> @PolyDet("down")[] getDeclaredConstructors(Class<?> c) {
     @PolyDet Constructor<?> @PolyDet("upDet") [] result = c.getDeclaredConstructors();
-    Arrays.sort(result, constructorComparator);
-    return result;
+    return sort(result, constructorComparator);
   }
 
   /**
@@ -119,11 +115,10 @@ public class ClassDeterministic {
    * @param c the Class whose fields to return
    * @return the class's fields
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Field @PolyDet("down")[] getFields(Class<?> c) {
     @PolyDet Field @PolyDet("upDet")[] result = c.getFields();
-    Arrays.sort(result, fieldComparator);
-    return result;
+    return sort(result, fieldComparator);
   }
 
   /**
@@ -132,11 +127,10 @@ public class ClassDeterministic {
    * @param c the Class whose declared fields to return
    * @return the class's declared fields
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Field @PolyDet("down") [] getDeclaredFields(Class<?> c) {
     @PolyDet Field @PolyDet("upDet") [] result = c.getDeclaredFields();
-    Arrays.sort(result, fieldComparator);
-    return result;
+    return sort(result, fieldComparator);
   }
 
   /**
@@ -145,11 +139,10 @@ public class ClassDeterministic {
    * @param c the Class whose methods to return
    * @return the class's methods
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Method @PolyDet("down") [] getMethods(Class<?> c) {
     @PolyDet Method @PolyDet("upDet") [] result = c.getMethods();
-    Arrays.sort(result, methodComparator);
-    return result;
+    return sort(result, methodComparator);
   }
 
   /**
@@ -158,11 +151,10 @@ public class ClassDeterministic {
    * @param c the Class whose declared methods to return
    * @return the class's declared methods
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible","determinism:return.type.incompatible"})  // Det checker doesn't type refine sorted arrays
+  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Method @PolyDet("down") [] getDeclaredMethods(Class<?> c) {
     @PolyDet Method @PolyDet("upDet") [] result = c.getDeclaredMethods();
-    Arrays.sort(result, methodComparator);
-    return result;
+    return sort(result, methodComparator);
   }
 
   /// Helper routines

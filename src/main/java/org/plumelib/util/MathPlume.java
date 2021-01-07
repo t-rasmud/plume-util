@@ -18,7 +18,7 @@ import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.checker.determinism.qual.*;
 
-import static org.plumelib.util.DeterminismUtils.*;
+import static org.checkerframework.checker.determinism.DeterminismUtil.*;
 
 /** Mathematical utilities. */
 public final class MathPlume {

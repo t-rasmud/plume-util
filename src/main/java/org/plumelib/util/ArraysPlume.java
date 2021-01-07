@@ -36,7 +36,7 @@ import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.*;
 import org.plumelib.reflection.ReflectionPlume;
 
-import static org.plumelib.util.DeterminismUtils.*;
+import static org.checkerframework.checker.determinism.DeterminismUtil.*;
 
 /**
  * Utilities for manipulating arrays and collections. This complements {@link java.util.Arrays} and
@@ -2273,7 +2273,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") boolean @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2290,7 +2290,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") byte @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2307,7 +2307,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") char @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2324,7 +2324,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") float @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2341,7 +2341,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") short @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2358,7 +2358,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") int @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2376,7 +2376,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") double @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2393,7 +2393,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") long @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2410,7 +2410,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") String @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2427,7 +2427,7 @@ public final class ArraysPlume {
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") Object @PolyDet [] a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   /**
@@ -2443,7 +2443,7 @@ public final class ArraysPlume {
   @Pure
   public static <T extends @PolyDet("use") Object> @PolyDet("down") boolean noDuplicates(
       @PolyDet List<T> a) {
-    return !DeterminismUtils.hasDuplicate(a);
+    return !hasDuplicate(a);
   }
 
   ///////////////////////////////////////////////////////////////////////////
