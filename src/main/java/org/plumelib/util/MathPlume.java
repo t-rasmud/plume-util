@@ -18,6 +18,8 @@ import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.checker.determinism.qual.*;
 
+import static org.plumelib.util.DeterminismUtils.*;
+
 /** Mathematical utilities. */
 public final class MathPlume {
 
@@ -591,6 +593,21 @@ public final class MathPlume {
   }
 
   /**
+   * Like gcd, but returns 0 when one of the arguments is 0.
+   *
+   * @param a first operand
+   * @param b second operand
+   * @return greatest common divisor of a and b, or 0 if either argument is 0
+   */
+  private static int gcdSpecialCaseZero(int a, int b) {
+    if (a == 0 || b == 0) {
+      return 0;
+    } else {
+      return gcd(a,b);
+    }
+  }
+
+  /**
    * Return the greatest common divisor of the elements of int array a.
    *
    * @param a array of operands
@@ -598,20 +615,11 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") int gcd(int[] a) {
-    // Euclid's method
     if (a.length == 0) {
       return 0;
     }
-    int result = a[0];
-    for (int i = 1; i < a.length; i++) {
-      result = gcd(a[i], result);
-      if ((result == 1) || (result == 0)) {
-        return result;
-      }
-    }
-    return result;
+    return reduce(a, MathPlume::gcdSpecialCaseZero);
   }
 
   /**

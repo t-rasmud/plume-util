@@ -310,14 +310,8 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static double sum(double[] a) {
-    double sum = 0;
-    for (int i = 0; i < a.length; i++) {
-      sum += a[i];
-    }
-    return sum;
+    return reduce(a, Double::sum);
   }
 
   /**
