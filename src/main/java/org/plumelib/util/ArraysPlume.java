@@ -209,7 +209,6 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  // for aggregation
   public static @PolyDet("use") int @ArrayLen(2) [] minAndMax(int[] a) {
     return new @PolyDet("use") int @PolyDet [] {min(a), max(a)};
   }
