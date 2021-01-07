@@ -658,8 +658,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over OrderNonDet collection for aggregation
-  public static @PolyDet("down") long gcd(long a, long b) {
+  public static @PolyDet long gcd(long a, long b) {
 
     // Euclid's method
     if (b == 0) {
@@ -676,6 +675,21 @@ public final class MathPlume {
   }
 
   /**
+   * Like gcd, but returns 0 when one of the arguments is 0.
+   *
+   * @param a first operand
+   * @param b second operand
+   * @return greatest common divisor of a and b, or 0 if either argument is 0
+   */
+  private static long gcdSpecialCaseZero(long a, long b) {
+    if (a == 0 || b == 0) {
+      return 0;
+    } else {
+      return gcd(a,b);
+    }
+  }
+
+  /**
    * Return the greatest common divisor of the elements of long array a.
    *
    * @param a array of operands
@@ -683,20 +697,12 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") long gcd(long[] a) {
     // Euclid's method
     if (a.length == 0) {
       return 0;
     }
-    long result = a[0];
-    for (int i = 1; i < a.length; i++) {
-      result = gcd(a[i], result);
-      if ((result == 1) || (result == 0)) {
-        return result;
-      }
-    }
-    return result;
+    return reduce(a, MathPlume::gcdSpecialCaseZero);
   }
 
   /**
@@ -733,8 +739,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over OrderNonDet collection for aggregation
-  public static @PolyDet("down") double gcd(double a, double b) {
+  public static @PolyDet double gcd(double a, double b) {
 
     if (a == Double.POSITIVE_INFINITY
         || a == Double.NEGATIVE_INFINITY
@@ -760,6 +765,22 @@ public final class MathPlume {
   }
 
   /**
+   * Like gcd, but returns 0 when one of the arguments is 0.
+   *
+   * @param a first operand
+   * @param b second operand
+   * @return greatest common divisor of a and b, or 0 if either argument is 0
+   */
+  private static double gcdSpecialCaseZero(double a, double b) {
+    if (a == 0 || b == 0) {
+      return 0;
+    } else {
+      return gcd(a,b);
+    }
+  }
+
+
+  /**
    * Return the greatest common divisor of the elements of double array a.
    *
    * @param a array of operands
@@ -767,20 +788,12 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") double gcd(double[] a) {
     // Euclid's method
     if (a.length == 0) {
       return 0;
     }
-    double result = a[0];
-    for (int i = 1; i < a.length; i++) {
-      result = gcd(a[i], result);
-      if ((result == 1) || (result == 0)) {
-        return result;
-      }
-    }
-    return result;
+    return reduce(a, MathPlume::gcdSpecialCaseZero);
   }
 
   /**
@@ -824,7 +837,7 @@ public final class MathPlume {
   @Deprecated // use modNonnegative()
   @Pure
   @StaticallyExecutable
-  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet("down") int modPositive(
+  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet int modPositive(
       int x, @PolyUpperBound int y) {
     return modNonnegative(x, y);
   }
@@ -841,11 +854,10 @@ public final class MathPlume {
     "lowerbound:return.type.incompatible",
     "index:return.type.incompatible", // result is non-negative because either y is positive (-> x % y is non-negative)
           // or |y| is added to x % y, which is also non-negative
-          "determinism:return.type.incompatible" // Iteration over OrderNonDet collection for aggregation
   })
   @Pure
   @StaticallyExecutable
-  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet("down") int modNonnegative(
+  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet int modNonnegative(
       int x, @PolyUpperBound int y) {
     int result = x % y;
     if (result < 0) {
