@@ -724,8 +724,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over OrderNonDet collection for aggregation
-  public static @PolyDet("down") double gcd(double a, double b) {
+  public static @PolyDet double gcd(double a, double b) {
 
     if (a == Double.POSITIVE_INFINITY
         || a == Double.NEGATIVE_INFINITY
@@ -815,7 +814,7 @@ public final class MathPlume {
   @Deprecated // use modNonnegative()
   @Pure
   @StaticallyExecutable
-  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet("down") int modPositive(
+  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet int modPositive(
       int x, @PolyUpperBound int y) {
     return modNonnegative(x, y);
   }
@@ -832,11 +831,10 @@ public final class MathPlume {
     "lowerbound:return.type.incompatible",
     "index:return.type.incompatible", // result is non-negative because either y is positive (-> x % y is non-negative)
           // or |y| is added to x % y, which is also non-negative
-          "determinism:return.type.incompatible" // Iteration over OrderNonDet collection for aggregation
   })
   @Pure
   @StaticallyExecutable
-  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet("down") int modNonnegative(
+  public static @NonNegative @LessThan("#2") @PolyUpperBound @PolyDet int modNonnegative(
       int x, @PolyUpperBound int y) {
     int result = x % y;
     if (result < 0) {
