@@ -1310,7 +1310,7 @@ public final class MathPlume {
    * @return the set: [min(nums)..max(nums)] - nums
    */
   @SuppressWarnings({"allcheckers:purity", "lock",
-          "determinism:assignment.type.incompatible"  // Iteration over OrderNonDet collection for assigning into another
+          "determinism:assignment.type.incompatible"  // Iteration over OrderNonDet collection for creating another
   })
   @Pure
   @StaticallyExecutable
@@ -1370,7 +1370,7 @@ public final class MathPlume {
      * @param nums a non-empty array
      * @param addEnds if true, include the bracketing endpoints
      */
-    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning element of nums to currentNonMissing
+    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning element of nums to field: currentNonMissing
     MissingNumbersIteratorInt(@PolyDet("down") int @MinLen(1) @PolyDet [] nums, boolean addEnds) {
       this.addEnds = addEnds;
       { // avoid modifying parameter
@@ -1395,7 +1395,7 @@ public final class MathPlume {
      * @param numsItor a non-empty iterator; it must return integers in sorted order
      * @param addEnds if true, include the bracketing endpoints
      */
-    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning element of numsItor to currentNonMissing
+    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning element of numsItor to field: currentNonMissing
     MissingNumbersIteratorInt(Iterator<Integer> numsItor, boolean addEnds) {
       this.addEnds = addEnds;
       if (!numsItor.hasNext()) {
@@ -1417,7 +1417,7 @@ public final class MathPlume {
     @SuppressWarnings({
       "allcheckers:purity", // benevolent side effects
       "lock:method.guarantee.violated",
-            "determinism:assignment.type.incompatible",  // Assigning element of nums to currentNonMissing
+            "determinism:assignment.type.incompatible",  // Assigning element of nums to field: currentNonMissing
             "determinism:return.type.incompatible" // Returning PolyDet next element
     })
     @Override
@@ -1646,7 +1646,7 @@ public final class MathPlume {
    * @return the set: [min(nums)..max(nums)] - nums
    */
   @SuppressWarnings({"allcheckers:purity", "lock",
-          "determinism:assignment.type.incompatible" // Iteration over OrderNonDet collection for assigning into another
+          "determinism:assignment.type.incompatible" // Iteration over OrderNonDet collection for creating another
   })
   @Pure
   @StaticallyExecutable
@@ -1707,7 +1707,7 @@ public final class MathPlume {
      * @param nums a non-empty array
      * @param addEnds if true, include the bracketing endpoints
      */
-    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning element of nums to currentNonMissing
+    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning element of nums to field: currentNonMissing
     MissingNumbersIteratorLong(@PolyDet("down") long @MinLen(1) @PolyDet[] nums, boolean addEnds) {
       this.addEnds = addEnds;
       { // avoid modifying parameter
@@ -1732,7 +1732,7 @@ public final class MathPlume {
      * @param numsItor a non-empty array; must return longs in sorted order
      * @param addEnds if true, include the bracketing endpoints
      */
-    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning element of numsItor to currentNonMissing
+    @SuppressWarnings("determinism:assignment.type.incompatible")  // Assigning element of numsItor to field: currentNonMissing
     MissingNumbersIteratorLong(Iterator<Long> numsItor, boolean addEnds) {
       this.addEnds = addEnds;
       if (!numsItor.hasNext()) {

@@ -2270,7 +2270,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") boolean @PolyDet [] a) {
@@ -2298,7 +2298,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") byte @PolyDet [] a) {
@@ -2326,7 +2326,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") char @PolyDet [] a) {
@@ -2354,7 +2354,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") float @PolyDet [] a) {
@@ -2382,7 +2382,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") short @PolyDet [] a) {
@@ -2410,7 +2410,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") int @PolyDet [] a) {
@@ -2439,7 +2439,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") double @PolyDet [] a) {
@@ -2467,7 +2467,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") long @PolyDet [] a) {
@@ -2495,7 +2495,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") String @PolyDet [] a) {
@@ -2522,7 +2522,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") Object @PolyDet [] a) {
@@ -2714,7 +2714,8 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
+    // into another
   })
   @Pure
   public static @PolyDet("down") boolean isSubset(
@@ -2751,7 +2752,8 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
+    // into another
   })
   @Pure
   public static @PolyDet("down") boolean isSubset(
@@ -2788,7 +2790,8 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
+    // into another
   })
   @Pure
   public static @PolyDet("down") boolean isSubset(
