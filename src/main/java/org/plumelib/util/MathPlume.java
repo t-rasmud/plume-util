@@ -650,8 +650,7 @@ public final class MathPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings("determinism:return.type.incompatible")  // Iteration over OrderNonDet collection for aggregation
-  public static @PolyDet("down") long gcd(long a, long b) {
+  public static @PolyDet long gcd(long a, long b) {
 
     // Euclid's method
     if (b == 0) {
