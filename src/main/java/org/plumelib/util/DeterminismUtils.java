@@ -2,6 +2,8 @@ package org.plumelib.util;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.IntBinaryOperator;
@@ -94,5 +96,25 @@ public class DeterminismUtils {
       T[] a, @Nullable Comparator<? super T> c) {
     Arrays.sort(a, c);
     return a;
+  }
+
+  ///
+  /// Duplicates
+  ///
+
+  public static <T> @PolyDet("down") boolean hasDuplicate(@PolyDet Iterable<? extends @PolyDet("use") T> iterator) {
+    Set<T> set = new HashSet<T>();
+    for (T each : iterator) {
+      if (!set.add(each)) {
+        // Already contained the element.
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @SafeVarargs
+  public static <T> @PolyDet("down") boolean hasDuplicate(@PolyDet("use") T @PolyDet ... a) {
+    return hasDuplicate(Arrays.asList(a));
   }
 }

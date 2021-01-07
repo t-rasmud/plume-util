@@ -2270,21 +2270,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") boolean @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") Boolean> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      // Could be optimized not to add the last element,
-      // but that would make the code much less readable.
-      Boolean n = Boolean.valueOf(a[i]);
-      if (hs.contains(n)) {
-        return false;
-      }
-      hs.add(n);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2298,21 +2287,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") byte @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") Byte> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      // Could be optimized not to add the last element,
-      // but that would make the code much less readable.
-      Byte n = a[i];
-      if (hs.contains(n)) {
-        return false;
-      }
-      hs.add(n);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2326,21 +2304,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") char @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") Character> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      // Could be optimized not to add the last element,
-      // but that would make the code much less readable.
-      Character n = a[i];
-      if (hs.contains(n)) {
-        return false;
-      }
-      hs.add(n);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2354,21 +2321,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") float @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") Float> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      // Could be optimized not to add the last element,
-      // but that would make the code much less readable.
-      Float n = a[i];
-      if (hs.contains(n)) {
-        return false;
-      }
-      hs.add(n);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2382,21 +2338,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") short @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") Short> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      // Could be optimized not to add the last element,
-      // but that would make the code much less readable.
-      Short n = a[i];
-      if (hs.contains(n)) {
-        return false;
-      }
-      hs.add(n);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2410,21 +2355,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") int @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") Integer> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      // Could be optimized not to add the last element,
-      // but that would make the code much less readable.
-      Integer n = a[i];
-      if (hs.contains(n)) {
-        return false;
-      }
-      hs.add(n);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2439,21 +2373,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") double @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") Double> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      // Could be optimized not to create the last element,
-      // but that would make the code much less readable.
-      Double n = a[i];
-      if (hs.contains(n)) {
-        return false;
-      }
-      hs.add(n);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2467,21 +2390,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") long @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") Long> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      // Could be optimized not to create the last element,
-      // but that would make the code much less readable.
-      Long n = a[i];
-      if (hs.contains(n)) {
-        return false;
-      }
-      hs.add(n);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2495,20 +2407,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") String @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") String> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      if (hs.contains(a[i])) {
-        return false;
-      }
-      // Could be optimized not to add the last element,
-      // but that would make the code much less readable.
-      hs.add(a[i]);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2522,20 +2424,10 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") Object @PolyDet [] a) {
-    @PolyDet("upDet") HashSet<@PolyDet("use") Object> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.length; i++) {
-      if (hs.contains(a[i])) {
-        return false;
-      }
-      // Could be optimized not to add the last element,
-      // but that would make the code much less readable.
-      hs.add(a[i]);
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   /**
@@ -2551,14 +2443,7 @@ public final class ArraysPlume {
   @Pure
   public static <T extends @PolyDet("use") Object> @PolyDet("down") boolean noDuplicates(
       @PolyDet List<T> a) {
-    @PolyDet("upDet") HashSet<T> hs = new @PolyDet("upDet") HashSet<>();
-    for (int i = 0; i < a.size(); i++) {
-      T elt = a.get(i);
-      if (!hs.add(elt)) {
-        return false;
-      }
-    }
-    return true;
+    return !DeterminismUtils.hasDuplicate(a);
   }
 
   ///////////////////////////////////////////////////////////////////////////
