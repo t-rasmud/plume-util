@@ -563,9 +563,9 @@ public final class CollectionsPlume {
     @SuppressWarnings({
       "allcheckers:purity",
       "lock:method.guarantee.violated", // benevolent side effects
-      "determinism:assignment.type.incompatible", // Iteration over OrderNonDet collection for searching
-      "determinism:argument.type.incompatible", // Iteration over OrderNonDet collection for searching
-      "determinism:return.type.incompatible" // Iteration over OrderNonDet collection for searching
+      "determinism:assignment.type.incompatible", // Iteration over OrderNonDet collection for searching: actually for hasNext
+      "determinism:argument.type.incompatible", // Iteration over OrderNonDet collection for searching: actually for hasNext
+      "determinism:return.type.incompatible" // Iteration over OrderNonDet collection for searching: actually for hasNext
     })
     @Override
     public @PolyDet("down") boolean hasNext(@GuardSatisfied FilteredIterator<T> this) {

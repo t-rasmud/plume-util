@@ -79,7 +79,7 @@ public class DeterminismUtils {
   /// Sorting
   ///
 
-  // These version return the sorted array, which permits flow-sensitive type refinement.
+  // These versions return the sorted array, which permits flow-sensitive type refinement.
 
   /**
    * Sorts the specified array of objects according to the order induced by the specified
