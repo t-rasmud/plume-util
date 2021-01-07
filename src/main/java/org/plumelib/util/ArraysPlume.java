@@ -209,8 +209,7 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings("determinism:invalid.array.component.type")  // TODO FIX (waiting for Rashmi)
-  public static @PolyDet("use") int @ArrayLen(2) [] minAndMax(int[] a) {
+  public static @PolyDet("down") int @ArrayLen(2) @PolyDet("down")[] minAndMax(int[] a) {
     return new @PolyDet("use") int [] {min(a), max(a)};
   }
 
@@ -223,8 +222,7 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings("determinism:invalid.array.component.type")  // TODO FIX (waiting for Rashmi)
-  public static @PolyDet("down") long @ArrayLen(2) [] minAndMax(long[] a) {
+  public static @PolyDet("down") long @ArrayLen(2) @PolyDet("down") [] minAndMax(long[] a) {
     return new @PolyDet("down") long [] {min(a), max(a)};
   }
 
@@ -237,13 +235,11 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static int elementRange(int[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to elementRange(int[])");
     }
-    int[] minAndMax = minAndMax(a);
+    @PolyDet("down") int @PolyDet("down")[] minAndMax = minAndMax(a);
     return minAndMax[1] - minAndMax[0];
   }
 
@@ -256,13 +252,11 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static long elementRange(long[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to elementRange(long[])");
     }
-    long[] minAndMax = minAndMax(a);
+    @PolyDet("down") long @PolyDet("down") [] minAndMax = minAndMax(a);
     return minAndMax[1] - minAndMax[0];
   }
 
