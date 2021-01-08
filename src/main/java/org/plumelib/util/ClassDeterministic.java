@@ -1,16 +1,14 @@
 package org.plumelib.util;
 
+import static org.checkerframework.checker.determinism.DeterminismUtil.*;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Comparator;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import org.checkerframework.checker.determinism.qual.*;
-
-import static org.checkerframework.checker.determinism.DeterminismUtil.*;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Deterministic versions of {@code java.lang.Class} methods, which return arrays in sorted order.
@@ -28,7 +26,6 @@ public class ClassDeterministic {
    * @param c the Class whose annotations to return
    * @return the class's annotations
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Annotation @PolyDet("down") [] getAnnotations(Class<?> c) {
     @PolyDet Annotation @PolyDet("upDet") [] result = c.getAnnotations();
     return sort(result, annotationComparator);
@@ -40,7 +37,6 @@ public class ClassDeterministic {
    * @param c the Class whose declared annotations to return
    * @return the class's declared annotations
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Annotation @PolyDet("down") [] getDeclaredAnnotations(Class<?> c) {
     @PolyDet Annotation @PolyDet("upDet") [] result = c.getDeclaredAnnotations();
     return sort(result, annotationComparator);
@@ -52,9 +48,8 @@ public class ClassDeterministic {
    * @param c the Class whose member classes to return
    * @return the class's member classes
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Class<?> @PolyDet("down") [] getClasses(Class<?> c) {
-    @PolyDet Class<?> @PolyDet("upDet")[] result = c.getClasses();
+    @PolyDet Class<?> @PolyDet("upDet") [] result = c.getClasses();
     return sort(result, classComparator);
   }
 
@@ -64,9 +59,8 @@ public class ClassDeterministic {
    * @param c the Class whose declared member classes to return
    * @return the class's declared member classes
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
-  public static @PolyDet("down") Class<?> @PolyDet("down")[] getDeclaredClasses(Class<?> c) {
-    @PolyDet Class<?> @PolyDet("upDet")[] result = c.getDeclaredClasses();
+  public static @PolyDet("down") Class<?> @PolyDet("down") [] getDeclaredClasses(Class<?> c) {
+    @PolyDet Class<?> @PolyDet("upDet") [] result = c.getDeclaredClasses();
     return sort(result, classComparator);
   }
 
@@ -77,8 +71,8 @@ public class ClassDeterministic {
    * @param c the Class whose enum constants to return
    * @return the class's enum constants
    */
-  public static <T> @PolyDet("down") T @Nullable [] getEnumConstants(Class<T> c) {
-    T[] result = c.getEnumConstants();
+  public static <T> @PolyDet("down") T @Nullable @PolyDet("down") [] getEnumConstants(Class<T> c) {
+    @PolyDet T @PolyDet("upDet") [] result = c.getEnumConstants();
     if (result == null) {
       return null;
     }
@@ -91,9 +85,8 @@ public class ClassDeterministic {
    * @param c the Class whose constructors to return
    * @return the class's constructors
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Constructor<?> @PolyDet("down") [] getConstructors(Class<?> c) {
-    @PolyDet Constructor<?> @PolyDet("upDet")[] result = c.getConstructors();
+    @PolyDet Constructor<?> @PolyDet("upDet") [] result = c.getConstructors();
     return sort(result, constructorComparator);
   }
 
@@ -103,8 +96,8 @@ public class ClassDeterministic {
    * @param c the Class whose declared constructors to return
    * @return the class's declared constructors
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
-  public static @PolyDet("down") Constructor<?> @PolyDet("down")[] getDeclaredConstructors(Class<?> c) {
+  public static @PolyDet("down") Constructor<?> @PolyDet("down") [] getDeclaredConstructors(
+      Class<?> c) {
     @PolyDet Constructor<?> @PolyDet("upDet") [] result = c.getDeclaredConstructors();
     return sort(result, constructorComparator);
   }
@@ -115,9 +108,8 @@ public class ClassDeterministic {
    * @param c the Class whose fields to return
    * @return the class's fields
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
-  public static @PolyDet("down") Field @PolyDet("down")[] getFields(Class<?> c) {
-    @PolyDet Field @PolyDet("upDet")[] result = c.getFields();
+  public static @PolyDet("down") Field @PolyDet("down") [] getFields(Class<?> c) {
+    @PolyDet Field @PolyDet("upDet") [] result = c.getFields();
     return sort(result, fieldComparator);
   }
 
@@ -127,7 +119,6 @@ public class ClassDeterministic {
    * @param c the Class whose declared fields to return
    * @return the class's declared fields
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Field @PolyDet("down") [] getDeclaredFields(Class<?> c) {
     @PolyDet Field @PolyDet("upDet") [] result = c.getDeclaredFields();
     return sort(result, fieldComparator);
@@ -139,7 +130,6 @@ public class ClassDeterministic {
    * @param c the Class whose methods to return
    * @return the class's methods
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Method @PolyDet("down") [] getMethods(Class<?> c) {
     @PolyDet Method @PolyDet("upDet") [] result = c.getMethods();
     return sort(result, methodComparator);
@@ -151,7 +141,6 @@ public class ClassDeterministic {
    * @param c the Class whose declared methods to return
    * @return the class's declared methods
    */
-  @SuppressWarnings({"determinism:argument.type.incompatible"})  // WHY?
   public static @PolyDet("down") Method @PolyDet("down") [] getDeclaredMethods(Class<?> c) {
     @PolyDet Method @PolyDet("upDet") [] result = c.getDeclaredMethods();
     return sort(result, methodComparator);
