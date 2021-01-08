@@ -210,7 +210,7 @@ public final class ArraysPlume {
   @Pure
   @StaticallyExecutable
   public static @PolyDet("down") int @ArrayLen(2) @PolyDet("down")[] minAndMax(int[] a) {
-    return new @PolyDet("use") int [] {min(a), max(a)};
+    return new @PolyDet("down") int @PolyDet("down") [] {min(a), max(a)};
   }
 
   /**
@@ -223,7 +223,7 @@ public final class ArraysPlume {
   @Pure
   @StaticallyExecutable
   public static @PolyDet("down") long @ArrayLen(2) @PolyDet("down") [] minAndMax(long[] a) {
-    return new @PolyDet("down") long [] {min(a), max(a)};
+    return new @PolyDet("down") long @PolyDet("down") [] {min(a), max(a)};
   }
 
   /**
