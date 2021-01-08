@@ -509,8 +509,7 @@ public final class CollectionsPlume {
     @SuppressWarnings({
       "allcheckers:purity",
       "lock:method.guarantee.violated",
-      "determinism:assignment.type.incompatible" // Assigning PolyDet(up) pointer to 'current' when
-                                                 // 'current' is empty
+      "determinism:assignment.type.incompatible" // Assigning PolyDet(up) pointer to 'current' when 'current' is empty
     })
     @Override
     public @PolyDet("down") boolean hasNext(@GuardSatisfied MergedIterator<T> this) {

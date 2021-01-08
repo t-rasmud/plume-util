@@ -1834,8 +1834,7 @@ public final class ArraysPlume {
    * @return an array that concatenates the arguments
    */
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for assigning
-  // into another
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for assigning into another
   private static <@PolyDet("use") T> T @PolyDet [] concat(
       @PolyDet ListOrArray<T> a, @PolyDet ListOrArray<T> b) {
     if (a.isNull() && b.isNull()) {
