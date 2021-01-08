@@ -1777,10 +1777,10 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for concatenation with another
-  public static <T> @PolyDet("use") T @PolyDet [] concat(
-      @PolyDet("use") T @Nullable @PolyDet [] a, @PolyDet("use") T @Nullable @PolyDet [] b) {
+//  @SuppressWarnings(
+//      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for concatenation with another
+  public static <@PolyDet("use") T> T @PolyDet [] concat(
+      T @Nullable @PolyDet [] a, T @Nullable @PolyDet [] b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
 
@@ -1793,9 +1793,7 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for concatenation with another
-  public static <T> @PolyDet("use") T @PolyDet [] concat(
+  public static <@PolyDet("use") T> T @PolyDet [] concat(
       T @Nullable @PolyDet [] a, @Nullable @PolyDet List<T> b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
@@ -1809,10 +1807,8 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for concatenation with another
-  public static <T> @PolyDet("use") T @PolyDet [] concat(
-      @PolyDet @Nullable List<@PolyDet("use") T> a, @PolyDet("use") T @Nullable @PolyDet [] b) {
+  public static <@PolyDet("use") T> T @PolyDet [] concat(
+      @PolyDet @Nullable List<T> a, T @Nullable @PolyDet [] b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
 
@@ -1824,10 +1820,8 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for concatenation with another
-  public static <T> @PolyDet("use") T @PolyDet [] concat(
-      @Nullable @PolyDet List<@PolyDet("use") T> a, @Nullable @PolyDet List<@PolyDet("use") T> b) {
+  public static <@PolyDet("use") T> T @PolyDet [] concat(
+      @Nullable @PolyDet List<T> a, @Nullable @PolyDet List<T> b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
 
@@ -1842,8 +1836,8 @@ public final class ArraysPlume {
   @SuppressWarnings(
       "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for assigning
   // into another
-  private static <T> @PolyDet("use") T @PolyDet [] concat(
-      @PolyDet ListOrArray<@PolyDet("use") T> a, @PolyDet ListOrArray<@PolyDet("use") T> b) {
+  private static <@PolyDet("use") T> T @PolyDet [] concat(
+      @PolyDet ListOrArray<T> a, @PolyDet ListOrArray<T> b) {
     if (a.isNull() && b.isNull()) {
       @SuppressWarnings("unchecked")
       @PolyDet("use") T @PolyDet [] result =
