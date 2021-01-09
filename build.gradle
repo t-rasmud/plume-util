@@ -56,7 +56,7 @@ dependencies {
   errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
 }
 tasks.withType(JavaCompile).configureEach {
-  options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+  options.compilerArgs << "-Xlint:all,-processing"
   options.errorprone {
     // Code copied from the JDK that we don't want to change gratuitously.
     excludedPaths = ".*/Weak.*Hash(er)?Map.java"
@@ -81,7 +81,6 @@ checkerFramework {
   ]
   extraJavacArgs = [
     '-Aannotations', '-Anolocations', // for AnnotationStatistics
-    '-Werror',
     // '-AcheckPurityAnnotations',
     '-ArequirePrefixInWarningSuppressions',
     '-AwarnUnneededSuppressions',
@@ -89,7 +88,7 @@ checkerFramework {
     '-AwarnUnneededSuppressionsExceptions=purity|method.guarantee.violated|:deterministic',
     '-AusePolyDefault',
     '-AsuppressWarnings=determinism:type.argument.invalid.hasqualparam,determinism:enhancedfor.type.incompatible,determinism:invalid.array.assignment,determinism:invalid.field.assignment,determinism:throw.type.invalid,determinism:type.argument.type.incompatible,determinism:invalid.upper.bound.on.type.argument',
-    '-Xmaxerrs', '10000',
+    '-Xmaxwarns', '10000',
     '-Awarns',
   ]
 }
