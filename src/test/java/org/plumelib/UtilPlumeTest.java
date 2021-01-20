@@ -16,6 +16,7 @@ import org.checkerframework.common.value.qual.ArrayLen;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({
+  "determinism", // don't type-check tests
   "UseCorrectAssertInTests" // `assert` works fine in tests
 })
 public final class UtilPlumeTest {

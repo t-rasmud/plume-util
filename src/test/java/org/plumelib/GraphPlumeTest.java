@@ -11,6 +11,7 @@ import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({
+  "determinism", // don't type-check tests
   "keyfor", // https://github.com/typetools/checker-framework/issues/2358 and maybe other issues
   "nullness",
   "UseCorrectAssertInTests" // `assert` works fine in tests

@@ -11,6 +11,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({
+  "determinism",
   "UseCorrectAssertInTests" // `assert` works fine in tests
 })
 public final class ArraysPlumeTest {

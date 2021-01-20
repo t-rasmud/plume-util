@@ -10,6 +10,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({
+  "determinism", // don't type-check tests
   "UseCorrectAssertInTests" // `assert` works fine in tests
 })
 public final class MathPlumeTest {

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({
+  "determinism",
   "deprecation" // StringBuilderDelimited is deprecated
 })
 public final class StringBuilderDelimitedTest {
