@@ -47,7 +47,7 @@ public class CombinationIterator<T> implements Iterator<List<T>> {
    * @param collectionsOfCandidates lists of candidate values for each position in generated lists
    */
   @SuppressWarnings({"rawtypes", "unchecked",  // for generic array creation
-          "determinism:assignment.type.incompatible"  // Iteration over OrderNonDet collection for assigning into another
+          "determinism:assignment.type.incompatible"  // Iteration over OrderNonDet collection for creating another
   })
   public CombinationIterator(Collection<? extends Collection<T>> collectionsOfCandidates) {
     int size = collectionsOfCandidates.size();

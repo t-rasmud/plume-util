@@ -509,7 +509,7 @@ public final class ReflectionPlume {
    *     null
    */
   @SuppressWarnings("unchecked")  // cast to Class<T>
-  public static <T> @PolyDet("up") @Nullable Class<T> leastUpperBound(List<? extends @NonDet @Nullable Object> objects) {
+  public static <T> @NonDet @Nullable Class<T> leastUpperBound(List<? extends @NonDet @Nullable Object> objects) {
     Class<T> result = null;
     for (Object obj : objects) {
       if (obj != null) {

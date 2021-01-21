@@ -61,8 +61,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") int min(int[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to min(int[])");
@@ -83,8 +82,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") long min(long[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to min(long[])");
@@ -105,8 +103,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") double min(double[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to min(double[])");
@@ -127,8 +124,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") Integer min(Integer[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to min(Integer[])");
@@ -153,8 +149,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") Long min(Long[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to min(Long[])");
@@ -179,8 +174,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") Double min(Double[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to min(Double[])");
@@ -205,8 +199,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") int max(int[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to max(int[])");
@@ -227,8 +220,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") long max(long[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to max(long[])");
@@ -249,8 +241,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") double max(double[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to max(double[])");
@@ -271,8 +262,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") Integer max(Integer[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to max(Integer[])");
@@ -297,8 +287,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") Long max(Long[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to max(Long[])");
@@ -323,8 +312,7 @@ public final class ArraysPlume {
    */
   @Pure
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static @PolyDet("down") Double max(Double[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to max(Double[])");
@@ -352,7 +340,7 @@ public final class ArraysPlume {
   @SuppressWarnings(
       "determinism:array.initializer.type.incompatible") // Iteration over OrderNonDet collection
   // for aggregation
-  public static @PolyDet("use") int @ArrayLen(2) [] minAndMax(int[] a) {
+  public static @PolyDet("down") int @ArrayLen(2) @PolyDet("down")[] minAndMax(int[] a) {
     if (a.length == 0) {
       // return null;
       throw new ArrayIndexOutOfBoundsException("Empty array passed to minAndMax(int[])");
@@ -363,7 +351,7 @@ public final class ArraysPlume {
       resultMin = Math.min(resultMin, a[i]);
       resultMax = Math.max(resultMax, a[i]);
     }
-    return new @PolyDet("use") int @PolyDet [] {resultMin, resultMax};
+    return new @PolyDet("down") int @PolyDet("down") [] {resultMin, resultMax};
   }
 
   /**
@@ -379,7 +367,7 @@ public final class ArraysPlume {
     "determinism:return.type.incompatible",
     "determinism:array.initializer.type.incompatible"
   }) // Iteration over OrderNonDet collection for aggregation
-  public static @PolyDet("down") long @ArrayLen(2) [] minAndMax(long[] a) {
+  public static @PolyDet("down") long @ArrayLen(2) @PolyDet("down") [] minAndMax(long[] a) {
     if (a.length == 0) {
       // return null;
       throw new ArrayIndexOutOfBoundsException("Empty array passed to minAndMax(long[])");
@@ -390,7 +378,7 @@ public final class ArraysPlume {
       resultMin = Math.min(resultMin, a[i]);
       resultMax = Math.max(resultMax, a[i]);
     }
-    return new @PolyDet("use") long @PolyDet [] {resultMin, resultMax};
+    return new @PolyDet("down") long @PolyDet("down") [] {resultMin, resultMax};
   }
 
   /**
@@ -402,14 +390,11 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
   public static int elementRange(int[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to elementRange(int[])");
     }
-    int[] minAndMax = minAndMax(a);
+    @PolyDet("down") int @PolyDet("down")[] minAndMax = minAndMax(a);
     return minAndMax[1] - minAndMax[0];
   }
 
@@ -422,14 +407,11 @@ public final class ArraysPlume {
    */
   @Pure
   @StaticallyExecutable
-  @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
   public static long elementRange(long[] a) {
     if (a.length == 0) {
       throw new ArrayIndexOutOfBoundsException("Empty array passed to elementRange(long[])");
     }
-    long[] minAndMax = minAndMax(a);
+    @PolyDet("down") long @PolyDet("down") [] minAndMax = minAndMax(a);
     return minAndMax[1] - minAndMax[0];
   }
 
@@ -446,8 +428,7 @@ public final class ArraysPlume {
   @Pure
   @StaticallyExecutable
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static int sum(int[] a) {
     int sum = 0;
     for (int i = 0; i < a.length; i++) {
@@ -465,8 +446,7 @@ public final class ArraysPlume {
   @Pure
   @StaticallyExecutable
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static int sum(int[][] a) {
     int sum = 0;
     for (int i = 0; i < a.length; i++) {
@@ -486,8 +466,7 @@ public final class ArraysPlume {
   @Pure
   @StaticallyExecutable
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static double sum(double[] a) {
     double sum = 0;
     for (int i = 0; i < a.length; i++) {
@@ -505,8 +484,7 @@ public final class ArraysPlume {
   @Pure
   @StaticallyExecutable
   @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for
-  // aggregation
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for aggregation
   public static double sum(double[][] a) {
     double sum = 0;
     for (int i = 0; i < a.length; i++) {
@@ -1752,8 +1730,7 @@ public final class ArraysPlume {
     @SuppressWarnings({
       "lowerbound:argument.type.incompatible", // TODO: annotate for Index Checker
       "index:argument.type.incompatible", // TODO: annotate for Index Checker
-      "determinism:assignment.type.incompatible" // Iteration over OrderNonDet collection for
-      // assigning into another
+      "determinism:assignment.type.incompatible" // Iteration over OrderNonDet collection for assigning into another
     })
     void copyInto(@PolyDet("use") T @PolyDet [] dest, int destPos) {
       if (theArray != null) {
@@ -1800,11 +1777,10 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for
-  // concatenation with another
-  public static <T> @PolyDet("use") T @PolyDet [] concat(
-      @PolyDet("use") T @Nullable @PolyDet [] a, @PolyDet("use") T @Nullable @PolyDet [] b) {
+//  @SuppressWarnings(
+//      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for concatenation with another
+  public static <@PolyDet("use") T> T @PolyDet [] concat(
+      T @Nullable @PolyDet [] a, T @Nullable @PolyDet [] b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
 
@@ -1817,10 +1793,7 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for
-  // concatenation with another
-  public static <T> @PolyDet("use") T @PolyDet [] concat(
+  public static <@PolyDet("use") T> T @PolyDet [] concat(
       T @Nullable @PolyDet [] a, @Nullable @PolyDet List<T> b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
@@ -1834,11 +1807,21 @@ public final class ArraysPlume {
    * @param b the second sequence to concatenate
    * @return an array that concatenates the arguments
    */
-  @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for
-  // concatenation with another
-  public static <T> @PolyDet("use") T @PolyDet [] concat(
-      @PolyDet @Nullable List<@PolyDet("use") T> a, @PolyDet("use") T @Nullable @PolyDet [] b) {
+  public static <@PolyDet("use") T> T @PolyDet [] concat(
+      @PolyDet @Nullable List<T> a, T @Nullable @PolyDet [] b) {
+    return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
+  }
+
+  /**
+   * Return an array that contains all the elements of both arguments, in order.
+   *
+   * @param <T> the type of the sequence elements
+   * @param a the first sequence to concatenate
+   * @param b the second sequence to concatenate
+   * @return an array that concatenates the arguments
+   */
+  public static <@PolyDet("use") T> T @PolyDet [] concat(
+      @Nullable @PolyDet List<T> a, @Nullable @PolyDet List<T> b) {
     return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
   }
 
@@ -1851,26 +1834,9 @@ public final class ArraysPlume {
    * @return an array that concatenates the arguments
    */
   @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for
-  // concatenation with another
-  public static <T> @PolyDet("use") T @PolyDet [] concat(
-      @Nullable @PolyDet List<@PolyDet("use") T> a, @Nullable @PolyDet List<@PolyDet("use") T> b) {
-    return concat(new @PolyDet ListOrArray<T>(a), new @PolyDet ListOrArray<T>(b));
-  }
-
-  /**
-   * Return an array that contains all the elements of both arguments, in order.
-   *
-   * @param <T> the type of the sequence elements
-   * @param a the first sequence to concatenate
-   * @param b the second sequence to concatenate
-   * @return an array that concatenates the arguments
-   */
-  @SuppressWarnings(
-      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for assigning
-  // into another
-  private static <T> @PolyDet("use") T @PolyDet [] concat(
-      @PolyDet ListOrArray<@PolyDet("use") T> a, @PolyDet ListOrArray<@PolyDet("use") T> b) {
+      "determinism:return.type.incompatible") // Iteration over OrderNonDet collection for assigning into another
+  private static <@PolyDet("use") T> T @PolyDet [] concat(
+      @PolyDet ListOrArray<T> a, @PolyDet ListOrArray<T> b) {
     if (a.isNull() && b.isNull()) {
       @SuppressWarnings("unchecked")
       @PolyDet("use") T @PolyDet [] result =
@@ -2459,8 +2425,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") boolean @PolyDet [] a) {
@@ -2488,8 +2453,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") byte @PolyDet [] a) {
@@ -2517,8 +2481,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") char @PolyDet [] a) {
@@ -2546,8 +2509,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") float @PolyDet [] a) {
@@ -2575,8 +2537,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") short @PolyDet [] a) {
@@ -2604,8 +2565,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") int @PolyDet [] a) {
@@ -2634,8 +2594,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") double @PolyDet [] a) {
@@ -2663,8 +2622,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") long @PolyDet [] a) {
@@ -2692,8 +2650,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") String @PolyDet [] a) {
@@ -2720,8 +2677,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
-    // into another
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
   })
   @Pure
   public static @PolyDet("down") boolean noDuplicates(@PolyDet("use") Object @PolyDet [] a) {
@@ -2859,8 +2815,7 @@ public final class ArraysPlume {
    * @return function from [0..a.length) to range R that is the composition of a and b
    */
   @SuppressWarnings({
-    "determinism:assignment.type.incompatible" // Iteration over OrderNonDet collection for
-    // assigning into another
+    "determinism:assignment.type.incompatible" // Iteration over OrderNonDet collection for assigning into another
   })
   public static int @SameLen("#1") [] fnCompose(@IndexFor("#2") int[] a, int[] b) {
     @PolyDet("use") int @PolyDet("use") [] result = new @PolyDet("use") int @PolyDet("use") [a.length];
@@ -2880,8 +2835,7 @@ public final class ArraysPlume {
    *     b.
    */
   @SuppressWarnings(
-      "determinism:assignment.type.incompatible") // Iteration over OrderNonDet collection for
-  // assigning into another
+      "determinism:assignment.type.incompatible") // Iteration over OrderNonDet collection for assigning into another
   public static int @SameLen("#1") [] partialFnCompose(@IndexOrLow("#2") int[] a, int[] b) {
     @PolyDet("use") int @PolyDet [] result = new @PolyDet("use") int @PolyDet [a.length];
     for (int i = 0; i < a.length; i++) {
@@ -2915,7 +2869,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
     // into another
   })
   @Pure
@@ -2953,7 +2907,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
     // into another
   })
   @Pure
@@ -2991,7 +2945,7 @@ public final class ArraysPlume {
   @SuppressWarnings({
     "allcheckers:purity",
     "lock", // side effect to local state (HashSet)
-    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for assigning
+    "determinism:method.invocation.invalid" // Iteration over OrderNonDet collection for searching
     // into another
   })
   @Pure

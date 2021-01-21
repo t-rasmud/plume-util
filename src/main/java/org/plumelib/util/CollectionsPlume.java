@@ -248,8 +248,7 @@ public final class CollectionsPlume {
    * @return list of lists of length dims, each of which combines elements from objs
    */
   @SuppressWarnings(
-      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for
-                                                // creating another
+      "determinism:argument.type.incompatible") // Iteration over OrderNonDet collection for creating another
   public static <T> List<@PolyDet("use") List<@PolyDet("use") T>> createCombinations(
       @Positive int dims, @NonNegative int start, List<@PolyDet("use") T> objs) {
 
@@ -510,8 +509,7 @@ public final class CollectionsPlume {
     @SuppressWarnings({
       "allcheckers:purity",
       "lock:method.guarantee.violated",
-      "determinism:assignment.type.incompatible" // Assigning PolyDet(up) pointer to 'current' when
-                                                 // 'current' is empty
+      "determinism:assignment.type.incompatible" // Assigning PolyDet(up) pointer to 'current' when 'current' is empty
     })
     @Override
     public @PolyDet("down") boolean hasNext(@GuardSatisfied MergedIterator<T> this) {

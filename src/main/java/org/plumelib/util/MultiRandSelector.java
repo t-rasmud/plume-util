@@ -152,7 +152,7 @@ public class MultiRandSelector<T> {
    *
    * @return an iterator of all objects selected
    */
-  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over OrderNonDet collection for assigning into another
+  @SuppressWarnings("determinism:argument.type.incompatible")  // Iteration over OrderNonDet collection `map.values()` for creating another
   public Iterator<T> valuesIter() {
     @PolyDet ArrayList<T> ret = new @PolyDet ArrayList<>();
     for (RandomSelector<T> rs : map.values()) {
