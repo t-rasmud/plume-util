@@ -56,7 +56,7 @@ dependencies {
   errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
 }
 tasks.withType(JavaCompile).configureEach {
-  options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+  options.compilerArgs << "-Xlint:all,-processing" 
   options.errorprone {
     // Code copied from the JDK that we don't want to change gratuitously.
     excludedPaths = ".*/Weak.*Hash(er)?Map.java"
@@ -80,8 +80,8 @@ checkerFramework {
     'org.checkerframework.common.util.count.AnnotationStatistics',
   ]
   extraJavacArgs = [
-    '-Aannotations', '-Anolocations', // for AnnotationStatistics
-    '-Werror',
+    '-Aannotations', '-Anolocations', '-Awarns',// for AnnotationStatistics
+//    '-Werror',
     // '-AcheckPurityAnnotations',
     '-ArequirePrefixInWarningSuppressions',
     '-AwarnUnneededSuppressions',
